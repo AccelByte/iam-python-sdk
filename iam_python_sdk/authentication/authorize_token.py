@@ -1,0 +1,2 @@
+class AuthorizeClient():
+    pass
