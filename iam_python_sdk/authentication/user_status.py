@@ -1,2 +1,2 @@
-class Users():
+class UserStatus():
     pass
