@@ -12,7 +12,7 @@ To install iam-python-sdk, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install iam_python_sdk
+    $ pip install iam-python-sdk
 
 This is the preferred method to install iam-python-sdk, as it will always install the most recent stable release.
 
