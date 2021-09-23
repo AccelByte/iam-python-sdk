@@ -15,7 +15,7 @@ requirements = ['Click>=7.0', ]
 test_requirements = ['pytest>=3', ]
 
 setup(
-    author="Accelbyte",
+    author="AccelByte",
     author_email='dev@accelbyte.net',
     python_requires='>=3.6',
     classifiers=[
@@ -31,15 +31,15 @@ setup(
     description="Iam Python SDK",
     entry_points={
         'console_scripts': [
-            'iam_python_sdk=iam_python_sdk.cli:main',
+            'iam=iam_python_sdk.cli:main',
         ],
     },
     install_requires=requirements,
     license="Apache Software License 2.0",
     long_description=readme + '\n\n' + history,
     include_package_data=True,
-    keywords='iam_python_sdk',
-    name='iam_python_sdk',
+    keywords=['iam_python_sdk', 'accelbyte', 'iam'],
+    name='iam-python-sdk',
     packages=find_packages(include=['iam_python_sdk', 'iam_python_sdk.*']),
     test_suite='tests',
     tests_require=test_requirements,

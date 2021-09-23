@@ -21,7 +21,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
-import iam_python_sdk
+import iam_python_sdk  # noqa: E402
 
 # -- General configuration ---------------------------------------------
 
@@ -47,8 +47,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'iam-python-sdk'
-copyright = "2021, Accelbyte"
-author = "Accelbyte"
+copyright = "2021, AccelByte"
+author = "AccelByte"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -129,7 +129,7 @@ latex_elements = {
 latex_documents = [
     (master_doc, 'iam_python_sdk.tex',
      'iam-python-sdk Documentation',
-     'Accelbyte', 'manual'),
+     'AccelByte', 'manual'),
 ]
 
 
@@ -157,6 +157,3 @@ texinfo_documents = [
      'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-

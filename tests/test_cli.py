@@ -2,8 +2,6 @@
 
 """Tests for `iam_python_sdk` package."""
 
-import pytest
-
 from click.testing import CliRunner
 
 from iam_python_sdk import cli

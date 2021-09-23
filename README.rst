@@ -1,5 +1,5 @@
 ==============
-iam-python-sdk
+IAM Python SDK
 ==============
 
 
@@ -20,7 +20,7 @@ iam-python-sdk
 
 
 
-Iam Python SDK
+AccelByte IAM Python SDK
 
 
 * Free software: Apache Software License 2.0
