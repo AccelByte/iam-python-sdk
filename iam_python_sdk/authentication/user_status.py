@@ -1,2 +1,0 @@
-class UserStatus():
-    pass
