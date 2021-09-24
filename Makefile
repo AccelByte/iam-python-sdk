@@ -68,7 +68,6 @@ coverage: ## check code coverage quickly with the default Python
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/iam_python_sdk.rst
-	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ iam_python_sdk
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
