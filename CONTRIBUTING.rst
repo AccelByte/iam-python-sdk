@@ -15,7 +15,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/accelbyte/iam_python_sdk/issues.
+Report bugs at https://github.com/accelbyte/iam-python-sdk/issues.
 
 If you are reporting a bug, please include:
 
@@ -45,7 +45,7 @@ articles, and such.
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/accelbyte/iam_python_sdk/issues.
+The best way to send feedback is to file an issue at https://github.com/accelbyte/iam-python-sdk/issues.
 
 If you are proposing a feature:
 
@@ -57,17 +57,17 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `iam_python_sdk` for local development.
+Ready to contribute? Here's how to set up `iam-python-sdk` for local development.
 
-1. Fork the `iam_python_sdk` repo on GitHub.
+1. Fork the `iam-python-sdk` repo on GitHub.
 2. Clone your fork locally::
 
-    $ git clone git@github.com:your_name_here/iam_python_sdk.git
+    $ git clone git@github.com:your_name_here/iam-python-sdk.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
-    $ mkvirtualenv iam_python_sdk
-    $ cd iam_python_sdk/
+    $ mkvirtualenv iam-python-sdk
+    $ cd iam-python-sdk/
     $ python setup.py develop
 
 4. Create a branch for local development::
@@ -103,7 +103,7 @@ Before you submit a pull request, check that it meets these guidelines:
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
 3. The pull request should work for Python 3.5, 3.6, 3.7 and 3.8, and for PyPy. Check
-   https://travis-ci.com/accelbyte/iam_python_sdk/pull_requests
+   https://travis-ci.com/accelbyte/iam-python-sdk/pull_requests
    and make sure that the tests pass for all supported Python versions.
 
 Tips
