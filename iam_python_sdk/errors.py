@@ -17,9 +17,10 @@
 
 class Error(Exception):
     """Base error class."""
-    def __init__(self, message: str) -> None:
-        super().__init__(message)
+    def __init__(self, message: str = "") -> None:
+        if message:
         self.message = message
+        super().__init__(self.message)
 
 
 class UnauthorizedError(Error):
