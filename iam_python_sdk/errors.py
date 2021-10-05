@@ -19,7 +19,7 @@ class Error(Exception):
     """Base error class."""
     def __init__(self, message: str = "") -> None:
         if message:
-        self.message = message
+            self.message = message
         super().__init__(self.message)
 
 
@@ -65,3 +65,23 @@ class RoleNotFoundError(Error):
 
 class NoLocalValidationError(Error):
     message = "local validation is not active, activate by calling StartLocalValidation()"
+
+
+class HTTPClientError(Error):
+    pass
+
+
+class ClientTokenGrantError(Error):
+    pass
+
+
+class RefreshAccessTokenError(Error):
+    pass
+
+
+class ValidateAccessTokenError(Error):
+    pass
+
+
+class GetRolePermissionError(Error):
+    pass
