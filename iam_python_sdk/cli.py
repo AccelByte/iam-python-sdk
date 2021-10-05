@@ -13,6 +13,7 @@
 # limitations under the License.
 
 """Console script for iam_python_sdk."""
+
 import sys
 import click
 

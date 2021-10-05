@@ -28,7 +28,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    description="Iam Python SDK",
+    description="AccelByte IAM Python SDK",
     entry_points={
         'console_scripts': [
             'iam=iam_python_sdk.cli:main',
