@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* Accelbyte <dev@accelbyte.net>
+* AccelByte <dev@accelbyte.net>
 
 Contributors
 ------------
