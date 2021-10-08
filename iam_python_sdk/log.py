@@ -12,20 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Console script for iam_python_sdk."""
+import logging
 
-import sys
-import click
-
-
-@click.command()
-def main(args=None):
-    """Console script for iam_python_sdk."""
-    click.echo("Replace this message by putting your code into "
-               "iam_python_sdk.cli.main")
-    click.echo("See click documentation at https://click.palletsprojects.com/")
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())  # pragma: no cover
+logging.basicConfig(format="%(asctime)s %(levelname)s %(name)s %(funcName)s: %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
+logger = logging.getLogger("[IAM-Python-SDK]")
