@@ -79,6 +79,10 @@ class RefreshAccessTokenError(Error):
     pass
 
 
+class ValidatePermissionError(Error):
+    pass
+
+
 class ValidateAccessTokenError(Error):
     pass
 
