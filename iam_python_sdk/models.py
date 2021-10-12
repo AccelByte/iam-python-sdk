@@ -14,7 +14,8 @@
 
 """Model module."""
 
-from typing import Any, List, Set
+from typing import Any, List
+from crontab import CronTab
 from datetime import datetime
 
 from .utils import decode_model
@@ -39,28 +40,74 @@ class Permission(Model):
     """Holds information about the actions can be performed to the resource."""
     Resource: str = ""
     Action: int = -1
-    ScheduleAction: int = -1
-    CronSchedule: str = ""
-    RangeSchedule: List[str] = [""]
+    Schedaction: int = -1
+    Schedcron: str = ""
+    Schedrange: List[str] = [""]
+
+    def is_recurring(self) -> bool:
+        try:
+            cron = CronTab(self.Schedcron)
+            next = cron.next(return_datetime=True)
+            zero = datetime(1, 1, 1, 0, 0, 0)
+            now = datetime.now()
+            if next == zero or (next - now).total_seconds() > 0:
+                return False
+        except (AttributeError, ValueError):
+            return True
+
+        return True
+
+    def is_in_range(self) -> bool:
+        try:
+            start = CronTab(self.Schedrange[0])
+            end = CronTab(self.Schedrange[1])
+            next_start = start.next(return_datetime=True)
+            next_end = end.next(return_datetime=True)
+            zero = datetime(1, 1, 1, 0, 0, 0)
+            now = datetime.now()
+
+            if not next_start == zero and (next_start - now).total_seconds() > 0:
+                return False
+
+            if next_end == zero:
+                return False
+
+        except (AttributeError, ValueError):
+            return True
+
+        return True
+
+    def is_scheduled(self) -> bool:
+        ok = False
+        if self.Schedcron:
+            ok = self.is_recurring()
+
+        if ok:
+            return ok
+
+        if len(self.Schedrange) > 1:
+            ok = self.is_in_range()
+
+        return ok
 
 
 class Role(Model):
     """Hold info about a user role."""
-    RoleID: str = ""
-    RoleName: str = ""
+    Roleid: str = ""
+    Rolename: str = ""
     Permissions: List[Permission] = [Permission()]
 
 
 class NamespaceRole(Model):
     """Hold info about a namespace role."""
-    RoleID: str = ""
+    Roleid: str = ""
     Namespace: str = ""
 
 
 class JWTBan(Model):
     """Holds information about ban record in JWT."""
     Ban: str = ""
-    EndDate: datetime = datetime.now()
+    Enddate: datetime = datetime.now()
 
 
 class TokenResponse(Model):
@@ -74,10 +121,10 @@ class TokenResponse(Model):
     NamespaceRoles: List[NamespaceRole] = [NamespaceRole()]
     Permissions: List[Permission] = [Permission()]
     Bans: List[JWTBan] = [JWTBan()]
-    UserID: str = ""
-    PlatformID: str = ""
-    PlatformUserID: str = ""
-    JusticeFlags: int = -1
+    UserId: str = ""
+    PlatformId: str = ""
+    PlatformUserId: str = ""
+    Jflgs: int = -1
     DisplayName: str = ""
     Namespace: str = ""
     IsComply: str = ""
@@ -92,28 +139,31 @@ class JWTClaims(Model):
     NamespaceRoles: List[NamespaceRole] = [NamespaceRole()]
     Permissions: List[Permission] = [Permission()]
     Bans: List[JWTBan] = [JWTBan()]
-    JusticeFlags: int = -1
+    Jflgs: int = -1
     Scope: str = ""
     Country: str = ""
-    ClientID: str = ""
+    ClientId: str = ""
     IsComply: bool = False
+    Sub: str = ""
+    Iat: int = -1
+    Exp: int = -1
 
 
 class UserRevocationListRecord(Model):
     """Used to store revoked user data."""
-    ID: str = ""
+    Id: str = ""
     RevokedAt: datetime = datetime.now()
 
 
 class RevocationList(Model):
     """Contains revoked user and token."""
-    RevokedTokens: Set[str] = {""}
+    RevokedTokens: List[int] = [0]
     RevokedUsers: List[UserRevocationListRecord] = [UserRevocationListRecord()]
 
 
 class ClientInformation(Model):
     """Holds client information."""
-    ClientName: str = ""
+    Clientname: str = ""
     Namespace: str = ""
-    RedirectURI: str = ""
-    BaseURI: str = ""
+    Redirecturi: str = ""
+    Baseuri: str = ""
