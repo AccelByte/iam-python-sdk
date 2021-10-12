@@ -15,6 +15,7 @@
 """Utils module."""
 
 import copy, json
+from datetime import datetime
 from typing import Any, Union
 
 
@@ -87,3 +88,19 @@ def decode_model(data: Union[str, list, dict], model: object) -> Any:
 
     else:
         raise ValueError("Data should be a list, a dict or a json string.")
+
+
+def parse_nanotimestamp(s: str) -> datetime:
+    """Parse datetime string with nanoseconds
+
+    Args:
+        s (str): datetime string
+
+    Returns:
+        datetime: datetime object
+    """
+    tz = ""
+    if s[-1] == "Z":
+        # Add explicit UTC timezone
+        tz = "Z+0000"
+    return datetime.strptime(s[0:26] + tz, "%Y-%m-%dT%H:%M:%S.%fZ%z")
