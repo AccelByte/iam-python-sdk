@@ -18,6 +18,7 @@ from typing import Any, List
 from crontab import CronTab
 from datetime import datetime
 
+from .bloom import BloomFilter
 from .utils import decode_model
 
 
@@ -157,7 +158,7 @@ class UserRevocationListRecord(Model):
 
 class RevocationList(Model):
     """Contains revoked user and token."""
-    RevokedTokens: List[int] = [0]
+    RevokedTokens: BloomFilter = BloomFilter()
     RevokedUsers: List[UserRevocationListRecord] = [UserRevocationListRecord()]
 
 
