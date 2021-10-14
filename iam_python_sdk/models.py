@@ -108,7 +108,7 @@ class NamespaceRole(Model):
 class JWTBan(Model):
     """Holds information about ban record in JWT."""
     Ban: str = ""
-    Enddate: datetime = datetime.now()
+    Enddate: int = -1
 
 
 class TokenResponse(Model):
@@ -153,7 +153,7 @@ class JWTClaims(Model):
 class UserRevocationListRecord(Model):
     """Used to store revoked user data."""
     Id: str = ""
-    RevokedAt: datetime = datetime.now()
+    RevokedAt: int = -1
 
 
 class RevocationList(Model):
