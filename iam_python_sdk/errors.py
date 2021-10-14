@@ -79,6 +79,18 @@ class RefreshAccessTokenError(Error):
     pass
 
 
+class GetJWKSError(Error):
+    pass
+
+
+class GetRevocationListError(Error):
+    pass
+
+
+class StartLocalValidationError(Error):
+    pass
+
+
 class ValidatePermissionError(Error):
     pass
 

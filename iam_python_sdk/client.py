@@ -16,15 +16,18 @@
 
 import backoff, httpx, json, jwt
 
+from threading import RLock
 from typing import Any, Dict, List, Union
 
+from .bloom import BloomFilter
 from .cache import Cache
 from .config import Config
 from .config import CLIENT_INFO_EXPIRATION, GET_ROLE_PATH, GRANT_PATH, JWKS_PATH, MAX_BACKOFF_TIME, \
     REVOCATION_LIST_PATH, VERIFY_PATH
 from .errors import ClientTokenGrantError, GetJWKSError, GetRevocationListError, GetRolePermissionError, \
-    HTTPClientError, RefreshAccessTokenError, StartLocalValidationError, ValidateAccessTokenError, \
-    ValidatePermissionError
+    HTTPClientError, InvalidTokenSignatureKeyError, NoLocalValidationError, RefreshAccessTokenError, \
+    StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAccessTokenError, \
+    ValidateAndParseClaimsError, ValidateJWTError, ValidatePermissionError
 from .models import ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse
 from .log import logger
 from .utils import parse_nanotimestamp
@@ -74,11 +77,36 @@ class DefaultClient:
                  clientInfoCache: Cache,
                  httpClient: HttpClient
                  ) -> None:
+        self.__lock = RLock()
+        self.__clientAccessToken = ""
+        self.__localValidationActive = False
+        self.__keys = {}
+        self.__revokedUsers = {}
+        self.__revocationFilter = None
         self.config = config
         self.httpClient = httpClient
         self.rolePermissionCache = rolePermissionCache
         self.clientInfoCache = clientInfoCache
-        self.clientAccessToken = ""
+
+    def __set_key(self, k: str, value: Any) -> None:
+        with self.__lock:
+            self.__keys[k] = value
+
+    def __get_key(self, k: str) -> Any:
+        with self.__lock:
+            return self.__keys.get(k)
+
+    def __set_revoked_user(self, k: str, value: str) -> None:
+        with self.__lock:
+            self.__revokedUsers[k] = parse_nanotimestamp(value)
+
+    def __get_revoked_user(self, k: str) -> Any:
+        with self.__lock:
+            return self.__revokedUsers.get(k)
+
+    def __set_revocation_filter(self, filer: BloomFilter) -> None:
+        with self.__lock:
+            self.__revocationFilter = filer
 
     def __refreshAccessToken(self) -> None:
         """Refresh user token"
@@ -91,6 +119,49 @@ class DefaultClient:
             logger.info("client token refreshed")
         except ClientTokenGrantError as e:
             raise RefreshAccessTokenError("unable to refresh token") from e
+
+    def __getJWKS(self) -> None:
+        try:
+            resp = self.httpClient.get(self.config.BaseURL + JWKS_PATH,
+                                       auth=(self.config.ClientID, self.config.ClientSecret)
+                                       )
+            if not resp.is_success:
+                logger.error(f"unable to get JWKS: error code {resp.status_code},"
+                             f"error message: {resp.reason_phrase}"
+                             )
+
+            jwks = jwt.PyJWKSet(resp.json().get("keys", []))
+            for jwk in jwks.keys:
+                self.__set_key(jwk.key_id, jwk.key)
+
+        except (json.JSONDecodeError, ValueError) as e:
+            raise GetJWKSError("unable to unmarshal response body") from e
+        except (jwt.InvalidKeyError, jwt.PyJWKSetError) as e:
+            raise GetJWKSError("unable to generate public key") from e
+        except HTTPClientError as e:
+            raise GetJWKSError(f"{e.message}") from e
+
+    def __getRevocationList(self) -> None:
+        try:
+            resp = self.httpClient.get(self.config.BaseURL + REVOCATION_LIST_PATH,
+                                       auth=(self.config.ClientID, self.config.ClientSecret)
+                                       )
+
+            if not resp.is_success:
+                logger.error(f"unable to get JWKS: error code {resp.status_code},"
+                             f"error message: {resp.reason_phrase}"
+                             )
+
+            revocation_list = RevocationList.loads(resp.json())
+            self.__set_revocation_filter(revocation_list.RevokedTokens)
+            for revoked_user in revocation_list.RevokedUsers:
+                self.__set_revoked_user(revoked_user.Id, revoked_user.RevokedAt)
+
+        except (json.JSONDecodeError, ValueError) as e:
+            raise GetRevocationListError("unable to unmarshal response body") from e
+        except HTTPClientError as e:
+            raise GetRevocationListError(f"{e.message}") from e
+
     def __resourceAllowed(self, accessPermissionResource: str, requiredPermissionResource: str) -> bool:
         required_perm_res_sections = requiredPermissionResource.split(":")
         required_perm_res_section_len = len(required_perm_res_sections)
@@ -172,9 +243,11 @@ class DefaultClient:
                 )
 
             token_response = TokenResponse.loads(resp.json())
-            self.clientAccessToken = token_response.AccessToken
+            self.__clientAccessToken = token_response.AccessToken
             logger.info("token grant success")
+
             # TODO: Background refresh token
+
         except (json.JSONDecodeError, ValueError) as e:
             raise ClientTokenGrantError("unable to unmarshal response body") from e
         except HTTPClientError as e:
@@ -186,15 +259,21 @@ class DefaultClient:
         Returns:
             str: token
         """
-        return self.clientAccessToken
+        return self.__clientAccessToken
 
     def StartLocalValidation(self) -> None:
-        """Starts thread to refresh JWK and revocation list periodically this enables local token validation
+        """Starts thread to refresh JWK and revocation list periodically this enables local token validation"""
+        try:
+            self.__getJWKS()
+            self.__getRevocationList()
+            self.__localValidationActive = True
 
-        Returns:
-            object: error
-        """
-        pass
+            # TODO: Background refresh JWKS and Revocation list
+
+        except GetJWKSError as e:
+            raise StartLocalValidationError("unable to get JWKS") from e
+        except GetRevocationListError as e:
+            raise StartLocalValidationError("unable to get revocation list") from e
 
     def ValidateAccessToken(self, accessToken: str) -> bool:
         """Validates access token by calling IAM service
@@ -408,7 +487,7 @@ class DefaultClient:
 
             # Get permissions
             resp = self.httpClient.get(self.config.BaseURL + GET_ROLE_PATH + "/" + roleID,
-                                       headers={"Authorization": f"Bearer {self.clientAccessToken}"}
+                                       headers={"Authorization": f"Bearer {self.__clientAccessToken}"}
                                        )
             if resp.status_code == 401:
                 logger.error("unauthorized")
