@@ -90,7 +90,7 @@ def decode_model(data: Union[str, list, dict], model: object) -> Any:
         raise ValueError("Data should be a list, a dict or a json string.")
 
 
-def parse_nanotimestamp(s: str) -> datetime:
+def parse_nanotimestamp(s: str) -> Union[int, float]:
     """Parse datetime string with nanoseconds
 
     Args:
@@ -103,4 +103,5 @@ def parse_nanotimestamp(s: str) -> datetime:
     if s[-1] == "Z":
         # Add explicit UTC timezone
         tz = "Z+0000"
-    return datetime.strptime(s[0:26] + tz, "%Y-%m-%dT%H:%M:%S.%fZ%z")
+    # Get milliseconds and convert it to unix timestamp
+    return datetime.strptime(s[0:23] + tz, "%Y-%m-%dT%H:%M:%S.%fZ%z").timestamp()
