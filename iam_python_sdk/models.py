@@ -51,7 +51,7 @@ class Permission(Model):
             next = cron.next(return_datetime=True)
             zero = datetime(1, 1, 1, 0, 0, 0)
             now = datetime.now()
-            if next == zero or (next - now).total_seconds() > 0:
+            if next == zero or (isinstance(next, datetime) and (next - now).total_seconds() > 0):
                 return False
         except (AttributeError, ValueError):
             return True
@@ -67,7 +67,7 @@ class Permission(Model):
             zero = datetime(1, 1, 1, 0, 0, 0)
             now = datetime.now()
 
-            if not next_start == zero and (next_start - now).total_seconds() > 0:
+            if not next_start == zero and (isinstance(next_start, datetime) and (next_start - now).total_seconds() > 0):
                 return False
 
             if next_end == zero:
