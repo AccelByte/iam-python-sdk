@@ -10,7 +10,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['Click>=7.0', 'backoff==1.11.1', 'httpx>=1.0.0b0']
+requirements = ['Click>=7.0', 'backoff==1.11.1', 'httpx>=1.0.0b0', 'pyjwt[crypto]==2.2.0', 'crontab==0.23.0']
 
 test_requirements = ['pytest>=3', ]
 
@@ -44,6 +44,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/accelbyte/iam_python_sdk',
-    version='0.3.0',
+    version='0.4.0',
     zip_safe=False,
 )

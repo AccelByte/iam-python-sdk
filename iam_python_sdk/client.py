@@ -14,16 +14,24 @@
 
 """IAM Python SDK client module."""
 
-import backoff, httpx, json
+import backoff, httpx, json, jwt
 
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
+
 from .cache import Cache
 from .config import Config
-from .config import CLIENT_INFO_EXPIRATION, GET_ROLE_PATH, VERIFY_PATH, MAX_BACKOFF_TIME, GRANT_PATH
-from .errors import ClientTokenGrantError, GetRolePermissionError, HTTPClientError, \
-    RefreshAccessTokenError, ValidateAccessTokenError
-from .models import ClientInformation, JWTClaims, Permission, Role, TokenResponse
+from .config import CLIENT_INFO_EXPIRATION, GET_ROLE_PATH, GRANT_PATH, JWKS_PATH, MAX_BACKOFF_TIME, \
+    REVOCATION_LIST_PATH, VERIFY_PATH
+from .errors import ClientTokenGrantError, GetJWKSError, GetRevocationListError, GetRolePermissionError, \
+    HTTPClientError, RefreshAccessTokenError, StartLocalValidationError, ValidateAccessTokenError, \
+    ValidatePermissionError
+from .models import ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse
 from .log import logger
+from .utils import parse_nanotimestamp
+
+
+RESOURCE_NAMESPACE: str = "NAMESPACE"
+RESOURCE_USER: str = "USER"
 
 
 def backoff_giveup_handler(backoff) -> None:
@@ -72,6 +80,79 @@ class DefaultClient:
         self.clientInfoCache = clientInfoCache
         self.clientAccessToken = ""
 
+    def __refreshAccessToken(self) -> None:
+        """Refresh user token"
+
+        Raises:
+            RefreshAccessTokenError: exception failed to refresh token
+        """
+        try:
+            self.ClientTokenGrant()
+            logger.info("client token refreshed")
+        except ClientTokenGrantError as e:
+            raise RefreshAccessTokenError("unable to refresh token") from e
+    def __resourceAllowed(self, accessPermissionResource: str, requiredPermissionResource: str) -> bool:
+        required_perm_res_sections = requiredPermissionResource.split(":")
+        required_perm_res_section_len = len(required_perm_res_sections)
+        access_perm_res_sections = accessPermissionResource.split(":")
+        access_perm_res_section_len = len(access_perm_res_sections)
+        min_section_len = access_perm_res_section_len
+
+        if min_section_len > required_perm_res_section_len:
+            min_section_len = required_perm_res_section_len
+
+        for i in range(0, min_section_len):
+            user_section = access_perm_res_sections[i]
+            required_section = required_perm_res_sections[i]
+
+            if user_section != required_section and user_section != "*":
+                return False
+
+        if access_perm_res_section_len == required_perm_res_section_len:
+            return True
+
+        if access_perm_res_section_len < required_perm_res_section_len:
+            if access_perm_res_sections[access_perm_res_section_len - 1] == "*":
+                if access_perm_res_section_len < 2:
+                    return True
+
+                segment = access_perm_res_sections[access_perm_res_section_len - 2]
+
+                if segment == RESOURCE_NAMESPACE or segment == RESOURCE_USER:
+                    return False
+
+                return True
+            return False
+
+        for i in range(required_perm_res_section_len, access_perm_res_section_len):
+            if access_perm_res_sections[i] != "*":
+                return False
+
+        return True
+
+    def __permissionAllowed(self, grantedPermissions: List[Permission], requiredPermission: Permission) -> bool:
+        for granted_permission in grantedPermissions:
+            granted_action = granted_permission.Action
+            if granted_permission.is_scheduled():
+                granted_action = granted_permission.Schedaction
+
+            if self.__resourceAllowed(granted_permission.Resource, requiredPermission.Resource) and \
+               (granted_action & requiredPermission.Action == requiredPermission.Action):
+                return True
+
+        return False
+
+    def __applyUserPermissionResourceValues(self, grantedPermissions: List[Permission],
+                                            claims: JWTClaims, allowedNamespace: str) -> List[Permission]:
+        if not allowedNamespace:
+            allowedNamespace = claims.Namespace
+
+        for granted_permission in grantedPermissions:
+            granted_permission.Resource = granted_permission.Resource.replace("{userId}", claims.Sub)
+            granted_permission.Resource = granted_permission.Resource.replace("{namespace}", allowedNamespace)
+
+        return grantedPermissions
+
     def ClientTokenGrant(self) -> None:
         """Starts client token grant to get client bearer token for role caching
 
@@ -89,7 +170,6 @@ class DefaultClient:
                     f"unable to grant client token: error code : {resp.status_code}, "
                     f"error message : {resp.reason_phrase}"
                 )
-                return None
 
             token_response = TokenResponse.loads(resp.json())
             self.clientAccessToken = token_response.AccessToken
@@ -99,18 +179,6 @@ class DefaultClient:
             raise ClientTokenGrantError("unable to unmarshal response body") from e
         except HTTPClientError as e:
             raise ClientTokenGrantError(f"{e.message}") from e
-
-    def RefreshAccessToken(self) -> None:
-        """Refresh user token"
-
-        Raises:
-            RefreshAccessTokenError: exception failed to refresh token
-        """
-        try:
-            self.ClientTokenGrant()
-            logger.info("client token refreshed")
-        except ClientTokenGrantError as e:
-            raise RefreshAccessTokenError("unable to refresh token") from e
 
     def ClientToken(self) -> str:
         """Returns client access token
@@ -149,7 +217,7 @@ class DefaultClient:
             if resp.status_code == 401:
                 logger.error("unauthorized")
                 # Refresh Token
-                self.RefreshAccessToken()
+                self.__refreshAccessToken()
                 return self.ValidateAccessToken(accessToken)
 
             elif not resp.is_success:
@@ -192,6 +260,48 @@ class DefaultClient:
         Returns:
             bool: permission status
         """
+        if not claims:
+            raise ValueError("claim is nil")
+
+        for placeholder, value in permissionResources.items():
+            requiredPermission.Resource = requiredPermission.Resource.replace(placeholder, value)
+
+        if self.__permissionAllowed(claims.Permissions, requiredPermission):
+            logger.info("permission allowed to access resource")
+            return True
+
+        namespace_roles = claims.NamespaceRoles or []
+        for namespace_role in namespace_roles:
+            granted_role_permissions = []
+            try:
+                granted_role_permissions = self.GetRolePermissions(namespace_role.Roleid)
+                granted_role_permissions = self.__applyUserPermissionResourceValues(
+                    granted_role_permissions, claims, namespace_role.Namespace
+                )
+
+                if self.__permissionAllowed(granted_role_permissions, requiredPermission):
+                    logger.info("permission allowed to access resource")
+                    return True
+
+            except GetRolePermissionError as e:
+                raise ValidatePermissionError("unable to get role perms") from e
+
+        roles = claims.Roles or []
+        for role_id in roles:
+            granted_role_permissions = []
+            try:
+                granted_role_permissions = self.GetRolePermissions(role_id)
+                granted_role_permissions = self.__applyUserPermissionResourceValues(
+                    granted_role_permissions, claims, ""
+                )
+
+                if self.__permissionAllowed(granted_role_permissions, requiredPermission):
+                    logger.info("permission allowed to access resource")
+                    return True
+            except GetRolePermissionError as e:
+                raise ValidatePermissionError("unable to get role perms") from e
+
+        logger.info("permission not allowed to access resource")
         return False
 
     def ValidateRole(self, requiredRoleID: str, claims: JWTClaims) -> bool:
@@ -276,7 +386,7 @@ class DefaultClient:
         """
         pass
 
-    def GetRolePermissions(self, roleID: str) -> Union[List[Permission], None]:
+    def GetRolePermissions(self, roleID: str) -> List[Permission]:
         """Get permssions of a role
 
         Args:
@@ -303,19 +413,19 @@ class DefaultClient:
             if resp.status_code == 401:
                 logger.error("unauthorized")
                 # Refresh Token
-                self.RefreshAccessToken()
+                self.__refreshAccessToken()
                 return self.GetRolePermissions(roleID)
             elif resp.status_code == 403:
                 logger.error("forbidden")
-                return None
+                return []
             elif resp.status_code == 404:
                 logger.error("not found")
-                return None
+                return []
             elif not resp.is_success:
                 logger.error(
                     f"unexpected error: {resp.status_code}"
                 )
-                return None
+                return []
 
             role = Role.loads(resp.json())
             self.rolePermissionCache[roleID] = role.Permissions
