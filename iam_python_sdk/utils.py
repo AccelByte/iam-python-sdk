@@ -66,8 +66,11 @@ def decode_model(data: Union[str, list, dict], model: object) -> Any:
                 # Recursive list
                 try:
                     attr = getattr(obj, key)
-                    result = decode_model(v, attr[0])
-                    setattr(obj, key, result)
+                    if isinstance(attr[0], (str, int, float, bool)):  # Simple type
+                        setattr(obj, key, v)
+                    else:  # Other type
+                        result = decode_model(v, attr[0])
+                        setattr(obj, key, result)
                 except Exception:
                     pass
 
