@@ -15,7 +15,6 @@
 """Tests for `iam_python_sdk.utils` module."""
 
 
-from datetime import datetime, timezone
 from typing import List
 from iam_python_sdk.utils import decode_model, parse_nanotimestamp
 
