@@ -99,5 +99,13 @@ class ValidateAccessTokenError(Error):
     pass
 
 
+class ValidateAndParseClaimsError(Error):
+    pass
+
+
+class ValidateJWTError(Error):
+    pass
+
+
 class GetRolePermissionError(Error):
     pass

@@ -162,6 +162,39 @@ class DefaultClient:
         except HTTPClientError as e:
             raise GetRevocationListError(f"{e.message}") from e
 
+    def __validateJWT(self, token: str) -> Union[JWTClaims, None]:
+        if not token:
+            raise ValueError("invalid token")
+
+        web_token = jwt.get_unverified_header(token)
+        if not web_token.get("kid"):
+            raise InvalidTokenSignatureKeyError("invalid header")
+
+        public_key = self.__get_key(web_token.get("kid"))
+        if not public_key:
+            raise ValueError("invalid key")
+
+        claims = None
+        try:
+            claims = jwt.decode(token, public_key, algorithms=["RS256"], options={"verify_exp": True})
+            jwt_claims = JWTClaims.loads(claims)
+        except jwt.DecodeError as e:
+            raise ValidateJWTError("unable to deserialize JWT claims") from e
+        except jwt.ExpiredSignatureError as e:
+            raise ValidateJWTError("unable to validate JWT") from e
+
+        return jwt_claims
+
+    def __userRevoked(self, user_id: str, issued_at: int) -> bool:
+        time_revoked = self.__get_revoked_user(user_id)
+        if time_revoked:
+            return time_revoked >= issued_at
+        return False
+
+    def __tokenRevoked(self, access_token: str) -> bool:
+        # TODO: Check if access_token maybe in revoked tokens bloom filter
+        return False
+
     def __resourceAllowed(self, accessPermissionResource: str, requiredPermissionResource: str) -> bool:
         required_perm_res_sections = requiredPermissionResource.split(":")
         required_perm_res_section_len = len(required_perm_res_sections)
@@ -323,7 +356,22 @@ class DefaultClient:
         Returns:
             Union[JWTClaims, None]: JWT claims or None
         """
-        pass
+        if self.__localValidationActive is not True:
+            raise NoLocalValidationError
+
+        jwt_claims = None
+        try:
+            jwt_claims = self.__validateJWT(accessToken)
+        except (ValueError, InvalidTokenSignatureKeyError, ValidateJWTError) as e:
+            raise ValidateAndParseClaimsError("unable to validate JWT") from e
+
+        if jwt_claims and self.__userRevoked(jwt_claims.Sub, jwt_claims.Iat):
+            raise UserRevokedError("user (owner) of JWT is revoked")
+
+        if jwt_claims and self.__tokenRevoked(accessToken):
+            raise TokenRevokedError("token is revoked")
+
+        return jwt_claims
 
     def ValidatePermission(self, claims: JWTClaims, requiredPermission: Permission,
                            permissionResources: Dict[str, str]) -> bool:
