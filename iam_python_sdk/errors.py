@@ -107,5 +107,9 @@ class ValidateJWTError(Error):
     pass
 
 
+class ValidateScopeError(Error):
+    pass
+
+
 class GetRolePermissionError(Error):
     pass

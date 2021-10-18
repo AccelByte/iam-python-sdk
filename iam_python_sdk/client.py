@@ -22,12 +22,12 @@ from typing import Any, Dict, List, Union
 from .bloom import BloomFilter
 from .cache import Cache
 from .config import Config
-from .config import CLIENT_INFO_EXPIRATION, GET_ROLE_PATH, GRANT_PATH, JWKS_PATH, MAX_BACKOFF_TIME, \
-    REVOCATION_LIST_PATH, VERIFY_PATH
-from .errors import ClientTokenGrantError, GetJWKSError, GetRevocationListError, GetRolePermissionError, \
-    HTTPClientError, InvalidTokenSignatureKeyError, NoLocalValidationError, RefreshAccessTokenError, \
-    StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAccessTokenError, \
-    ValidateAndParseClaimsError, ValidateJWTError, ValidatePermissionError
+from .config import CLIENT_INFO_EXPIRATION, CLIENT_INFORMATION_PATH, GET_ROLE_PATH, GRANT_PATH, JWKS_PATH, \
+    MAX_BACKOFF_TIME, REVOCATION_LIST_PATH, SCOPE_SEPARATOR, VERIFY_PATH
+from .errors import ClientTokenGrantError, GetClientInformationError, GetJWKSError, GetRevocationListError, \
+    GetRolePermissionError, HTTPClientError, InvalidTokenSignatureKeyError, NilClaimError, NoLocalValidationError, \
+    RefreshAccessTokenError, StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAccessTokenError, \
+    ValidateAndParseClaimsError, ValidateAudienceError, ValidateJWTError, ValidatePermissionError, ValidateScopeError
 from .models import ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse
 from .log import logger
 from .utils import parse_nanotimestamp
@@ -509,14 +509,18 @@ class DefaultClient:
         """
         pass
 
-    def ValidateScope(self, claims: JWTClaims, scope: str) -> None:
+    def ValidateScope(self, claims: JWTClaims, reqScope: str) -> None:
         """Validate scope of user access token
 
         Args:
             claims (JWTClaims): JWT claims
-            scope (str): role scope
+            reqScope (str): required role scope
         """
-        pass
+        scopes = claims.Scope.split(SCOPE_SEPARATOR)
+        if reqScope not in scopes:
+            raise ValidateScopeError("invalid scope")
+
+        logger.info("scope valid")
 
     def GetRolePermissions(self, roleID: str) -> List[Permission]:
         """Get permssions of a role
