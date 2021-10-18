@@ -441,6 +441,11 @@ class DefaultClient:
         Returns:
             bool: role validity status
         """
+        if requiredRoleID in claims.Roles:
+            logger.info("role allowed to access resource")
+            return True
+
+        logger.warn("role not allowed to access resource")
         return False
 
     def UserPhoneVerificationStatus(self, claims: JWTClaims) -> bool:
