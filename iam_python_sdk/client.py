@@ -584,7 +584,37 @@ class DefaultClient:
         Returns:
             Union[ClientInformation, None]: client information or None
         """
-        pass
+        # Try to get from cache first
+        cached_client_info = self.clientInfoCache.get(clientID)
+        if cached_client_info:
+            return cached_client_info
+
+        # Get client informations
+        try:
+            resp = self.httpClient.get(self.config.BaseURL + CLIENT_INFORMATION_PATH % (namespace, clientID),
+                                       headers={"Authorization": f"Bearer {self.__clientAccessToken}"}
+                                       )
+            if resp.status_code == 401:
+                logger.warn("unauthorized")
+                # Refresh Token
+                self.__refreshAccessToken()
+                return self.GetClientInformation(namespace, clientID)
+            elif not resp.is_success:
+                logger.warn(f"unable to get client information: error code {resp.status_code},"
+                            f"error message: {resp.reason_phrase}"
+                            )
+                return None
+
+            client_info = ClientInformation.loads(resp.json())
+            self.clientInfoCache[clientID] = client_info
+            return client_info
+
+        except RefreshAccessTokenError as e:
+            raise GetClientInformationError("unable to get client information") from e
+        except (json.JSONDecodeError, ValueError) as e:
+            raise GetClientInformationError("unable to unmarshal response body") from e
+        except HTTPClientError as e:
+            raise GetClientInformationError(f"{e.message}") from e
 
 
 class NewDefaultClient(DefaultClient):

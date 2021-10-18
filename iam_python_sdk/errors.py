@@ -113,3 +113,7 @@ class ValidateScopeError(Error):
 
 class GetRolePermissionError(Error):
     pass
+
+
+class GetClientInformationError(Error):
+    pass
