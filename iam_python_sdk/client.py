@@ -507,7 +507,25 @@ class DefaultClient:
         Args:
             claims (JWTClaims): JWT claims
         """
-        pass
+        if not claims:
+            raise NilClaimError("invalid audience")
+
+        # no need to check if no audience found in the claims. https://tools.ietf.org/html/rfc7519#section-4.1.3
+        audience = getattr(claims, "Aud")
+        if not audience:
+            logger.warn("no audience found in the token. Skipping the audience validation")
+            return None
+
+        try:
+            client_info = self.GetClientInformation(claims.Namespace, self.config.ClientID)
+            if getattr(client_info, "Baseuri") not in claims.Aud:
+                raise ValidateAudienceError("audience is not valid")
+
+            logger.info("audience is valid")
+            return None
+
+        except GetClientInformationError as e:
+            raise ValidateAudienceError("get client detail returns error") from e
 
     def ValidateScope(self, claims: JWTClaims, reqScope: str) -> None:
         """Validate scope of user access token
