@@ -126,9 +126,9 @@ class DefaultClient:
                                        auth=(self.config.ClientID, self.config.ClientSecret)
                                        )
             if not resp.is_success:
-                logger.error(f"unable to get JWKS: error code {resp.status_code},"
-                             f"error message: {resp.reason_phrase}"
-                             )
+                logger.warn(f"unable to get JWKS: error code {resp.status_code},"
+                            f"error message: {resp.reason_phrase}"
+                            )
 
             jwks = jwt.PyJWKSet(resp.json().get("keys", []))
             for jwk in jwks.keys:
@@ -148,9 +148,9 @@ class DefaultClient:
                                        )
 
             if not resp.is_success:
-                logger.error(f"unable to get JWKS: error code {resp.status_code},"
-                             f"error message: {resp.reason_phrase}"
-                             )
+                logger.warn(f"unable to get JWKS: error code {resp.status_code},"
+                            f"error message: {resp.reason_phrase}"
+                            )
 
             revocation_list = RevocationList.loads(resp.json())
             self.__set_revocation_filter(revocation_list.RevokedTokens)
@@ -270,7 +270,7 @@ class DefaultClient:
                                         auth=(self.config.ClientID, self.config.ClientSecret)
                                         )
             if not resp.is_success:
-                logger.error(
+                logger.warn(
                     f"unable to grant client token: error code : {resp.status_code}, "
                     f"error message : {resp.reason_phrase}"
                 )
@@ -327,13 +327,13 @@ class DefaultClient:
                                         auth=(self.config.ClientID, self.config.ClientSecret)
                                         )
             if resp.status_code == 401:
-                logger.error("unauthorized")
+                logger.warn("unauthorized")
                 # Refresh Token
                 self.__refreshAccessToken()
                 return self.ValidateAccessToken(accessToken)
 
             elif not resp.is_success:
-                logger.error(
+                logger.warn(
                     f"unable to validate access token: error code : {resp.status_code}, "
                     f"error message : {resp.reason_phrase}"
                 )
@@ -565,18 +565,18 @@ class DefaultClient:
                                        headers={"Authorization": f"Bearer {self.__clientAccessToken}"}
                                        )
             if resp.status_code == 401:
-                logger.error("unauthorized")
+                logger.warn("unauthorized")
                 # Refresh Token
                 self.__refreshAccessToken()
                 return self.GetRolePermissions(roleID)
             elif resp.status_code == 403:
-                logger.error("forbidden")
+                logger.warn("forbidden")
                 return []
             elif resp.status_code == 404:
-                logger.error("not found")
+                logger.warn("not found")
                 return []
             elif not resp.is_success:
-                logger.error(
+                logger.warn(
                     f"unexpected error: {resp.status_code}"
                 )
                 return []
