@@ -17,19 +17,19 @@
 from iam_python_sdk.cache import Cache
 
 
-class TestCache:
-    def test_set_get_item(self):
-        cache = Cache(60, x=1)
-        cache['y'] = 2
-        cache.set('z', 3)
-        assert cache['x'] == 1
-        assert cache['y'] == 2
-        assert cache.get('z') == 3
+def test_set_get_item():
+    cache = Cache(60, x=1)
+    cache['y'] = 2
+    cache.set('z', 3)
+    assert cache['x'] == 1
+    assert cache['y'] == 2
+    assert cache.get('z') == 3
 
-    def test_is_expired(self):
-        cache = Cache(60, x=1)
-        cache['y'] = 2
-        cache.set('z', 3, 30)
-        assert cache.is_expired('x') is False
-        assert cache.is_expired('y', 30) is False
-        assert cache.is_expired('z', 35) is True
+
+def test_is_expired():
+    cache = Cache(60, x=1)
+    cache['y'] = 2
+    cache.set('z', 3, 30)
+    assert cache.is_expired('x') is False
+    assert cache.is_expired('y', 30) is False
+    assert cache.is_expired('z', 35) is True

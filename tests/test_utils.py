@@ -35,26 +35,26 @@ class PersonModel:
     Phones: List[PhoneModel] = [PhoneModel()]
 
 
-class TestUtils:
-    def test_decode_model(self):
-        data = {"id": "12345", "name": "Jhon",
-                "city": {"name": "Yogyakarta"},
-                "phones": [{"number": "+6234567890"}]
-                }
-        obj = decode_model(data, PersonModel())
-        assert isinstance(obj, PersonModel)
-        assert obj.Name == "Jhon"
+def test_decode_model():
+    data = {
+        "id": "12345",
+        "name": "Jhon",
+        "city": {"name": "Yogyakarta"},
+        "phones": [{"number": "+6234567890"}],
+    }
+    obj = decode_model(data, PersonModel())
+    assert isinstance(obj, PersonModel)
+    assert obj.Name == "Jhon"
 
-        assert isinstance(obj.City, CityModel)
-        assert obj.City.Name == "Yogyakarta"
+    assert isinstance(obj.City, CityModel)
+    assert obj.City.Name == "Yogyakarta"
 
-        assert isinstance(obj.Phones[0], PhoneModel)
-        assert obj.Phones[0].Number == "+6234567890"
+    assert isinstance(obj.Phones[0], PhoneModel)
+    assert obj.Phones[0].Number == "+6234567890"
 
-    def test_parse_nanotimestamp(self):
-        data = "2020-02-02T02:02:02.02020202Z"
-        timestamp = parse_nanotimestamp(data)
-        assert isinstance(timestamp, float)
-        import logging
-        logging.info(timestamp)
-        assert timestamp == 1580608922.02
+
+def test_parse_nanotimestamp():
+    data = "2020-02-02T02:02:02.02020202Z"
+    timestamp = parse_nanotimestamp(data)
+    assert isinstance(timestamp, float)
+    assert timestamp == 1580608922.02
