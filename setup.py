@@ -12,7 +12,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = ['Click>=7.0', 'backoff==1.11.1', 'httpx>=1.0.0b0', 'pyjwt[crypto]==2.2.0', 'crontab==0.23.0']
 
-test_requirements = ['pytest>=3', ]
+test_requirements = ['pytest>=3', 'respx==0.18.0']
 
 setup(
     author="AccelByte",
