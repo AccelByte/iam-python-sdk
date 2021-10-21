@@ -373,7 +373,7 @@ class DefaultClient:
 
         return jwt_claims
 
-    def ValidatePermission(self, claims: JWTClaims, requiredPermission: Permission,
+    def ValidatePermission(self, claims: Union[JWTClaims, None], requiredPermission: Permission,
                            permissionResources: Dict[str, str]) -> bool:
         """Validates if an access token has right for a specific permission
 
@@ -388,7 +388,7 @@ class DefaultClient:
             bool: permission status
         """
         if not claims:
-            raise ValueError("claim is nil")
+            raise NilClaimError("claim is nil")
 
         for placeholder, value in permissionResources.items():
             requiredPermission.Resource = requiredPermission.Resource.replace(placeholder, value)
@@ -431,7 +431,7 @@ class DefaultClient:
         logger.info("permission not allowed to access resource")
         return False
 
-    def ValidateRole(self, requiredRoleID: str, claims: JWTClaims) -> bool:
+    def ValidateRole(self, requiredRoleID: str, claims: Union[JWTClaims, None]) -> bool:
         """Validates if an access token has a specific role
 
         Args:
@@ -441,6 +441,9 @@ class DefaultClient:
         Returns:
             bool: role validity status
         """
+        if not claims:
+            raise NilClaimError("claim is nil")
+
         if requiredRoleID in claims.Roles:
             logger.info("role allowed to access resource")
             return True
@@ -501,14 +504,14 @@ class DefaultClient:
         """
         return False
 
-    def ValidateAudience(self, claims: JWTClaims) -> None:
+    def ValidateAudience(self, claims: Union[JWTClaims, None]) -> None:
         """Validate audience of user access token
 
         Args:
             claims (JWTClaims): JWT claims
         """
         if not claims:
-            raise NilClaimError("invalid audience")
+            raise NilClaimError("claim is nil")
 
         # no need to check if no audience found in the claims. https://tools.ietf.org/html/rfc7519#section-4.1.3
         audience = getattr(claims, "Aud")
@@ -527,13 +530,16 @@ class DefaultClient:
         except GetClientInformationError as e:
             raise ValidateAudienceError("get client detail returns error") from e
 
-    def ValidateScope(self, claims: JWTClaims, reqScope: str) -> None:
+    def ValidateScope(self, claims: Union[JWTClaims, None], reqScope: str) -> None:
         """Validate scope of user access token
 
         Args:
             claims (JWTClaims): JWT claims
             reqScope (str): required role scope
         """
+        if not claims:
+            raise NilClaimError("claim is nil")
+
         scopes = claims.Scope.split(SCOPE_SEPARATOR)
         if reqScope not in scopes:
             raise ValidateScopeError("invalid scope")
