@@ -22,12 +22,12 @@ from typing import Any, Dict, List, Union
 from .bloom import BloomFilter
 from .cache import Cache
 from .config import Config
-from .config import CLIENT_INFO_EXPIRATION, GET_ROLE_PATH, GRANT_PATH, JWKS_PATH, MAX_BACKOFF_TIME, \
-    REVOCATION_LIST_PATH, VERIFY_PATH
-from .errors import ClientTokenGrantError, GetJWKSError, GetRevocationListError, GetRolePermissionError, \
-    HTTPClientError, InvalidTokenSignatureKeyError, NoLocalValidationError, RefreshAccessTokenError, \
-    StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAccessTokenError, \
-    ValidateAndParseClaimsError, ValidateJWTError, ValidatePermissionError
+from .config import CLIENT_INFO_EXPIRATION, CLIENT_INFORMATION_PATH, GET_ROLE_PATH, GRANT_PATH, JWKS_PATH, \
+    MAX_BACKOFF_TIME, REVOCATION_LIST_PATH, SCOPE_SEPARATOR, VERIFY_PATH
+from .errors import ClientTokenGrantError, GetClientInformationError, GetJWKSError, GetRevocationListError, \
+    GetRolePermissionError, HTTPClientError, InvalidTokenSignatureKeyError, NilClaimError, NoLocalValidationError, \
+    RefreshAccessTokenError, StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAccessTokenError, \
+    ValidateAndParseClaimsError, ValidateAudienceError, ValidateJWTError, ValidatePermissionError, ValidateScopeError
 from .models import ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse
 from .log import logger
 from .utils import parse_nanotimestamp
@@ -35,6 +35,9 @@ from .utils import parse_nanotimestamp
 
 RESOURCE_NAMESPACE: str = "NAMESPACE"
 RESOURCE_USER: str = "USER"
+USER_STATUS_EMAIL_VERIFIED: int = 1
+USER_STATUS_PHONE_VERIFIED: int = 1 << 1
+USER_STATUS_ANONYMOUS: int = 1 << 2
 
 
 def backoff_giveup_handler(backoff) -> None:
@@ -126,9 +129,10 @@ class DefaultClient:
                                        auth=(self.config.ClientID, self.config.ClientSecret)
                                        )
             if not resp.is_success:
-                logger.error(f"unable to get JWKS: error code {resp.status_code},"
-                             f"error message: {resp.reason_phrase}"
-                             )
+                logger.warning(
+                    f"unable to get JWKS: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
 
             jwks = jwt.PyJWKSet(resp.json().get("keys", []))
             for jwk in jwks.keys:
@@ -148,9 +152,10 @@ class DefaultClient:
                                        )
 
             if not resp.is_success:
-                logger.error(f"unable to get JWKS: error code {resp.status_code},"
-                             f"error message: {resp.reason_phrase}"
-                             )
+                logger.warning(
+                    f"unable to get JWKS: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
 
             revocation_list = RevocationList.loads(resp.json())
             self.__set_revocation_filter(revocation_list.RevokedTokens)
@@ -270,7 +275,7 @@ class DefaultClient:
                                         auth=(self.config.ClientID, self.config.ClientSecret)
                                         )
             if not resp.is_success:
-                logger.error(
+                logger.warning(
                     f"unable to grant client token: error code : {resp.status_code}, "
                     f"error message : {resp.reason_phrase}"
                 )
@@ -327,13 +332,13 @@ class DefaultClient:
                                         auth=(self.config.ClientID, self.config.ClientSecret)
                                         )
             if resp.status_code == 401:
-                logger.error("unauthorized")
+                logger.warning("unauthorized")
                 # Refresh Token
                 self.__refreshAccessToken()
                 return self.ValidateAccessToken(accessToken)
 
             elif not resp.is_success:
-                logger.error(
+                logger.warning(
                     f"unable to validate access token: error code : {resp.status_code}, "
                     f"error message : {resp.reason_phrase}"
                 )
@@ -373,7 +378,7 @@ class DefaultClient:
 
         return jwt_claims
 
-    def ValidatePermission(self, claims: JWTClaims, requiredPermission: Permission,
+    def ValidatePermission(self, claims: Union[JWTClaims, None], requiredPermission: Permission,
                            permissionResources: Dict[str, str]) -> bool:
         """Validates if an access token has right for a specific permission
 
@@ -388,7 +393,7 @@ class DefaultClient:
             bool: permission status
         """
         if not claims:
-            raise ValueError("claim is nil")
+            raise NilClaimError("claim is nil")
 
         for placeholder, value in permissionResources.items():
             requiredPermission.Resource = requiredPermission.Resource.replace(placeholder, value)
@@ -431,7 +436,7 @@ class DefaultClient:
         logger.info("permission not allowed to access resource")
         return False
 
-    def ValidateRole(self, requiredRoleID: str, claims: JWTClaims) -> bool:
+    def ValidateRole(self, requiredRoleID: str, claims: Union[JWTClaims, None]) -> bool:
         """Validates if an access token has a specific role
 
         Args:
@@ -441,9 +446,17 @@ class DefaultClient:
         Returns:
             bool: role validity status
         """
+        if not claims:
+            raise NilClaimError("claim is nil")
+
+        if claims.Roles and requiredRoleID in claims.Roles:
+            logger.info("role allowed to access resource")
+            return True
+
+        logger.warning("role not allowed to access resource")
         return False
 
-    def UserPhoneVerificationStatus(self, claims: JWTClaims) -> bool:
+    def UserPhoneVerificationStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user phone verification status on access token
 
         Args:
@@ -452,9 +465,15 @@ class DefaultClient:
         Returns:
             bool: user phone verification status
         """
-        return False
+        if not claims:
+            raise NilClaimError("claim is nil")
 
-    def UserEmailVerificationStatus(self, claims: JWTClaims) -> bool:
+        phone_verified_status = claims.Jflgs & USER_STATUS_PHONE_VERIFIED == USER_STATUS_PHONE_VERIFIED
+        logger.info(phone_verified_status)
+
+        return phone_verified_status
+
+    def UserEmailVerificationStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user email verification status on access token
 
         Args:
@@ -463,9 +482,15 @@ class DefaultClient:
         Returns:
             bool: user email verification status
         """
-        return False
+        if not claims:
+            raise NilClaimError("claim is nil")
 
-    def UserAnonymousStatus(self, claims: JWTClaims) -> bool:
+        email_verification_status = claims.Jflgs & USER_STATUS_EMAIL_VERIFIED == USER_STATUS_EMAIL_VERIFIED
+        logger.info(email_verification_status)
+
+        return email_verification_status
+
+    def UserAnonymousStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user anonymous status on access token
 
         Args:
@@ -474,9 +499,15 @@ class DefaultClient:
         Returns:
             bool: user anonymous status
         """
-        return False
+        if not claims:
+            raise NilClaimError("claim is nil")
 
-    def HasBan(self, claims: JWTClaims, banType: str) -> bool:
+        user_anonymous_status = claims.Jflgs & USER_STATUS_ANONYMOUS == USER_STATUS_ANONYMOUS
+        logger.info(user_anonymous_status)
+
+        return user_anonymous_status
+
+    def HasBan(self, claims: Union[JWTClaims, None], banType: str) -> bool:
         """Validates if certain ban exist
 
         Args:
@@ -486,6 +517,16 @@ class DefaultClient:
         Returns:
             bool: ban status
         """
+        if not claims:
+            raise NilClaimError("claim is nil")
+
+        claim_bans = claims.Bans or []
+        for ban in claim_bans:
+            if ban.Ban == banType:
+                logger.info("user banned")
+                return True
+
+        logger.info("user not banned")
         return False
 
     def HealthCheck(self) -> bool:
@@ -496,22 +537,47 @@ class DefaultClient:
         """
         return False
 
-    def ValidateAudience(self, claims: JWTClaims) -> None:
+    def ValidateAudience(self, claims: Union[JWTClaims, None]) -> None:
         """Validate audience of user access token
 
         Args:
             claims (JWTClaims): JWT claims
         """
-        pass
+        if not claims:
+            raise NilClaimError("claim is nil")
 
-    def ValidateScope(self, claims: JWTClaims, scope: str) -> None:
+        # no need to check if no audience found in the claims. https://tools.ietf.org/html/rfc7519#section-4.1.3
+        audience = getattr(claims, "Aud")
+        if not audience:
+            logger.warning("no audience found in the token. Skipping the audience validation")
+            return None
+
+        try:
+            client_info = self.GetClientInformation(claims.Namespace, self.config.ClientID)
+            if claims.Aud and getattr(client_info, "Baseuri") not in claims.Aud:
+                raise ValidateAudienceError("audience is not valid")
+
+            logger.info("audience is valid")
+            return None
+
+        except GetClientInformationError as e:
+            raise ValidateAudienceError("get client detail returns error") from e
+
+    def ValidateScope(self, claims: Union[JWTClaims, None], reqScope: str) -> None:
         """Validate scope of user access token
 
         Args:
             claims (JWTClaims): JWT claims
-            scope (str): role scope
+            reqScope (str): required role scope
         """
-        pass
+        if not claims:
+            raise NilClaimError("claim is nil")
+
+        scopes = claims.Scope.split(SCOPE_SEPARATOR)
+        if reqScope not in scopes:
+            raise ValidateScopeError("invalid scope")
+
+        logger.info("scope valid")
 
     def GetRolePermissions(self, roleID: str) -> List[Permission]:
         """Get permssions of a role
@@ -538,18 +604,18 @@ class DefaultClient:
                                        headers={"Authorization": f"Bearer {self.__clientAccessToken}"}
                                        )
             if resp.status_code == 401:
-                logger.error("unauthorized")
+                logger.warning("unauthorized")
                 # Refresh Token
                 self.__refreshAccessToken()
                 return self.GetRolePermissions(roleID)
             elif resp.status_code == 403:
-                logger.error("forbidden")
+                logger.warning("forbidden")
                 return []
             elif resp.status_code == 404:
-                logger.error("not found")
+                logger.warning("not found")
                 return []
             elif not resp.is_success:
-                logger.error(
+                logger.warning(
                     f"unexpected error: {resp.status_code}"
                 )
                 return []
@@ -575,7 +641,38 @@ class DefaultClient:
         Returns:
             Union[ClientInformation, None]: client information or None
         """
-        pass
+        # Try to get from cache first
+        cached_client_info = self.clientInfoCache.get(clientID)
+        if cached_client_info:
+            return cached_client_info
+
+        # Get client informations
+        try:
+            resp = self.httpClient.get(self.config.BaseURL + CLIENT_INFORMATION_PATH % (namespace, clientID),
+                                       headers={"Authorization": f"Bearer {self.__clientAccessToken}"}
+                                       )
+            if resp.status_code == 401:
+                logger.warning("unauthorized")
+                # Refresh Token
+                self.__refreshAccessToken()
+                return self.GetClientInformation(namespace, clientID)
+            elif not resp.is_success:
+                logger.warning(
+                    f"unable to get client information: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
+                return None
+
+            client_info = ClientInformation.loads(resp.json())
+            self.clientInfoCache[clientID] = client_info
+            return client_info
+
+        except RefreshAccessTokenError as e:
+            raise GetClientInformationError("unable to get client information") from e
+        except (json.JSONDecodeError, ValueError) as e:
+            raise GetClientInformationError("unable to unmarshal response body") from e
+        except HTTPClientError as e:
+            raise GetClientInformationError(f"{e.message}") from e
 
 
 class NewDefaultClient(DefaultClient):

@@ -107,5 +107,17 @@ class ValidateJWTError(Error):
     pass
 
 
+class ValidateScopeError(Error):
+    pass
+
+
+class ValidateAudienceError(Error):
+    pass
+
+
 class GetRolePermissionError(Error):
+    pass
+
+
+class GetClientInformationError(Error):
     pass

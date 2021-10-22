@@ -148,6 +148,7 @@ class JWTClaims(Model):
     Sub: str = ""
     Iat: int = -1
     Exp: int = -1
+    Aud: List[str] = [""]
 
 
 class UserRevocationListRecord(Model):
