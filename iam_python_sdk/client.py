@@ -37,6 +37,7 @@ RESOURCE_NAMESPACE: str = "NAMESPACE"
 RESOURCE_USER: str = "USER"
 USER_STATUS_EMAIL_VERIFIED: int = 1
 USER_STATUS_PHONE_VERIFIED: int = 1 << 1
+USER_STATUS_ANONYMOUS: int = 1 << 2
 
 
 def backoff_giveup_handler(backoff) -> None:
@@ -489,7 +490,7 @@ class DefaultClient:
 
         return email_verification_status
 
-    def UserAnonymousStatus(self, claims: JWTClaims) -> bool:
+    def UserAnonymousStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user anonymous status on access token
 
         Args:
@@ -498,7 +499,13 @@ class DefaultClient:
         Returns:
             bool: user anonymous status
         """
-        return False
+        if not claims:
+            raise NilClaimError("claim is nil")
+
+        user_anonymous_status = claims.Jflgs & USER_STATUS_ANONYMOUS == USER_STATUS_ANONYMOUS
+        logger.info(user_anonymous_status)
+
+        return user_anonymous_status
 
     def HasBan(self, claims: Union[JWTClaims, None], banType: str) -> bool:
         """Validates if certain ban exist
