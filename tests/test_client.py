@@ -144,6 +144,18 @@ def test_UserEmailVerificationStatus(client: DefaultClient) -> None:
 
 
 @iam_mock
+def test_UserAnonymousStatus(client: DefaultClient) -> None:
+    client.ClientTokenGrant()
+    client.StartLocalValidation()
+
+    claims = client.ValidateAndParseClaims(client.ClientToken())
+    assert client.UserAnonymousStatus(claims) is False
+
+    setattr(claims, "Jflgs", 7)
+    assert client.UserAnonymousStatus(claims) is True
+
+
+@iam_mock
 def test_GetRolePermission(client: DefaultClient) -> None:
     client.ClientTokenGrant()
 
