@@ -496,6 +496,15 @@ class DefaultClient:
         Returns:
             bool: ban status
         """
+        if not claims:
+            raise NilClaimError("claim is nil")
+        
+        for ban in claims.Bans:
+            if ban.Ban == banType:
+                logger.info("user banned")
+                return True
+
+        logger.info("user not banned")
         return False
 
     def HealthCheck(self) -> bool:
