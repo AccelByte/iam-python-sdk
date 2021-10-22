@@ -66,8 +66,11 @@ def decode_model(data: Union[str, list, dict], model: object) -> Any:
                 # Recursive list
                 try:
                     attr = getattr(obj, key)
-                    result = decode_model(v, attr[0])
-                    setattr(obj, key, result)
+                    if isinstance(attr[0], (str, int, float, bool)):  # Simple type
+                        setattr(obj, key, v)
+                    else:  # Other type
+                        result = decode_model(v, attr[0])
+                        setattr(obj, key, result)
                 except Exception:
                     pass
 
@@ -90,7 +93,7 @@ def decode_model(data: Union[str, list, dict], model: object) -> Any:
         raise ValueError("Data should be a list, a dict or a json string.")
 
 
-def parse_nanotimestamp(s: str) -> datetime:
+def parse_nanotimestamp(s: str) -> Union[int, float]:
     """Parse datetime string with nanoseconds
 
     Args:
@@ -103,4 +106,5 @@ def parse_nanotimestamp(s: str) -> datetime:
     if s[-1] == "Z":
         # Add explicit UTC timezone
         tz = "Z+0000"
-    return datetime.strptime(s[0:26] + tz, "%Y-%m-%dT%H:%M:%S.%fZ%z")
+    # Get milliseconds and convert it to unix timestamp
+    return datetime.strptime(s[0:23] + tz, "%Y-%m-%dT%H:%M:%S.%fZ%z").timestamp()

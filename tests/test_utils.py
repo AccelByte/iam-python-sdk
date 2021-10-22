@@ -15,7 +15,6 @@
 """Tests for `iam_python_sdk.utils` module."""
 
 
-from datetime import datetime, timezone
 from typing import List
 from iam_python_sdk.utils import decode_model, parse_nanotimestamp
 
@@ -55,6 +54,7 @@ class TestUtils:
     def test_parse_nanotimestamp(self):
         data = "2020-02-02T02:02:02.02020202Z"
         timestamp = parse_nanotimestamp(data)
-        assert isinstance(timestamp, datetime)
-        assert timestamp.microsecond == 20202
-        assert timestamp.tzinfo == timezone.utc
+        assert isinstance(timestamp, float)
+        import logging
+        logging.info(timestamp)
+        assert timestamp == 1580608922.02

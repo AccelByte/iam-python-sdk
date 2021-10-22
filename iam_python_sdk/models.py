@@ -18,6 +18,7 @@ from typing import Any, List
 from crontab import CronTab
 from datetime import datetime
 
+from .bloom import BloomFilter
 from .utils import decode_model
 
 
@@ -50,7 +51,7 @@ class Permission(Model):
             next = cron.next(return_datetime=True)
             zero = datetime(1, 1, 1, 0, 0, 0)
             now = datetime.now()
-            if next == zero or (next - now).total_seconds() > 0:
+            if next == zero or (isinstance(next, datetime) and (next - now).total_seconds() > 0):
                 return False
         except (AttributeError, ValueError):
             return True
@@ -66,7 +67,7 @@ class Permission(Model):
             zero = datetime(1, 1, 1, 0, 0, 0)
             now = datetime.now()
 
-            if not next_start == zero and (next_start - now).total_seconds() > 0:
+            if not next_start == zero and (isinstance(next_start, datetime) and (next_start - now).total_seconds() > 0):
                 return False
 
             if next_end == zero:
@@ -107,7 +108,7 @@ class NamespaceRole(Model):
 class JWTBan(Model):
     """Holds information about ban record in JWT."""
     Ban: str = ""
-    Enddate: datetime = datetime.now()
+    Enddate: float = 0.0
 
 
 class TokenResponse(Model):
@@ -152,12 +153,12 @@ class JWTClaims(Model):
 class UserRevocationListRecord(Model):
     """Used to store revoked user data."""
     Id: str = ""
-    RevokedAt: datetime = datetime.now()
+    RevokedAt: float = 0.0
 
 
 class RevocationList(Model):
     """Contains revoked user and token."""
-    RevokedTokens: List[int] = [0]
+    RevokedTokens: BloomFilter = BloomFilter()
     RevokedUsers: List[UserRevocationListRecord] = [UserRevocationListRecord()]
 
 
