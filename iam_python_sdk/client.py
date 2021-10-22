@@ -35,6 +35,7 @@ from .utils import parse_nanotimestamp
 
 RESOURCE_NAMESPACE: str = "NAMESPACE"
 RESOURCE_USER: str = "USER"
+USER_STATUS_EMAIL_VERIFIED: int = 1
 
 
 def backoff_giveup_handler(backoff) -> None:
@@ -464,7 +465,7 @@ class DefaultClient:
         """
         return False
 
-    def UserEmailVerificationStatus(self, claims: JWTClaims) -> bool:
+    def UserEmailVerificationStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user email verification status on access token
 
         Args:
@@ -473,7 +474,13 @@ class DefaultClient:
         Returns:
             bool: user email verification status
         """
-        return False
+        if not claims:
+            raise NilClaimError("claim is nil")
+
+        email_verification_status = claims.Jflgs & USER_STATUS_EMAIL_VERIFIED == USER_STATUS_EMAIL_VERIFIED
+        logger.info(email_verification_status)
+
+        return email_verification_status
 
     def UserAnonymousStatus(self, claims: JWTClaims) -> bool:
         """Gets user anonymous status on access token
