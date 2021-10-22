@@ -2,17 +2,27 @@
 History
 =======
 
-0.4.0 (2021-10-12)
+0.8.0 (2021-10-22)
 ------------------
 
-* Add validate permission feature.
+* Add has ban, email and phone verification status.
+
+0.7.0 (2021-10-17)
+------------------
+
+* Add get client information, validate scope, role and audience.
+
+0.5.0 (2021-10-12)
+------------------
+
+* Add start local validation and validate parse and claims.
 
 0.3.0 (2021-10-05)
 ------------------
 
-* Add client token grant feature.
+* Add get role and validate permission.
 
 0.1.0 (2021-09-09)
 ------------------
 
-* Generate Skeleton.
+* Add client token grant & validate access token.
