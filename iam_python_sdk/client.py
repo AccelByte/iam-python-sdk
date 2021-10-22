@@ -486,7 +486,7 @@ class DefaultClient:
         """
         return False
 
-    def HasBan(self, claims: JWTClaims, banType: str) -> bool:
+    def HasBan(self, claims: Union[JWTClaims, None], banType: str) -> bool:
         """Validates if certain ban exist
 
         Args:
