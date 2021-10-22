@@ -15,4 +15,4 @@
 
 __author__ = """AccelByte"""
 __email__ = 'dev@accelbyte.net'
-__version__ = '0.4.0'
+__version__ = '0.8.0'
