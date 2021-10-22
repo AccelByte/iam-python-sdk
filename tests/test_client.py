@@ -156,6 +156,15 @@ def test_UserAnonymousStatus(client: DefaultClient) -> None:
 
 
 @iam_mock
+def test_HasBan(client: DefaultClient) -> None:
+    client.ClientTokenGrant()
+    client.StartLocalValidation()
+
+    claims = client.ValidateAndParseClaims(client.ClientToken())
+    assert client.HasBan(claims, "Test Ban") is False
+
+
+@iam_mock
 def test_GetRolePermission(client: DefaultClient) -> None:
     client.ClientTokenGrant()
 
