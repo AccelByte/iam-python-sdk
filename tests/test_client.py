@@ -120,6 +120,18 @@ def test_ValidateScope(client: DefaultClient) -> None:
 
 
 @iam_mock
+def test_UserPhoneVerificationStatus(client: DefaultClient) -> None:
+    client.ClientTokenGrant()
+    client.StartLocalValidation()
+
+    claims = client.ValidateAndParseClaims(client.ClientToken())
+    assert client.UserPhoneVerificationStatus(claims) is False
+
+    setattr(claims, "Jflgs", 7)
+    assert client.UserPhoneVerificationStatus(claims) is True
+
+
+@iam_mock
 def test_GetRolePermission(client: DefaultClient) -> None:
     client.ClientTokenGrant()
 
