@@ -36,6 +36,7 @@ from .utils import parse_nanotimestamp
 RESOURCE_NAMESPACE: str = "NAMESPACE"
 RESOURCE_USER: str = "USER"
 USER_STATUS_EMAIL_VERIFIED: int = 1
+USER_STATUS_PHONE_VERIFIED: int = 1 << 1
 
 
 def backoff_giveup_handler(backoff) -> None:
@@ -454,7 +455,7 @@ class DefaultClient:
         logger.warning("role not allowed to access resource")
         return False
 
-    def UserPhoneVerificationStatus(self, claims: JWTClaims) -> bool:
+    def UserPhoneVerificationStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user phone verification status on access token
 
         Args:
@@ -463,7 +464,13 @@ class DefaultClient:
         Returns:
             bool: user phone verification status
         """
-        return False
+        if not claims:
+            raise NilClaimError("claim is nil")
+
+        phone_verified_status = claims.Jflgs & USER_STATUS_PHONE_VERIFIED == USER_STATUS_PHONE_VERIFIED
+        logger.info(phone_verified_status)
+
+        return phone_verified_status
 
     def UserEmailVerificationStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user email verification status on access token
