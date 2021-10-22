@@ -126,9 +126,10 @@ class DefaultClient:
                                        auth=(self.config.ClientID, self.config.ClientSecret)
                                        )
             if not resp.is_success:
-                logger.warn(f"unable to get JWKS: error code {resp.status_code},"
-                            f"error message: {resp.reason_phrase}"
-                            )
+                logger.warning(
+                    f"unable to get JWKS: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
 
             jwks = jwt.PyJWKSet(resp.json().get("keys", []))
             for jwk in jwks.keys:
@@ -148,9 +149,10 @@ class DefaultClient:
                                        )
 
             if not resp.is_success:
-                logger.warn(f"unable to get JWKS: error code {resp.status_code},"
-                            f"error message: {resp.reason_phrase}"
-                            )
+                logger.warning(
+                    f"unable to get JWKS: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
 
             revocation_list = RevocationList.loads(resp.json())
             self.__set_revocation_filter(revocation_list.RevokedTokens)
@@ -270,7 +272,7 @@ class DefaultClient:
                                         auth=(self.config.ClientID, self.config.ClientSecret)
                                         )
             if not resp.is_success:
-                logger.warn(
+                logger.warning(
                     f"unable to grant client token: error code : {resp.status_code}, "
                     f"error message : {resp.reason_phrase}"
                 )
@@ -327,13 +329,13 @@ class DefaultClient:
                                         auth=(self.config.ClientID, self.config.ClientSecret)
                                         )
             if resp.status_code == 401:
-                logger.warn("unauthorized")
+                logger.warning("unauthorized")
                 # Refresh Token
                 self.__refreshAccessToken()
                 return self.ValidateAccessToken(accessToken)
 
             elif not resp.is_success:
-                logger.warn(
+                logger.warning(
                     f"unable to validate access token: error code : {resp.status_code}, "
                     f"error message : {resp.reason_phrase}"
                 )
@@ -448,7 +450,7 @@ class DefaultClient:
             logger.info("role allowed to access resource")
             return True
 
-        logger.warn("role not allowed to access resource")
+        logger.warning("role not allowed to access resource")
         return False
 
     def UserPhoneVerificationStatus(self, claims: JWTClaims) -> bool:
@@ -516,7 +518,7 @@ class DefaultClient:
         # no need to check if no audience found in the claims. https://tools.ietf.org/html/rfc7519#section-4.1.3
         audience = getattr(claims, "Aud")
         if not audience:
-            logger.warn("no audience found in the token. Skipping the audience validation")
+            logger.warning("no audience found in the token. Skipping the audience validation")
             return None
 
         try:
@@ -571,18 +573,18 @@ class DefaultClient:
                                        headers={"Authorization": f"Bearer {self.__clientAccessToken}"}
                                        )
             if resp.status_code == 401:
-                logger.warn("unauthorized")
+                logger.warning("unauthorized")
                 # Refresh Token
                 self.__refreshAccessToken()
                 return self.GetRolePermissions(roleID)
             elif resp.status_code == 403:
-                logger.warn("forbidden")
+                logger.warning("forbidden")
                 return []
             elif resp.status_code == 404:
-                logger.warn("not found")
+                logger.warning("not found")
                 return []
             elif not resp.is_success:
-                logger.warn(
+                logger.warning(
                     f"unexpected error: {resp.status_code}"
                 )
                 return []
@@ -619,14 +621,15 @@ class DefaultClient:
                                        headers={"Authorization": f"Bearer {self.__clientAccessToken}"}
                                        )
             if resp.status_code == 401:
-                logger.warn("unauthorized")
+                logger.warning("unauthorized")
                 # Refresh Token
                 self.__refreshAccessToken()
                 return self.GetClientInformation(namespace, clientID)
             elif not resp.is_success:
-                logger.warn(f"unable to get client information: error code {resp.status_code},"
-                            f"error message: {resp.reason_phrase}"
-                            )
+                logger.warning(
+                    f"unable to get client information: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
                 return None
 
             client_info = ClientInformation.loads(resp.json())
