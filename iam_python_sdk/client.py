@@ -449,7 +449,7 @@ class DefaultClient:
         if not claims:
             raise NilClaimError("claim is nil")
 
-        if requiredRoleID in claims.Roles:
+        if claims.Roles and requiredRoleID in claims.Roles:
             logger.info("role allowed to access resource")
             return True
 
@@ -520,7 +520,8 @@ class DefaultClient:
         if not claims:
             raise NilClaimError("claim is nil")
 
-        for ban in claims.Bans:
+        claim_bans = claims.Bans or []
+        for ban in claim_bans:
             if ban.Ban == banType:
                 logger.info("user banned")
                 return True
@@ -553,7 +554,7 @@ class DefaultClient:
 
         try:
             client_info = self.GetClientInformation(claims.Namespace, self.config.ClientID)
-            if getattr(client_info, "Baseuri") not in claims.Aud:
+            if claims.Aud and getattr(client_info, "Baseuri") not in claims.Aud:
                 raise ValidateAudienceError("audience is not valid")
 
             logger.info("audience is valid")
