@@ -12,7 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Conftest module."""
 
-__author__ = """AccelByte"""
-__email__ = 'dev@accelbyte.net'
-__version__ = '0.8.0'
+
+import pytest
+from iam_python_sdk.client import NewDefaultClient
+from iam_python_sdk.config import Config
+
+from .mock import IAM_BASE_URL, client_id, client_secret
+
+
+@pytest.fixture
+def client(request: pytest.FixtureRequest):
+    cfg = Config(
+        IAM_BASE_URL,
+        ClientID=client_id,
+        ClientSecret=client_secret,
+    )
+    client = NewDefaultClient(cfg)
+
+    return client
