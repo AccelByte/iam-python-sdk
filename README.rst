@@ -13,28 +13,20 @@ IAM Python SDK
         :target: https://iam-python-sdk.readthedocs.io/en/latest/?version=latest
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/accelbyte/iam-python-sdk/shield.svg
-     :target: https://pyup.io/repos/github/accelbyte/iam-python-sdk/
-     :alt: Updates
+
+AccelByte IAM Python SDK is a software development kit to help python developers build their own services/apps
+that makes use of AccelByte User Account Management services [https://accelbyte.io/user-account-management/].
 
 
-
-AccelByte IAM Python SDK
-
-
-* Free software: Apache Software License 2.0
-* Documentation: https://iam-python-sdk.readthedocs.io.
+* Free software: `Apache Software License 2.0 <https://github.com/AccelByte/iam-python-sdk/blob/main/LICENSE>`_
+* Documentation: https://accelbyte.github.io/iam-python-sdk
 
 
 Features
 --------
 
-* TODO
-
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+* Client token grant and validation
+* Validate access token live on IAM service and local using JWKs
+* Get role and validate permission
+* Validate scope, role and audience
+* Verify ban, phone and email user status
