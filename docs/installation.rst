@@ -9,7 +9,7 @@ Requirements
 ------------
 Before install iam-python-sdk, please make sure these requirements have been installed on your environments:
 
-* Python >= 3.6 (tested on Python 3.6, 3.7, and 3.8)
+* Python >= 3.6 (tested on Python 3.6, 3.7, 3.8 and 3.9)
 * PIP > 19.0
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
