@@ -80,38 +80,71 @@ class DefaultClient:
                  clientInfoCache: Cache,
                  httpClient: HttpClient
                  ) -> None:
-        self.__lock = RLock()
-        self.__clientAccessToken = ""
-        self.__localValidationActive = False
-        self.__keys = {}
-        self.__revokedUsers = {}
-        self.__revocationFilter = None
+        self._lock = RLock()
+        self._clientAccessToken = ""
+        self._localValidationActive = False
+        self._jwks = {}
+        self._revokedUsers = {}
+        self._revocationFilter = None
         self.config = config
         self.httpClient = httpClient
         self.rolePermissionCache = rolePermissionCache
         self.clientInfoCache = clientInfoCache
 
-    def __set_key(self, k: str, value: Any) -> None:
-        with self.__lock:
-            self.__keys[k] = value
+    def _set_jwk(self, kid: str, value: Any) -> None:
+        """Set JWK key-value (thread-safe)
 
-    def __get_key(self, k: str) -> Any:
-        with self.__lock:
-            return self.__keys.get(k)
+        Args:
+            kid (str): JWK key_id
+            value (Any): JWK object
+        """
+        with self._lock:
+            self._jwks[kid] = value
 
-    def __set_revoked_user(self, k: str, value: str) -> None:
-        with self.__lock:
-            self.__revokedUsers[k] = parse_nanotimestamp(value)
+    def _get_jwk(self, kid: str) -> Any:
+        """Get JWK key by key_id (thread-safe)
 
-    def __get_revoked_user(self, k: str) -> Any:
-        with self.__lock:
-            return self.__revokedUsers.get(k)
+        Args:
+            kid (str): JWK key_id
 
-    def __set_revocation_filter(self, filer: BloomFilter) -> None:
-        with self.__lock:
-            self.__revocationFilter = filer
+        Returns:
+            Any: JWK object
+        """
+        with self._lock:
+            return self._jwks.get(kid)
 
-    def __refreshAccessToken(self) -> None:
+    def _set_revoked_user(self, uid: str, at: str) -> None:
+        """Set revoked user (thread-safe)
+
+        Args:
+            uid (str): User ID
+            at (str): Revoked At
+        """
+        with self._lock:
+            self._revokedUsers[uid] = parse_nanotimestamp(at)
+
+    def _get_revoked_user(self, uid: str) -> Any:
+        """Get revoked user by ID (thread-safe)
+
+        Args:
+            uid (str): User ID
+
+        Returns:
+            Any: Revoked At
+        """
+        with self._lock:
+            return self._revokedUsers.get(uid)
+
+    def _set_revocation_filter(self, filer: BloomFilter) -> None:
+        """Set revocation token filter (thread-safe)
+
+        Args:
+            filer (BloomFilter): Bloom filter object
+        """
+        with self._lock:
+            self._revocationFilter = filer
+
+    def _refresh_access_token(self) -> None:
         """Refresh user token"
 
         Raises:
@@ -123,7 +156,14 @@ class DefaultClient:
         except ClientTokenGrantError as e:
             raise RefreshAccessTokenError("unable to refresh token") from e
 
-    def __getJWKS(self) -> None:
+    def _get_jwks(self) -> None:
+        """Get JWKS data
+
+        Raises:
+            GetJWKSError: unable to unmarshal response body
+            GetJWKSError: unable to generate public key
+            GetJWKSError: unexpected error
+        """
         try:
             resp = self.httpClient.get(self.config.BaseURL + JWKS_PATH,
                                        auth=(self.config.ClientID, self.config.ClientSecret)
@@ -136,7 +176,7 @@ class DefaultClient:
 
             jwks = jwt.PyJWKSet(resp.json().get("keys", []))
             for jwk in jwks.keys:
-                self.__set_key(jwk.key_id, jwk.key)
+                self._set_jwk(jwk.key_id, jwk.key)
 
         except (json.JSONDecodeError, ValueError) as e:
             raise GetJWKSError("unable to unmarshal response body") from e
@@ -145,7 +185,13 @@ class DefaultClient:
         except HTTPClientError as e:
             raise GetJWKSError(f"{e.message}") from e
 
-    def __getRevocationList(self) -> None:
+    def _get_revocation_list(self) -> None:
+        """Get user and token revocation list
+
+        Raises:
+            GetRevocationListError: unable to unmarshal response body
+            GetRevocationListError: unexpected error
+        """
         try:
             resp = self.httpClient.get(self.config.BaseURL + REVOCATION_LIST_PATH,
                                        auth=(self.config.ClientID, self.config.ClientSecret)
@@ -158,16 +204,31 @@ class DefaultClient:
                 )
 
             revocation_list = RevocationList.loads(resp.json())
-            self.__set_revocation_filter(revocation_list.RevokedTokens)
+            self._set_revocation_filter(revocation_list.RevokedTokens)
             for revoked_user in revocation_list.RevokedUsers:
-                self.__set_revoked_user(revoked_user.Id, revoked_user.RevokedAt)
+                self._set_revoked_user(revoked_user.Id, revoked_user.RevokedAt)
 
         except (json.JSONDecodeError, ValueError) as e:
             raise GetRevocationListError("unable to unmarshal response body") from e
         except HTTPClientError as e:
             raise GetRevocationListError(f"{e.message}") from e
 
-    def __validateJWT(self, token: str) -> Union[JWTClaims, None]:
+    def _validate_jwt(self, token: str) -> Union[JWTClaims, None]:
+        """Validate access token with JWK
+
+        Args:
+            token (str): access token
+
+        Raises:
+            ValueError: invalid token
+            InvalidTokenSignatureKeyError: [description]
+            ValueError: invalid header
+            ValidateJWTError: unable to deserialize JWT claims
+            ValidateJWTError: unable to validate JWT
+
+        Returns:
+            Union[JWTClaims, None]: [description]
+        """
         if not token:
             raise ValueError("invalid token")
 
@@ -175,7 +236,7 @@ class DefaultClient:
         if not web_token.get("kid"):
             raise InvalidTokenSignatureKeyError("invalid header")
 
-        public_key = self.__get_key(web_token.get("kid"))
+        public_key = self._get_jwk(web_token.get("kid"))
         if not public_key:
             raise ValueError("invalid key")
 
@@ -190,17 +251,43 @@ class DefaultClient:
 
         return jwt_claims
 
-    def __userRevoked(self, user_id: str, issued_at: int) -> bool:
-        time_revoked = self.__get_revoked_user(user_id)
+    def _user_revoked(self, user_id: str, issued_at: int) -> bool:
+        """Chech if user is revoked or not
+
+        Args:
+            user_id (str): User ID
+            issued_at (int): Access token issued time
+
+        Returns:
+            bool: User revoked status
+        """
+        time_revoked = self._get_revoked_user(user_id)
         if time_revoked:
             return time_revoked >= issued_at
         return False
 
-    def __tokenRevoked(self, access_token: str) -> bool:
+    def _token_revoked(self, access_token: str) -> bool:
+        """Check if token was revoked or not
+
+        Args:
+            access_token (str): Access token
+
+        Returns:
+            bool: Access token revoked status
+        """
         # TODO: Check if access_token maybe in revoked tokens bloom filter
         return False
 
-    def __resourceAllowed(self, accessPermissionResource: str, requiredPermissionResource: str) -> bool:
+    def _resource_allowed(self, accessPermissionResource: str, requiredPermissionResource: str) -> bool:
+        """Check if user have permission to the required resource or not
+
+        Args:
+            accessPermissionResource (str): Granted resource permission
+            requiredPermissionResource (str): Granted resource permission
+
+        Returns:
+            bool: Resource allowed status
+        """
         required_perm_res_sections = requiredPermissionResource.split(":")
         required_perm_res_section_len = len(required_perm_res_sections)
         access_perm_res_sections = accessPermissionResource.split(":")
@@ -239,20 +326,39 @@ class DefaultClient:
 
         return True
 
-    def __permissionAllowed(self, grantedPermissions: List[Permission], requiredPermission: Permission) -> bool:
+    def _permission_allowed(self, grantedPermissions: List[Permission], requiredPermission: Permission) -> bool:
+        """Check if user have the required permission or not
+
+        Args:
+            grantedPermissions (List[Permission]): List of permission that user have
+            requiredPermission (Permission): Required permission
+
+        Returns:
+            bool: Permission allowed status
+        """
         for granted_permission in grantedPermissions:
             granted_action = granted_permission.Action
             if granted_permission.is_scheduled():
                 granted_action = granted_permission.Schedaction
 
-            if self.__resourceAllowed(granted_permission.Resource, requiredPermission.Resource) and \
+            if self._resource_allowed(granted_permission.Resource, requiredPermission.Resource) and \
                (granted_action & requiredPermission.Action == requiredPermission.Action):
                 return True
 
         return False
 
-    def __applyUserPermissionResourceValues(self, grantedPermissions: List[Permission],
-                                            claims: JWTClaims, allowedNamespace: str) -> List[Permission]:
+    def _apply_user_permission_resource_values(self, grantedPermissions: List[Permission],
+                                               claims: JWTClaims, allowedNamespace: str) -> List[Permission]:
+        """Apply user permission to the resource
+
+        Args:
+            grantedPermissions (List[Permission]): List of granted permissions
+            claims (JWTClaims): JWT claims object
+            allowedNamespace (str): Granted namespace
+
+        Returns:
+            List[Permission]: List of permission with applied user permission
+        """
         if not allowedNamespace:
             allowedNamespace = claims.Namespace
 
@@ -281,7 +387,7 @@ class DefaultClient:
                 )
 
             token_response = TokenResponse.loads(resp.json())
-            self.__clientAccessToken = token_response.AccessToken
+            self._clientAccessToken = token_response.AccessToken
             logger.info("token grant success")
 
             # TODO: Background refresh token
@@ -297,14 +403,14 @@ class DefaultClient:
         Returns:
             str: token
         """
-        return self.__clientAccessToken
+        return self._clientAccessToken
 
     def StartLocalValidation(self) -> None:
         """Starts thread to refresh JWK and revocation list periodically this enables local token validation"""
         try:
-            self.__getJWKS()
-            self.__getRevocationList()
-            self.__localValidationActive = True
+            self._get_jwks()
+            self._get_revocation_list()
+            self._localValidationActive = True
 
             # TODO: Background refresh JWKS and Revocation list
 
@@ -334,7 +440,7 @@ class DefaultClient:
             if resp.status_code == 401:
                 logger.warning("unauthorized")
                 # Refresh Token
-                self.__refreshAccessToken()
+                self._refresh_access_token()
                 return self.ValidateAccessToken(accessToken)
 
             elif not resp.is_success:
@@ -361,19 +467,19 @@ class DefaultClient:
         Returns:
             Union[JWTClaims, None]: JWT claims or None
         """
-        if self.__localValidationActive is not True:
+        if self._localValidationActive is not True:
             raise NoLocalValidationError
 
         jwt_claims = None
         try:
-            jwt_claims = self.__validateJWT(accessToken)
+            jwt_claims = self._validate_jwt(accessToken)
         except (ValueError, InvalidTokenSignatureKeyError, ValidateJWTError) as e:
             raise ValidateAndParseClaimsError("unable to validate JWT") from e
 
-        if jwt_claims and self.__userRevoked(jwt_claims.Sub, jwt_claims.Iat):
+        if jwt_claims and self._user_revoked(jwt_claims.Sub, jwt_claims.Iat):
             raise UserRevokedError("user (owner) of JWT is revoked")
 
-        if jwt_claims and self.__tokenRevoked(accessToken):
+        if jwt_claims and self._token_revoked(accessToken):
             raise TokenRevokedError("token is revoked")
 
         return jwt_claims
@@ -398,7 +504,7 @@ class DefaultClient:
         for placeholder, value in permissionResources.items():
             requiredPermission.Resource = requiredPermission.Resource.replace(placeholder, value)
 
-        if self.__permissionAllowed(claims.Permissions, requiredPermission):
+        if self._permission_allowed(claims.Permissions, requiredPermission):
             logger.info("permission allowed to access resource")
             return True
 
@@ -407,11 +513,11 @@ class DefaultClient:
             granted_role_permissions = []
             try:
                 granted_role_permissions = self.GetRolePermissions(namespace_role.Roleid)
-                granted_role_permissions = self.__applyUserPermissionResourceValues(
+                granted_role_permissions = self._apply_user_permission_resource_values(
                     granted_role_permissions, claims, namespace_role.Namespace
                 )
 
-                if self.__permissionAllowed(granted_role_permissions, requiredPermission):
+                if self._permission_allowed(granted_role_permissions, requiredPermission):
                     logger.info("permission allowed to access resource")
                     return True
 
@@ -423,11 +529,11 @@ class DefaultClient:
             granted_role_permissions = []
             try:
                 granted_role_permissions = self.GetRolePermissions(role_id)
-                granted_role_permissions = self.__applyUserPermissionResourceValues(
+                granted_role_permissions = self._apply_user_permission_resource_values(
                     granted_role_permissions, claims, ""
                 )
 
-                if self.__permissionAllowed(granted_role_permissions, requiredPermission):
+                if self._permission_allowed(granted_role_permissions, requiredPermission):
                     logger.info("permission allowed to access resource")
                     return True
             except GetRolePermissionError as e:
@@ -601,12 +707,12 @@ class DefaultClient:
 
             # Get permissions
             resp = self.httpClient.get(self.config.BaseURL + GET_ROLE_PATH + "/" + roleID,
-                                       headers={"Authorization": f"Bearer {self.__clientAccessToken}"}
+                                       headers={"Authorization": f"Bearer {self._clientAccessToken}"}
                                        )
             if resp.status_code == 401:
                 logger.warning("unauthorized")
                 # Refresh Token
-                self.__refreshAccessToken()
+                self._refresh_access_token()
                 return self.GetRolePermissions(roleID)
             elif resp.status_code == 403:
                 logger.warning("forbidden")
@@ -649,12 +755,12 @@ class DefaultClient:
         # Get client informations
         try:
             resp = self.httpClient.get(self.config.BaseURL + CLIENT_INFORMATION_PATH % (namespace, clientID),
-                                       headers={"Authorization": f"Bearer {self.__clientAccessToken}"}
+                                       headers={"Authorization": f"Bearer {self._clientAccessToken}"}
                                        )
             if resp.status_code == 401:
                 logger.warning("unauthorized")
                 # Refresh Token
-                self.__refreshAccessToken()
+                self._refresh_access_token()
                 return self.GetClientInformation(namespace, clientID)
             elif not resp.is_success:
                 logger.warning(
