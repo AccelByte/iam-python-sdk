@@ -16,7 +16,7 @@ To use iam-python-sdk in a project, first you need to initiate IAM client:
 
 .. code-block:: python
 
-    from iam_python_sdk Config, NewDefaultClient
+    from iam_python_sdk import Config, NewDefaultClient
 
     config = Config(
         BaseURL="<Base IAM URL>",
