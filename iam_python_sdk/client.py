@@ -491,9 +491,9 @@ class DefaultClient:
         Args:
             claims (JWTClaims): JWT claims
             requiredPermission (Permission): permission to access resource, example:
-                {Resource: "NAMESPACE:{namespace}:USER:{userId}", Action: 2}
+            {Resource: "NAMESPACE:{namespace}:USER:{userId}", Action: 2}
             permissionResources (Dict[str, str]): resource string to replace the `{}` placeholder in
-                `requiredPermission`, example: p["{namespace}"] = "accelbyte"
+            `requiredPermission`, example: p["{namespace}"] = "accelbyte"
 
         Returns:
             bool: permission status

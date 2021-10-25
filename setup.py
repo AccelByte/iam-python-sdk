@@ -43,7 +43,7 @@ setup(
     packages=find_packages(include=['iam_python_sdk', 'iam_python_sdk.*']),
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/accelbyte/iam_python_sdk',
+    url='https://github.com/accelbyte/iam-python-sdk',
     version='0.8.0',
     zip_safe=False,
 )
