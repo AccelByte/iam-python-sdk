@@ -5,6 +5,20 @@ Installation
 ============
 
 
+Requirements
+------------
+Before install iam-python-sdk, please make sure these requirements have been installed on your environments:
+
+* Python >= 3.6 (tested on Python 3.6, 3.7, and 3.8)
+* PIP > 19.0
+
+If you don't have `pip`_ installed, this `Python installation guide`_ can guide
+you through the process.
+
+.. _pip: https://pip.pypa.io
+.. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
+
+
 Stable release
 --------------
 
@@ -16,12 +30,6 @@ To install iam-python-sdk, run this command in your terminal:
 
 This is the preferred method to install iam-python-sdk, as it will always install the most recent stable release.
 
-If you don't have `pip`_ installed, this `Python installation guide`_ can guide
-you through the process.
-
-.. _pip: https://pip.pypa.io
-.. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
-
 
 From sources
 ------------
@@ -32,13 +40,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/accelbyte/iam_python_sdk
+    $ git clone git://github.com/accelbyte/iam-python-sdk
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/accelbyte/iam_python_sdk/tarball/master
+    $ curl -OJL https://github.com/accelbyte/iam-python-sdk/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +55,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/accelbyte/iam_python_sdk
-.. _tarball: https://github.com/accelbyte/iam_python_sdk/tarball/master
+.. _Github repo: https://github.com/accelbyte/iam-python-sdk
+.. _tarball: https://github.com/accelbyte/iam-python-sdk/tarball/master
