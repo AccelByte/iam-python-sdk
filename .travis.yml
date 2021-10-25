@@ -13,6 +13,19 @@ install: pip install -U pip tox-travis
 # Command to run tests, e.g. python setup.py test
 script: tox
 
+# Command to run before deploy
+before_deploy:
+  - make docs
+
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    github_token: $GITHUB_TOKEN
+    keep_history: true
+    local_dir: docs/_build/html
+    on:
+      all_branches: true
+
 # Assuming you have installed the travis-ci CLI tool, after you
 # create the Github repo and add it to Travis, run the
 # following command to finish PyPI deployment setup:
