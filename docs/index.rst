@@ -1,5 +1,5 @@
-Welcome to iam-python-sdk's documentation!
-======================================
+IAM Python SDK documentation
+============================
 
 .. toctree::
    :maxdepth: 2
@@ -11,7 +11,7 @@ Welcome to iam-python-sdk's documentation!
    modules
    contributing
    authors
-   history
+   changelog
 
 Indices and tables
 ==================
