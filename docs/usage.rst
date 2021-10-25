@@ -20,8 +20,8 @@ To use iam-python-sdk in a project, first you need to initiate IAM client:
 
     config = Config(
         BaseURL="<Base IAM URL>",
-        ClientID=<"Client ID">,
-        ClientSecret=<"Client Secret">,
+        ClientID="<Client ID>",
+        ClientSecret="<Client Secret>",
     )
     client = NewDefaultClient(config)
 
