@@ -16,7 +16,7 @@ script: tox
 # Command to run before deploy
 before_deploy:
   - pip install -U pip
-  - pip install -r requirements-dev.txt
+  - pip install -r requirements_dev.txt
   - make docs
 
 deploy:
