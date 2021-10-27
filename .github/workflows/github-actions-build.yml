@@ -23,7 +23,7 @@ jobs:
       - name: Save artifact
         uses: actions/upload-artifact@v2
         with:
-          name: iam-python-sdk-dist
+          name: iam-python-sdk-dist-${{ github.sha }}
           path: dist/*
       - name: Pre-release package to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
