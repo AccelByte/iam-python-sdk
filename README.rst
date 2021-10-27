@@ -3,15 +3,21 @@ IAM Python SDK
 ==============
 
 
-.. image:: https://img.shields.io/pypi/v/iam-python-sdk.svg
+.. image:: https://img.shields.io/pypi/v/iam-python-sdk
         :target: https://pypi.python.org/pypi/iam-python-sdk
+        :alt: PyPI Status
 
-.. image:: https://img.shields.io/travis/accelbyte/iam-python-sdk.svg
-        :target: https://travis-ci.com/accelbyte/iam-python-sdk
+.. image:: https://img.shields.io/github/workflow/status/accelbyte/iam-python-sdk/Test%20Package?label=testing
+        :target: https://github.com/accelbyte/iam-python-sdk/actions
+        :alt: GitHub Workflow Status
 
-.. image:: https://readthedocs.org/projects/iam-python-sdk/badge/?version=latest
-        :target: https://iam-python-sdk.readthedocs.io/en/latest/?version=latest
-        :alt: Documentation Status
+.. image:: https://img.shields.io/pypi/pyversions/iam-python-sdk
+        :target: https://pypi.python.org/pypi/iam-python-sdk
+        :alt: Python Version
+
+.. image:: https://img.shields.io/pypi/l/iam-python-sdk
+        :target: https://github.com/AccelByte/iam-python-sdk/blob/main/LICENSE
+        :alt: License
 
 
 AccelByte IAM Python SDK is a software development kit to help python developers build their own services/apps
