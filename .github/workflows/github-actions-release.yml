@@ -1,4 +1,4 @@
-name: Release Python Package
+name: Release Python Package to PyPI
 
 on:
   release:
@@ -19,7 +19,7 @@ jobs:
           pip install build
       - name: Build package
         run: make dist
-      - name: Publish package to Pypi
+      - name: Release package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
