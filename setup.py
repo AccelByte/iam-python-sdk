@@ -38,6 +38,7 @@ setup(
     install_requires=requirements,
     license="Apache Software License 2.0",
     long_description=readme + '\n\n' + changelog,
+    long_description_content_type='text/x-rst',
     include_package_data=True,
     keywords=['iam_python_sdk', 'accelbyte', 'iam'],
     name='iam-python-sdk',
