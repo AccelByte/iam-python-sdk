@@ -20,14 +20,14 @@ jobs:
           pip install build
       - name: Build Package
         run: make dist
+      - name: Save artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: iam-python-sdk-dist
+          path: dist/*
       - name: Pre-release package to Test PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
-      - name: Save artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: iam-python-sdk-dist
-          path: dist/*
