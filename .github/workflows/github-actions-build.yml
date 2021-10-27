@@ -21,7 +21,7 @@ jobs:
       - name: Add build version
         run: |
           current_version=$(bump2version --dry-run --list minor | grep current_version | sed -r s,"^.*=",,)
-          bump2version --new-version ${current_version}-${GITHUB_SHA::8} build --no-tag --no-commit --verbose
+          bump2version --new-version ${current_version}+${GITHUB_SHA::8} build --no-tag --no-commit --verbose
       - name: Build Package
         run: make dist
       - name: Save artifact
