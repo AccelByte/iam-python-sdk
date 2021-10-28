@@ -15,8 +15,8 @@ requirements = ['Click>=7.0', 'backoff==1.11.1', 'httpx>=1.0.0b0', 'pyjwt[crypto
 test_requirements = ['pytest>=3', 'respx==0.18.0']
 
 setup(
-    author="AccelByte",
-    author_email='dev@accelbyte.net',
+    author="Analytics AccelByte",
+    author_email='justice-analytics-team@accelbyte.net',
     python_requires='>=3.6',
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -45,7 +45,7 @@ setup(
     packages=find_packages(include=['iam_python_sdk', 'iam_python_sdk.*']),
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/accelbyte/iam-python-sdk',
+    url='https://accelbyte.github.io/iam-python-sdk',
     version='0.8.0',
     zip_safe=False,
 )
