@@ -1,0 +1,49 @@
+name: Release Python Package to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install build
+      - name: Build package
+        run: make dist
+      - name: Release package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+  docs:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: Upgrade PIP
+        run: python -m pip install --upgrade pip setuptools wheel
+      - name: Install dependencies
+        run: |
+          pip install -r requirements_dev.txt
+          pip install sphinxcontrib-versioning
+      - name: Build docs
+        run: |
+          sphinx-versioning build -r main -w main docs docs/_build/html
+          cp README.rst docs/_build/html
+      - name: Deploy to GH pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_build/html
