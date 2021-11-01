@@ -7,8 +7,8 @@ from setuptools import setup, find_packages
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
-with open('HISTORY.rst') as history_file:
-    history = history_file.read()
+with open('CHANGELOG.rst') as changelog_file:
+    changelog = changelog_file.read()
 
 requirements = ['Click>=7.0', 'backoff==1.11.1', 'httpx>=1.0.0b0', 'pyjwt[crypto]==2.2.0', 'crontab==0.23.0']
 
@@ -36,14 +36,14 @@ setup(
     },
     install_requires=requirements,
     license="Apache Software License 2.0",
-    long_description=readme + '\n\n' + history,
+    long_description=readme + '\n\n' + changelog,
     include_package_data=True,
     keywords=['iam_python_sdk', 'accelbyte', 'iam'],
     name='iam-python-sdk',
     packages=find_packages(include=['iam_python_sdk', 'iam_python_sdk.*']),
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/accelbyte/iam_python_sdk',
+    url='https://github.com/accelbyte/iam-python-sdk',
     version='0.8.0',
     zip_safe=False,
 )

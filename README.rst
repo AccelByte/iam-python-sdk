@@ -3,38 +3,36 @@ IAM Python SDK
 ==============
 
 
-.. image:: https://img.shields.io/pypi/v/iam-python-sdk.svg
+.. image:: https://img.shields.io/pypi/v/iam-python-sdk
         :target: https://pypi.python.org/pypi/iam-python-sdk
+        :alt: PyPI Status
 
-.. image:: https://img.shields.io/travis/accelbyte/iam-python-sdk.svg
-        :target: https://travis-ci.com/accelbyte/iam-python-sdk
+.. image:: https://img.shields.io/github/workflow/status/accelbyte/iam-python-sdk/Test%20Package?label=testing
+        :target: https://github.com/accelbyte/iam-python-sdk/actions
+        :alt: GitHub Workflow Status
 
-.. image:: https://readthedocs.org/projects/iam-python-sdk/badge/?version=latest
-        :target: https://iam-python-sdk.readthedocs.io/en/latest/?version=latest
-        :alt: Documentation Status
+.. image:: https://img.shields.io/pypi/pyversions/iam-python-sdk
+        :target: https://pypi.python.org/pypi/iam-python-sdk
+        :alt: Python Version
 
-.. image:: https://pyup.io/repos/github/accelbyte/iam-python-sdk/shield.svg
-     :target: https://pyup.io/repos/github/accelbyte/iam-python-sdk/
-     :alt: Updates
-
-
-
-AccelByte IAM Python SDK
+.. image:: https://img.shields.io/pypi/l/iam-python-sdk
+        :target: https://github.com/AccelByte/iam-python-sdk/blob/main/LICENSE
+        :alt: License
 
 
-* Free software: Apache Software License 2.0
-* Documentation: https://iam-python-sdk.readthedocs.io.
+AccelByte IAM Python SDK is a software development kit to help python developers build their own services/apps
+that makes use of AccelByte User Account Management services [https://accelbyte.io/user-account-management/].
+
+
+* Free software: `Apache Software License 2.0 <https://github.com/AccelByte/iam-python-sdk/blob/main/LICENSE>`_
+* Documentation: https://accelbyte.github.io/iam-python-sdk
 
 
 Features
 --------
 
-* TODO
-
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+* Client token grant and validation
+* Validate access token live on IAM service and local using JWKs
+* Get role and validate permission
+* Validate scope, role and audience
+* Verify ban, phone and email user status

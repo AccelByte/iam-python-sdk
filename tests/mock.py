@@ -143,20 +143,24 @@ revocation_list = {
 # IAM Mock API
 iam_mock = respx.mock(assert_all_called=False)
 
+
 # Client token grant mock api
 @iam_mock.post(url=IAM_BASE_URL + GRANT_PATH)
 def get_token(request):
     return httpx.Response(200, json=client_token)
+
 
 # Get JWKS mock api
 @iam_mock.get(url=IAM_BASE_URL + JWKS_PATH)
 def get_jwks(request):
     return httpx.Response(200, json=jwks)
 
+
 # Get revocation list mock api
 @iam_mock.get(url=IAM_BASE_URL + REVOCATION_LIST_PATH)
 def get_revocation_list(request):
     return httpx.Response(200, json=revocation_list)
+
 
 # Validate access token mock api
 @iam_mock.post(url=IAM_BASE_URL + VERIFY_PATH)
@@ -167,10 +171,12 @@ def verify_token(request):
         return httpx.Response(200)
     return httpx.Response(400)
 
+
 # Get client information mock api
 @iam_mock.get(url=IAM_BASE_URL + CLIENT_INFORMATION_PATH % (namespace, client_id))
 def get_client_info(request):
     return httpx.Response(200, json=client_info)
+
 
 # Get role permission mock api
 @iam_mock.get(url__regex=IAM_BASE_URL + GET_ROLE_PATH + "/" + r"(?P<role>\w+)")

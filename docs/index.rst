@@ -1,17 +1,15 @@
-Welcome to iam-python-sdk's documentation!
-======================================
+.. include:: ../README.rst
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   readme
    installation
    usage
    modules
    contributing
    authors
-   history
+   changelog
 
 Indices and tables
 ==================
