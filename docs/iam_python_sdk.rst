@@ -52,6 +52,14 @@ iam\_python\_sdk\.errors module
     :undoc-members:
     :show-inheritance:
 
+iam\_python\_sdk\.flask module
+------------------------------
+
+.. automodule:: iam_python_sdk.flask
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 iam\_python\_sdk\.log module
 ----------------------------
 

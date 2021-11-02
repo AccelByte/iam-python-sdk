@@ -6,6 +6,7 @@
 
    installation
    usage
+   frameworks
    modules
    contributing
    authors

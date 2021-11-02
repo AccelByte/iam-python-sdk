@@ -31,6 +31,18 @@ To install iam-python-sdk, run this command in your terminal:
 This is the preferred method to install iam-python-sdk, as it will always install the most recent stable release.
 
 
+Frameworks
+----------
+
+To install iam-python-sdk with *Flask* frameworks support, run this command in your terminal:
+
+.. code-block:: console
+
+    $ pip install iam-python-sdk[flask]
+
+This will install flask frameworks with the latest stable version.
+
+
 From sources
 ------------
 
