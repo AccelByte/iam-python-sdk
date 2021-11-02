@@ -62,3 +62,5 @@ You can customize these default configurations according to your service/apps ne
     app.config["IAM_TOKEN_LOCATIONS"] = ["headers", "cookies"]
     app.config["IAM_TOKEN_HEADER_NAME"] = "Authorization"
     app.config["IAM_TOKEN_HEADER_TYPE"] = "Bearer"
+    app.config["IAM_TOKEN_COOKIE_NAME"] = "access_token"
+    app.config["IAM_TOKEN_COOKIE_PATH"] = "/"

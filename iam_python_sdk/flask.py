@@ -99,8 +99,10 @@ class IAM:
                     access_token = header_parts[1]
 
             if location == "cookies":
-                # TODO: Handle token in cookies
-                pass
+                cookie_name = current_app.config.get("IAM_TOKEN_COOKIE_NAME")
+                auth_cookie = request.cookies.get(cookie_name)
+                if auth_cookie:
+                    access_token = auth_cookie
 
         if not access_token:
             raise EmptyTokenError("Token not found")

@@ -55,3 +55,11 @@ def test_protected_endpoint(flask: Flask) -> None:
         # Valid headers token
         resp = c.get('/protected', headers={"Authorization": f"Bearer {client_token['access_token']}"})
         assert resp.status_code == 200
+        # Invalid cookies token
+        c.set_cookie("localhost", "access_token", "invalid_token")
+        resp = c.get('/protected')
+        assert resp.status_code == 403
+        # Valid cookies token
+        c.set_cookie("localhost", "access_token", client_token['access_token'])
+        resp = c.get('/protected')
+        assert resp.status_code == 200
