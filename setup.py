@@ -14,6 +14,10 @@ requirements = ['Click>=7.0', 'backoff==1.11.1', 'httpx>=1.0.0b0', 'pyjwt[crypto
 
 test_requirements = ['pytest>=3', 'respx==0.18.0']
 
+extras_require = {
+    "flask": ["Flask>=1.0"]
+}
+
 setup(
     author="Analytics AccelByte",
     author_email='justice-analytics-team@accelbyte.net',
