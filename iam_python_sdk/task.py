@@ -20,6 +20,8 @@ from typing import Any, Callable, Union
 
 
 class Task:
+    """Task module for background task.
+    """
     def __init__(self, interval: Union[int, float], function: Callable[..., Any], *args, **kwargs) -> None:
         self._lock = RLock()
         self._timer = None
@@ -32,14 +34,19 @@ class Task:
         if kwargs.pop('autostart', True):
             self.start()
 
-    def _run(self):
+    def _run(self) -> None:
         with self._lock:
             self.status = 'RUNNING'
 
         self.function(*self.args, **self.kwargs)
         self.start(repeat=True)
 
-    def start(self, repeat=False):
+    def start(self, repeat: bool = False) -> None:
+        """Start the thread in background(daemon).
+
+        Args:
+            repeat (bool, optional): Status if the task is repetitive. Defaults to False.
+        """
         with self._lock:
             if repeat or self.status == 'STOP':
                 self.status = 'WAITING'
@@ -47,7 +54,9 @@ class Task:
                 self._timer.daemon = True
                 self._timer.start()
 
-    def stop(self):
+    def stop(self) -> None:
+        """Stop the background task.
+        """
         with self._lock:
             self.status = 'STOP'
             if self._timer:

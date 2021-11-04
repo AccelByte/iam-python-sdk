@@ -76,6 +76,14 @@ iam\_python\_sdk\.models module
     :undoc-members:
     :show-inheritance:
 
+iam\_python\_sdk\.task module
+-----------------------------
+
+.. automodule:: iam_python_sdk.task
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 iam\_python\_sdk\.utils module
 ------------------------------
 
