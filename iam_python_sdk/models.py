@@ -115,7 +115,7 @@ class TokenResponse(Model):
     """Token response class on successful token request."""
     AccessToken: str = ""
     RefreshToken: str = ""
-    ExpiresIn: str = ""
+    ExpiresIn: int = -1
     TokenType: str = ""
     Roles: List[str] = [""]
     AcceptedPolicyVersion: List[str] = [""]

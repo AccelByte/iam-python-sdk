@@ -37,6 +37,7 @@ def test_NewDefaultClient(client: DefaultClient) -> None:
 def test_ClientTokenGrant(client: DefaultClient) -> None:
     try:
         client.ClientTokenGrant()
+        assert client._tokenRefreshActive is True
     except ClientTokenGrantError:
         assert False
 
@@ -52,6 +53,7 @@ def test_ClientToken(client: DefaultClient) -> None:
 def test_StartLocalValidation(client: DefaultClient) -> None:
     try:
         client.StartLocalValidation()
+        assert client._localValidationActive is True
     except StartLocalValidationError:
         assert False
 

@@ -21,15 +21,16 @@ from typing import Any, Dict, List, Union
 
 from .bloom import BloomFilter
 from .cache import Cache
-from .config import Config
-from .config import CLIENT_INFO_EXPIRATION, CLIENT_INFORMATION_PATH, GET_ROLE_PATH, GRANT_PATH, JWKS_PATH, \
-    MAX_BACKOFF_TIME, REVOCATION_LIST_PATH, SCOPE_SEPARATOR, VERIFY_PATH
+from .config import DEFAULT_JWKS_REFRESH_INTERVAL, DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL, Config
+from .config import CLIENT_INFO_EXPIRATION, CLIENT_INFORMATION_PATH, DEFAULT_TOKEN_REFRESH_RATE, GET_ROLE_PATH, \
+    GRANT_PATH, JWKS_PATH, MAX_BACKOFF_TIME, REVOCATION_LIST_PATH, SCOPE_SEPARATOR, VERIFY_PATH
 from .errors import ClientTokenGrantError, GetClientInformationError, GetJWKSError, GetRevocationListError, \
     GetRolePermissionError, HTTPClientError, InvalidTokenSignatureKeyError, NilClaimError, NoLocalValidationError, \
     RefreshAccessTokenError, StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAccessTokenError, \
     ValidateAndParseClaimsError, ValidateAudienceError, ValidateJWTError, ValidatePermissionError, ValidateScopeError
 from .models import ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse
 from .log import logger
+from .task import Task
 from .utils import parse_nanotimestamp
 
 
@@ -81,7 +82,9 @@ class DefaultClient:
                  httpClient: HttpClient
                  ) -> None:
         self._lock = RLock()
+        self._threads = {}
         self._clientAccessToken = ""
+        self._tokenRefreshActive = False
         self._localValidationActive = False
         self._jwks = {}
         self._revokedUsers = {}
@@ -390,7 +393,12 @@ class DefaultClient:
             self._clientAccessToken = token_response.AccessToken
             logger.info("token grant success")
 
-            # TODO: Background refresh token
+            if not self._tokenRefreshActive:
+                self._tokenRefreshActive = True
+                self._threads["refresh_token"] = Task(
+                    token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE,
+                    self._refresh_access_token
+                )
 
         except (json.JSONDecodeError, ValueError) as e:
             raise ClientTokenGrantError("unable to unmarshal response body") from e
@@ -410,9 +418,17 @@ class DefaultClient:
         try:
             self._get_jwks()
             self._get_revocation_list()
-            self._localValidationActive = True
 
-            # TODO: Background refresh JWKS and Revocation list
+            if not self._localValidationActive:
+                self._localValidationActive = True
+                self._threads["refresh_jwks"] = Task(
+                    DEFAULT_JWKS_REFRESH_INTERVAL,
+                    self._get_jwks
+                )
+                self._threads["refresh_revocation_list"] = Task(
+                    DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL,
+                    self._get_revocation_list
+                )
 
         except GetJWKSError as e:
             raise StartLocalValidationError("unable to get JWKS") from e
