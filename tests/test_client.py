@@ -183,3 +183,11 @@ def test_GetClientInformation(client: DefaultClient) -> None:
     client_info = client.GetClientInformation("sdktest", client.config.ClientID)
     assert client_info is not None
     assert client_info == client.clientInfoCache.get(client.config.ClientID)
+
+
+@iam_mock
+def test_HealthCheck(client: DefaultClient) -> None:
+    client.ClientTokenGrant()
+    assert client.HealthCheck() is False
+    client.StartLocalValidation()
+    assert client.HealthCheck() is True

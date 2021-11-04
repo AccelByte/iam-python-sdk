@@ -657,7 +657,18 @@ class DefaultClient:
         Returns:
             bool: health status
         """
-        return False
+
+        if not self._tokenRefreshActive:
+            logger.warning("Token refresh error or not started")
+            return False
+
+        if not self._localValidationActive:
+            logger.warning("JWKS or revocation list refresh error or not started")
+            return False
+
+        logger.info("all OK")
+
+        return True
 
     def ValidateAudience(self, claims: Union[JWTClaims, None]) -> None:
         """Validate audience of user access token
