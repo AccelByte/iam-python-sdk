@@ -30,6 +30,7 @@ class Task:
         self.args = args
         self.kwargs = kwargs
         self.status = 'STOP'
+        self.error = None
 
         if kwargs.pop('autostart', True):
             self.start()
@@ -38,7 +39,12 @@ class Task:
         with self._lock:
             self.status = 'RUNNING'
 
-        self.function(*self.args, **self.kwargs)
+        try:
+            self.function(*self.args, **self.kwargs)
+        except Exception as e:
+            # We catch all exceptions here because we dont know what error will occur on background task
+            self.error = e
+
         self.start(repeat=True)
 
     def start(self, repeat: bool = False) -> None:
