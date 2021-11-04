@@ -143,7 +143,8 @@ class IAM:
 
         Args:
             jwt_claims (JWTClaims): JWT claims data
-            required_permission (Union[dict, Permission]): Required permission that needed, can be in dict or Permission format.
+            required_permission (Union[dict, Permission]): Required permission that needed,
+                can be in dict or Permission format.
             permission_resource (dict): Optional permission resource if needed
 
         Raises:
