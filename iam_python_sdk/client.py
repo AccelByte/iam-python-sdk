@@ -425,7 +425,7 @@ class DefaultClient:
                     DEFAULT_JWKS_REFRESH_INTERVAL,
                     self._get_jwks
                 )
-                self._threads["refresh_revocation_list"] = Task(
+                self._threads["refresh_revocation"] = Task(
                     DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL,
                     self._get_revocation_list
                 )
@@ -657,13 +657,28 @@ class DefaultClient:
         Returns:
             bool: health status
         """
+        with self._lock:
+            refresh_token = self._threads.get("refresh_token")
+            refresh_jwks = self._threads.get("refresh_jwks")
+            refresh_revocation = self._threads.get("refresh_revocation")
 
-        if not self._tokenRefreshActive:
-            logger.warning("Token refresh error or not started")
+        if not refresh_token or not refresh_jwks or not refresh_revocation:
+            logger.warning("refresh token, jwks or revocation list background thread not started")
             return False
 
-        if not self._localValidationActive:
-            logger.warning("JWKS or revocation list refresh error or not started")
+        if refresh_token.error is not None:
+            logger.warning("error refresh token")
+            logger.error(refresh_token.error)
+            return False
+
+        if refresh_jwks.error is not None:
+            logger.warning("error refresh jwks")
+            logger.error(refresh_jwks.error)
+            return False
+
+        if refresh_revocation.error is not None:
+            logger.warning("error refresh revocation list")
+            logger.error(refresh_revocation.error)
             return False
 
         logger.info("all OK")
