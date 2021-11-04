@@ -26,12 +26,24 @@ from .models import JWTClaims, Permission
 
 
 class IAM:
+    """IAM Flask extensions class.
+    """
     def __init__(self, app: Flask = None) -> None:
         self.app = app
         if app is not None:
             self.init_app(app)
 
     def init_app(self, app: Flask):
+        """Init IAM flask extensions with Flask app.
+        Client token grant and local validation will be executed once here,
+        then the background thread will spawn to refresh token, jwks and revocation list.
+
+        Args:
+            app (Flask): Flask app instance
+
+        Raises:
+            ValueError: Error if the requirement configs are not set
+        """
         if not (
             app.config.get("IAM_BASE_URL") and app.config.get("IAM_CLIENT_ID") and app.config.get("IAM_CLIENT_SECRET")
         ):
@@ -80,7 +92,16 @@ class IAM:
 
         return client
 
-    def validate_token_in_request(self):
+    def validate_token_in_request(self) -> Union[JWTClaims, None]:
+        """Validate token in the Flask request. This method support headers and cookies with based token.
+
+        Raises:
+            EmptyTokenError: Error if token is not found
+            UnauthorizedError: Error if token permission is not sufficient
+
+        Returns:
+            JWTClaims: JWT claims data
+        """
         access_token = ""
         token_location = current_app.config.get("IAM_TOKEN_LOCATIONS")
         for location in token_location:
@@ -117,7 +138,20 @@ class IAM:
     def validate_permission(self, jwt_claims: JWTClaims,
                             required_permission: Union[dict, Permission],
                             permission_resource: dict
-                            ):
+                            ) -> bool:
+        """Validate permission from JWT claims data.
+
+        Args:
+            jwt_claims (JWTClaims): JWT claims data
+            required_permission (Union[dict, Permission]): Required permission that needed, can be in dict or Permission format.
+            permission_resource (dict): Optional permission resource if needed
+
+        Raises:
+            UnauthorizedError: Error if JWT claims data is not sufficient to access required permission and resource
+
+        Returns:
+            bool: Permission status
+        """
 
         if isinstance(required_permission, dict):
             required_permission = Permission.loads(required_permission)
@@ -129,6 +163,13 @@ class IAM:
 
 
 def token_required(required_permission: dict, permission_resource: dict = {}):
+    """The decorator to protect endpoint using IAM service.
+
+    Args:
+        required_permission (dict): Required permission with format {"resource": xxx, "action": n}
+        permission_resource (dict, optional): Optional permission resource if needed with format
+            {"{xxx}": "xxx replacement"}. Defaults to {}.
+    """
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
