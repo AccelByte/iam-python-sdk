@@ -18,6 +18,8 @@
 from threading import RLock, Timer
 from typing import Any, Callable, Union
 
+from .log import logger
+
 
 class Task:
     """Task module for background task.
@@ -43,6 +45,7 @@ class Task:
             self.function(*self.args, **self.kwargs)
         except Exception as e:
             # We catch all exceptions here because we dont know what error will occur on background task
+            logger.error(e)
             self.error = e
 
         self.start(repeat=True)
