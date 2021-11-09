@@ -232,18 +232,18 @@ class DefaultClient:
         if not token:
             raise ValueError("invalid token")
 
-        web_token = jwt.get_unverified_header(token)
-        if not web_token.get("kid"):
-            raise InvalidTokenSignatureKeyError("invalid header")
-
-        public_key = self._get_jwk(web_token.get("kid"))
-        if not public_key:
-            raise ValueError("invalid key")
-
-        claims = None
         try:
+            web_token = jwt.get_unverified_header(token)
+            if not web_token.get("kid"):
+                raise InvalidTokenSignatureKeyError("invalid header")
+
+            public_key = self._get_jwk(web_token.get("kid"))
+            if not public_key:
+                raise ValueError("invalid key")
+
             claims = jwt.decode(token, public_key, algorithms=["RS256"], options={"verify_exp": True})
             jwt_claims = JWTClaims.loads(claims)
+
         except jwt.DecodeError as e:
             raise ValidateJWTError("unable to deserialize JWT claims") from e
         except jwt.ExpiredSignatureError as e:
