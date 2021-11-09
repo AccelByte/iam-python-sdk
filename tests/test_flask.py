@@ -63,3 +63,15 @@ def test_protected_endpoint(flask: Flask) -> None:
         c.set_cookie("localhost", "access_token", client_token['access_token'])
         resp = c.get('/protected')
         assert resp.status_code == 200
+
+
+@iam_mock
+def test_protected_with_csrf_endpoint(flask: Flask) -> None:
+    with flask.test_client() as c:
+        c.set_cookie("localhost", "access_token", client_token['access_token'])
+        # Valid referer header
+        resp = c.get('/protected_with_csrf', headers={"Referer": "http://127.0.0.1"})
+        assert resp.status_code == 200
+        # Invalid referer header
+        resp = c.get('/protected_with_csrf')
+        assert resp.status_code == 403

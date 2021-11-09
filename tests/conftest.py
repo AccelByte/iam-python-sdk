@@ -54,8 +54,13 @@ def flask(request: pytest.FixtureRequest):
         return jsonify({'status': 'unprotected'})
 
     @app.route('/protected')
-    @token_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
+    @token_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"}, False)
     def protected():
+        return jsonify({'status': 'protected'})
+
+    @app.route('/protected_with_csrf')
+    @token_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
+    def protected_with_csrf():
         return jsonify({'status': 'protected'})
 
     return app

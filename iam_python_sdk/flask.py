@@ -17,11 +17,12 @@
 from functools import wraps
 from typing import Union
 from flask import current_app, jsonify, Flask, request
+from urllib.parse import urlparse
 
 from .config import Config
 from .client import DefaultClient, NewDefaultClient
-from .errors import ClientTokenGrantError, EmptyTokenError, StartLocalValidationError, TokenRevokedError, \
-    UnauthorizedError, UserRevokedError, ValidateAndParseClaimsError
+from .errors import ClientTokenGrantError, EmptyTokenError, GetClientInformationError, StartLocalValidationError, \
+    TokenRevokedError, UnauthorizedError, UserRevokedError, ValidateAndParseClaimsError
 from .models import JWTClaims, Permission
 
 
@@ -65,6 +66,8 @@ class IAM:
         app.config.setdefault("IAM_TOKEN_HEADER_TYPE", "Bearer")
         app.config.setdefault("IAM_TOKEN_COOKIE_NAME", "access_token")
         app.config.setdefault("IAM_TOKEN_COOKIE_PATH", "/")
+        app.config.setdefault("IAM_CSRF_PROTECTION", True)
+        app.config.setdefault("IAM_STRICT_REFERER", True)
 
     def _set_default_errors(self, app: Flask) -> None:
         @app.errorhandler(EmptyTokenError)
@@ -92,8 +95,33 @@ class IAM:
 
         return client
 
-    def validate_token_in_request(self) -> Union[JWTClaims, None]:
+    def _validate_referer_header(self, jwt_claims: JWTClaims) -> bool:
+        try:
+            client_info = self.client.GetClientInformation(jwt_claims.Namespace, jwt_claims.ClientId)
+        except GetClientInformationError:
+            return False
+
+        if client_info and not client_info.Redirecturi:
+            return True
+
+        referer_header = request.referrer
+        client_redirect_uris = client_info.Redirecturi.split(",") if client_info else []
+
+        for redirect_uri in client_redirect_uris:
+            if current_app.config.get("IAM_STRICT_REFERER"):
+                parsed_uri = urlparse(redirect_uri)
+                redirect_uri = f"{parsed_uri.scheme}://{parsed_uri.netloc}"
+
+            if referer_header and referer_header.startswith(redirect_uri):
+                return True
+
+        return False
+
+    def validate_token_in_request(self, validate_referer: bool) -> JWTClaims:
         """Validate token in the Flask request. This method support headers and cookies with based token.
+
+        Args:
+            validate_referer (bool): Validate referer for CSRF protection
 
         Raises:
             EmptyTokenError: Error if token is not found
@@ -105,6 +133,7 @@ class IAM:
         access_token = ""
         token_location = current_app.config.get("IAM_TOKEN_LOCATIONS")
         for location in token_location:
+            # Get token from headers
             if location == "headers":
                 auth_name = current_app.config.get("IAM_TOKEN_HEADER_NAME")
                 auth_type = current_app.config.get("IAM_TOKEN_HEADER_TYPE")
@@ -115,23 +144,32 @@ class IAM:
 
                 header_parts = auth_header.split()
                 if not auth_type:
-                    access_token = header_parts[0]
+                    access_token = header_parts[0], "header"
                 else:
-                    access_token = header_parts[1]
+                    access_token = header_parts[1], "header"
 
+            # Get token from cookies
             if location == "cookies":
                 cookie_name = current_app.config.get("IAM_TOKEN_COOKIE_NAME")
                 auth_cookie = request.cookies.get(cookie_name)
                 if auth_cookie:
-                    access_token = auth_cookie
+                    access_token = auth_cookie, "cookie"
 
         if not access_token:
             raise EmptyTokenError("Token not found")
 
         try:
-            jwt_claims = self.client.ValidateAndParseClaims(access_token)
+            jwt_claims = self.client.ValidateAndParseClaims(access_token[0])
         except (ValidateAndParseClaimsError, UserRevokedError, TokenRevokedError):
             raise UnauthorizedError("Token is invalid or revoked")
+
+        if not jwt_claims:
+            raise UnauthorizedError("Invalid referer header")
+
+        # Validate referer header for cookie token
+        if access_token[1] == "cookie" and validate_referer:
+            if self._validate_referer_header(jwt_claims) is not True:
+                raise UnauthorizedError("Invalid referer header")
 
         return jwt_claims
 
@@ -163,13 +201,16 @@ class IAM:
         return self.client.ValidatePermission(jwt_claims, required_permission, permission_resource)
 
 
-def token_required(required_permission: dict, permission_resource: dict = {}):
+def token_required(required_permission: dict, permission_resource: dict = {},
+                   csrf_protect: bool = None):
     """The decorator to protect endpoint using IAM service.
 
     Args:
         required_permission (dict): Required permission with format {"resource": xxx, "action": n}
         permission_resource (dict, optional): Optional permission resource if needed with format
             {"{xxx}": "xxx replacement"}. Defaults to {}.
+        csrf_protect (bool): CSRF protection (Note: CSRF protect is available only on cookie token).
+            Defaults to IAM_CSRF_PROTECTION config.
     """
     def wrapper(fn):
         @wraps(fn)
@@ -181,10 +222,12 @@ def token_required(required_permission: dict, permission_resource: dict = {}):
                     "application before using this method"
                 )
 
-            jwt_claims = iam.validate_token_in_request()
-            is_valid = iam.validate_permission(jwt_claims, required_permission, permission_resource)
+            validate_referer = csrf_protect if csrf_protect is not None \
+                else current_app.config.get("IAM_CSRF_PROTECTION")
 
-            if not is_valid:
+            jwt_claims = iam.validate_token_in_request(validate_referer)
+            is_permitted = iam.validate_permission(jwt_claims, required_permission, permission_resource)
+            if not is_permitted:
                 raise UnauthorizedError("Token do not have required permissions")
 
             return fn(*args, **kwargs)
