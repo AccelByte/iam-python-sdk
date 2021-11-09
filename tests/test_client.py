@@ -37,6 +37,7 @@ def test_NewDefaultClient(client: DefaultClient) -> None:
 def test_ClientTokenGrant(client: DefaultClient) -> None:
     try:
         client.ClientTokenGrant()
+        assert client._tokenRefreshActive is True
     except ClientTokenGrantError:
         assert False
 
@@ -52,6 +53,7 @@ def test_ClientToken(client: DefaultClient) -> None:
 def test_StartLocalValidation(client: DefaultClient) -> None:
     try:
         client.StartLocalValidation()
+        assert client._localValidationActive is True
     except StartLocalValidationError:
         assert False
 
@@ -181,3 +183,11 @@ def test_GetClientInformation(client: DefaultClient) -> None:
     client_info = client.GetClientInformation("sdktest", client.config.ClientID)
     assert client_info is not None
     assert client_info == client.clientInfoCache.get(client.config.ClientID)
+
+
+@iam_mock
+def test_HealthCheck(client: DefaultClient) -> None:
+    client.ClientTokenGrant()
+    assert client.HealthCheck() is False
+    client.StartLocalValidation()
+    assert client.HealthCheck() is True

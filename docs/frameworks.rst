@@ -64,3 +64,11 @@ You can customize these default configurations according to your service/apps ne
     app.config["IAM_TOKEN_HEADER_TYPE"] = "Bearer"
     app.config["IAM_TOKEN_COOKIE_NAME"] = "access_token"
     app.config["IAM_TOKEN_COOKIE_PATH"] = "/"
+
+.. note::
+    This module has been tested with Flask default WSGI server for development.
+    For production use, this module has been tested with *Gunicorn* and *uWSGI*.
+    You can use Gunicorn with sync and gthread worker. Since this SDK use multithreading, please
+    make sure you enable the thread support with **--enable-threads** options when you use uWSGI.
+    
+    For more information about Flask deployment, please read more information `here <https://flask.palletsprojects.com/en/latest/deploying/>`_
