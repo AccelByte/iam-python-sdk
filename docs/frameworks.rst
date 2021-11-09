@@ -49,7 +49,8 @@ Then you can protect your endpoint with *token_required* decorator from unauthor
     @app.route('/protected')
     @token_required(
         {"Action": 4, "Resource": "NAMESPACE:{namespace}:USER:{userId}"},
-        {"{namespace}": "sample-namespace", "{userId}": "sample-userid"}
+        {"{namespace}": "sample-namespace", "{userId}": "sample-userid"},
+        csrf_protect=True
     )
     def get_protected_endpoint():
         return 'You have authorized access!'
@@ -64,6 +65,8 @@ You can customize these default configurations according to your service/apps ne
     app.config["IAM_TOKEN_HEADER_TYPE"] = "Bearer"
     app.config["IAM_TOKEN_COOKIE_NAME"] = "access_token"
     app.config["IAM_TOKEN_COOKIE_PATH"] = "/"
+    app.config["IAM_CSRF_PROTECTION"] = True
+    app.config["IAM_STRICT_REFERER"] = True
 
 .. note::
     This module has been tested with Flask default WSGI server for development.
