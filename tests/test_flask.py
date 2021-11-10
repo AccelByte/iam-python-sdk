@@ -73,5 +73,5 @@ def test_protected_with_csrf_endpoint(flask: Flask) -> None:
         resp = c.get('/protected_with_csrf', headers={"Referer": "http://127.0.0.1"})
         assert resp.status_code == 200
         # Invalid referer header
-        resp = c.get('/protected_with_csrf')
+        resp = c.get('/protected_with_csrf', headers={"Referer": "http://foo.bar"})
         assert resp.status_code == 403
