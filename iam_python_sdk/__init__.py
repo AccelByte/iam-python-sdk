@@ -17,7 +17,7 @@ from iam_python_sdk.config import Config
 
 __author__ = """Analytics AccelByte"""
 __email__ = 'justice-analytics-team@accelbyte.net'
-__version__ = '0.8.0'
+__version__ = '0.10.0'
 __all__ = [
     'NewDefaultClient',
     'Config'

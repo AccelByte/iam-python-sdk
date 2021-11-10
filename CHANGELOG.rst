@@ -3,7 +3,7 @@ Changelog
 =========
 
 0.10.0 (2021-11-05)
-------------------
+-------------------
 
 * Add backgroud refresh token, jwks and revocation list.
 * Add Flask framework support.
