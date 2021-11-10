@@ -24,28 +24,28 @@ from iam_python_sdk.flask import IAM
 from .mock import iam_mock, client_token
 
 
-def test_init_iam(flask: Flask) -> None:
-    with flask.app_context():
+def test_init_iam(flask_app: Flask) -> None:
+    with flask_app.app_context():
         iam = current_app.extensions.get("flask_iam")
         assert isinstance(iam, IAM)
         assert isinstance(iam.client, DefaultClient)
-    with flask.test_request_context():
+    with flask_app.test_request_context():
         iam = current_app.extensions.get("flask_iam")
         assert isinstance(iam, IAM)
         assert isinstance(iam.client, DefaultClient)
 
 
 @iam_mock
-def test_unprotected_endpoint(flask: Flask) -> None:
-    with flask.test_client() as c:
+def test_unprotected_endpoint(flask_app: Flask) -> None:
+    with flask_app.test_client() as c:
         resp = c.get('/')
         data = json.loads(resp.data)
         assert data['status'] == 'unprotected'
 
 
 @iam_mock
-def test_protected_endpoint(flask: Flask) -> None:
-    with flask.test_client() as c:
+def test_protected_endpoint(flask_app: Flask) -> None:
+    with flask_app.test_client() as c:
         # No token
         resp = c.get('/protected')
         assert resp.status_code == 401
@@ -66,8 +66,8 @@ def test_protected_endpoint(flask: Flask) -> None:
 
 
 @iam_mock
-def test_protected_with_csrf_endpoint(flask: Flask) -> None:
-    with flask.test_client() as c:
+def test_protected_with_csrf_endpoint(flask_app: Flask) -> None:
+    with flask_app.test_client() as c:
         c.set_cookie("localhost", "access_token", client_token['access_token'])
         # Valid referer header
         resp = c.get('/protected_with_csrf', headers={"Referer": "http://127.0.0.1"})
