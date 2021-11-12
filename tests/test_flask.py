@@ -75,3 +75,17 @@ def test_protected_with_csrf_endpoint(flask_app: Flask) -> None:
         # Invalid referer header
         resp = c.get('/protected_with_csrf', headers={"Referer": "http://foo.bar"})
         assert resp.status_code == 403
+
+
+@iam_mock
+def test_protected_with_cors_endpoint(flask_app: Flask) -> None:
+    with flask_app.test_client() as c:
+        c.set_cookie("localhost", "access_token", client_token['access_token'])
+        resp = c.options('/protected_with_cors', headers={"Referer": "http://127.0.0.1"})
+        assert resp.status_code == 200
+        # Preflight options have empty body response
+        assert resp.get_json() is None
+        # Assert default CORS header
+        assert resp.headers.get("Access-Control-Allow-Origin", "") == "*"
+        # Assert override CORS header
+        assert resp.headers.get("Access-Control-Allow-Headers", "").find("Device-Id") != -1
