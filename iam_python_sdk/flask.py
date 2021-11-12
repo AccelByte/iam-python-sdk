@@ -17,6 +17,8 @@
 from functools import wraps
 from typing import Union
 from flask import current_app, jsonify, Flask, request
+from flask.helpers import make_response
+from flask.wrappers import Response
 from urllib.parse import urlparse
 
 from .config import Config
@@ -60,6 +62,9 @@ class IAM:
 
         app.extensions["flask_iam"] = self
 
+        if app.config.get("IAM_CORS_ENABLE"):
+            app.after_request(self._set_default_cors_headers)
+
     def _set_default_config(self, app: Flask) -> None:
         app.config.setdefault("IAM_TOKEN_LOCATIONS", ["headers", "cookies"])
         app.config.setdefault("IAM_TOKEN_HEADER_NAME", "Authorization")
@@ -68,6 +73,11 @@ class IAM:
         app.config.setdefault("IAM_TOKEN_COOKIE_PATH", "/")
         app.config.setdefault("IAM_CSRF_PROTECTION", True)
         app.config.setdefault("IAM_STRICT_REFERER", True)
+        app.config.setdefault("IAM_CORS_ENABLE", True)
+        app.config.setdefault("IAM_CORS_ORIGIN", "*")
+        app.config.setdefault("IAM_CORS_HEADERS", "*")
+        app.config.setdefault("IAM_CORS_METHODS", "*")
+        app.config.setdefault("IAM_CORS_CREDENTIALS", True)
 
     def _set_default_errors(self, app: Flask) -> None:
         @app.errorhandler(EmptyTokenError)
@@ -77,6 +87,25 @@ class IAM:
         @app.errorhandler(UnauthorizedError)
         def handle_unauthorized(error):
             return jsonify({"error": str(error)}), 403
+
+    def _set_default_cors_headers(self, response: Response) -> Response:
+        allowed_origin = current_app.config.get("IAM_CORS_ORIGIN")
+        allowed_headers = current_app.config.get("IAM_CORS_HEADERS")
+        allow_credentials = str(current_app.config.get("IAM_CORS_CREDENTIALS")).lower()
+        allowed_methods = list(request.url_rule.methods) if request.url_rule \
+            else current_app.config.get("IAM_CORS_METHODS")
+
+        if isinstance(allowed_methods, list):
+            allowed_methods = ", ".join(allowed_methods)
+        if isinstance(allowed_headers, list):
+            allowed_headers = ", ".join(allowed_headers)
+
+        response.headers.setdefault("Access-Control-Allow-Origin", allowed_origin)
+        response.headers.setdefault("Access-Control-Allow-Headers", allowed_headers)
+        response.headers.setdefault("Access-Control-Allow-Methods", allowed_methods)
+        response.headers.setdefault("Access-Control-Allow-Credentials", allow_credentials)
+
+        return response
 
     def _grant_token(self, app: Flask) -> DefaultClient:
         config = Config(
@@ -231,6 +260,42 @@ def token_required(required_permission: dict, permission_resource: dict = {},
                 raise UnauthorizedError("Token do not have required permissions")
 
             return fn(*args, **kwargs)
+
+        return decorator
+
+    return wrapper
+
+
+def cors_options(headers: dict = {}, preflight_options: bool = True):
+    """Decorator for set the CORS response header. This method will override
+    default app-wide CORS options if it has enabled.
+
+    Args:
+        headers (dict, optional): CORS headers key and value to be added to the response. Defaults to {}.
+    """
+    def wrapper(fn):
+        if preflight_options:
+            fn.required_methods = getattr(fn, 'required_methods', set())
+            fn.required_methods.add('OPTIONS')
+            fn.provide_automatic_options = False
+
+        @wraps(fn)
+        def decorator(*args, **kwargs):
+            if preflight_options and request.method == 'OPTIONS':
+                response = current_app.make_default_options_response()
+            else:
+                response = make_response(fn(*args, **kwargs))
+
+            for key, value in headers.items():
+                if isinstance(value, list):
+                    value = ", ".join(value)
+
+                if isinstance(value, bool):
+                    value = str(value).lower()
+
+                response.headers.add(key, value)
+
+            return response
 
         return decorator
 
