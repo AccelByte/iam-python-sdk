@@ -10,7 +10,15 @@ with open('README.rst') as readme_file:
 with open('CHANGELOG.rst') as changelog_file:
     changelog = changelog_file.read()
 
-requirements = ['Click>=7.0', 'backoff==1.11.1', 'httpx>=1.0.0b0', 'pyjwt[crypto]==2.2.0', 'crontab==0.23.0']
+requirements = [
+    'Click>=7.0',
+    'backoff==1.11.1',
+    'httpx>=1.0.0b0',
+    'pyjwt[crypto]==2.2.0',
+    'crontab==0.23.0',
+    'bitarray==2.3.4',
+    'mmh3==3.0.0'
+]
 
 test_requirements = ['pytest>=3', 'respx==0.18.0']
 
