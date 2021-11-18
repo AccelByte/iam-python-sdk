@@ -188,6 +188,10 @@ class DefaultClient:
                     f"unable to get JWKS: error code {resp.status_code},"
                     f"error message: {resp.reason_phrase}"
                 )
+                raise GetJWKSError(
+                    f"unable to get JWKS: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
 
             jwks = jwt.PyJWKSet(resp.json().get("keys", []))
             for jwk in jwks.keys:
@@ -214,6 +218,10 @@ class DefaultClient:
 
             if not resp.is_success:
                 logger.warning(
+                    f"unable to get JWKS: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
+                raise GetRevocationListError(
                     f"unable to get JWKS: error code {resp.status_code},"
                     f"error message: {resp.reason_phrase}"
                 )
@@ -396,6 +404,10 @@ class DefaultClient:
                                         )
             if not resp.is_success:
                 logger.warning(
+                    f"unable to grant client token: error code : {resp.status_code}, "
+                    f"error message : {resp.reason_phrase}"
+                )
+                raise ClientTokenGrantError(
                     f"unable to grant client token: error code : {resp.status_code}, "
                     f"error message : {resp.reason_phrase}"
                 )
