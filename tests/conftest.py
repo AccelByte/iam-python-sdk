@@ -46,6 +46,11 @@ def flask_app(request: pytest.FixtureRequest):
     app.config["IAM_BASE_URL"] = iam_base_url
     app.config["IAM_CLIENT_ID"] = client_id
     app.config["IAM_CLIENT_SECRET"] = client_secret
+    app.config["IAM_CORS_ENABLE"] = True
+
+    app.register_blueprint(flask_mock)
+
+    app.register_blueprint(flask_mock)
 
     app.register_blueprint(flask_mock)
 

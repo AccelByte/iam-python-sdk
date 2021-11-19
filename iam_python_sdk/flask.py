@@ -73,7 +73,7 @@ class IAM:
         app.config.setdefault("IAM_TOKEN_COOKIE_PATH", "/")
         app.config.setdefault("IAM_CSRF_PROTECTION", True)
         app.config.setdefault("IAM_STRICT_REFERER", True)
-        app.config.setdefault("IAM_CORS_ENABLE", True)
+        app.config.setdefault("IAM_CORS_ENABLE", False)
         app.config.setdefault("IAM_CORS_ORIGIN", "*")
         app.config.setdefault("IAM_CORS_HEADERS", "*")
         app.config.setdefault("IAM_CORS_METHODS", "*")
