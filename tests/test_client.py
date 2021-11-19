@@ -26,168 +26,168 @@ from iam_python_sdk.errors import ClientTokenGrantError, NoLocalValidationError,
 from .mock import iam_mock, role_id
 
 
-def test_NewDefaultClient(client: DefaultClient) -> None:
-    assert isinstance(client.config, Config)
-    assert isinstance(client.httpClient, HttpClient)
-    assert isinstance(client.rolePermissionCache, Cache)
-    assert isinstance(client.clientInfoCache, Cache)
+def test_NewDefaultClient(iam_client: DefaultClient) -> None:
+    assert isinstance(iam_client.config, Config)
+    assert isinstance(iam_client.httpClient, HttpClient)
+    assert isinstance(iam_client.rolePermissionCache, Cache)
+    assert isinstance(iam_client.clientInfoCache, Cache)
 
 
 @iam_mock
-def test_ClientTokenGrant(client: DefaultClient) -> None:
+def test_ClientTokenGrant(iam_client: DefaultClient) -> None:
     try:
-        client.ClientTokenGrant()
-        assert client._tokenRefreshActive is True
+        iam_client.ClientTokenGrant()
+        assert iam_client._tokenRefreshActive is True
     except ClientTokenGrantError:
         assert False
 
 
 @iam_mock
-def test_ClientToken(client: DefaultClient) -> None:
-    assert client.ClientToken() == ""
-    client.ClientTokenGrant()
-    assert client.ClientToken() != ""
+def test_ClientToken(iam_client: DefaultClient) -> None:
+    assert iam_client.ClientToken() == ""
+    iam_client.ClientTokenGrant()
+    assert iam_client.ClientToken() != ""
 
 
 @iam_mock
-def test_StartLocalValidation(client: DefaultClient) -> None:
+def test_StartLocalValidation(iam_client: DefaultClient) -> None:
     try:
-        client.StartLocalValidation()
-        assert client._localValidationActive is True
+        iam_client.StartLocalValidation()
+        assert iam_client._localValidationActive is True
     except StartLocalValidationError:
         assert False
 
 
 @iam_mock
-def test_ValidateAccessToken(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    assert client.ValidateAccessToken(client.ClientToken()) is True
-    assert client.ValidateAccessToken("This is an invalid token") is False
+def test_ValidateAccessToken(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    assert iam_client.ValidateAccessToken(iam_client.ClientToken()) is True
+    assert iam_client.ValidateAccessToken("This is an invalid token") is False
 
 
 @iam_mock
-def test_ValidateAndParseClaims(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
+def test_ValidateAndParseClaims(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
     # Raise error if StartLocalValidation not called yet
     with pytest.raises(NoLocalValidationError):
-        jwt_claims = client.ValidateAndParseClaims(client.ClientToken())
+        jwt_claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
 
-    client.StartLocalValidation()
-    jwt_claims = client.ValidateAndParseClaims(client.ClientToken())
+    iam_client.StartLocalValidation()
+    jwt_claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
     assert isinstance(jwt_claims, JWTClaims)
 
 
 @iam_mock
-def test_ValidatePermission(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    client.StartLocalValidation()
-    claims = client.ValidateAndParseClaims(client.ClientToken())
+def test_ValidatePermission(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    iam_client.StartLocalValidation()
+    claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
     required_permission = Permission.loads(
         {"Action": 2, "Resource": "ADMIN:NAMESPACE:{namespace}:CLIENT"}
     )
     permission_resource = {"{namespace}": "sdktest"}
-    valid_permission = client.ValidatePermission(
+    valid_permission = iam_client.ValidatePermission(
         claims, required_permission, permission_resource
     )
     assert valid_permission is True
 
 
 @iam_mock
-def test_ValidateRole(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    client.StartLocalValidation()
-    claims = client.ValidateAndParseClaims(client.ClientToken())
-    assert client.ValidateRole(role_id, claims) is True
-    assert client.ValidateRole("Invalid role", claims) is False
+def test_ValidateRole(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    iam_client.StartLocalValidation()
+    claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
+    assert iam_client.ValidateRole(role_id, claims) is True
+    assert iam_client.ValidateRole("Invalid role", claims) is False
 
 
 @iam_mock
-def test_ValidateAudience(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    client.StartLocalValidation()
-    claims = client.ValidateAndParseClaims(client.ClientToken())
-    aud_status = client.ValidateAudience(claims)
+def test_ValidateAudience(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    iam_client.StartLocalValidation()
+    claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
+    aud_status = iam_client.ValidateAudience(claims)
     assert aud_status is None
 
 
 @iam_mock
-def test_ValidateScope(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    client.StartLocalValidation()
-    claims = client.ValidateAndParseClaims(client.ClientToken())
-    assert client.ValidateScope(claims, 'account') is None
+def test_ValidateScope(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    iam_client.StartLocalValidation()
+    claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
+    assert iam_client.ValidateScope(claims, 'account') is None
     # Raise error if invalid scope
     with pytest.raises(ValidateScopeError):
-        client.ValidateScope(claims, 'Invalid scope')
+        iam_client.ValidateScope(claims, 'Invalid scope')
 
 
 @iam_mock
-def test_UserPhoneVerificationStatus(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    client.StartLocalValidation()
+def test_UserPhoneVerificationStatus(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    iam_client.StartLocalValidation()
 
-    claims = client.ValidateAndParseClaims(client.ClientToken())
-    assert client.UserPhoneVerificationStatus(claims) is False
+    claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
+    assert iam_client.UserPhoneVerificationStatus(claims) is False
 
     setattr(claims, "Jflgs", 7)
-    assert client.UserPhoneVerificationStatus(claims) is True
+    assert iam_client.UserPhoneVerificationStatus(claims) is True
 
 
 @iam_mock
-def test_UserEmailVerificationStatus(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    client.StartLocalValidation()
+def test_UserEmailVerificationStatus(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    iam_client.StartLocalValidation()
 
-    claims = client.ValidateAndParseClaims(client.ClientToken())
-    assert client.UserEmailVerificationStatus(claims) is False
+    claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
+    assert iam_client.UserEmailVerificationStatus(claims) is False
 
     setattr(claims, "Jflgs", 7)
-    assert client.UserEmailVerificationStatus(claims) is True
+    assert iam_client.UserEmailVerificationStatus(claims) is True
 
 
 @iam_mock
-def test_UserAnonymousStatus(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    client.StartLocalValidation()
+def test_UserAnonymousStatus(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    iam_client.StartLocalValidation()
 
-    claims = client.ValidateAndParseClaims(client.ClientToken())
-    assert client.UserAnonymousStatus(claims) is False
+    claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
+    assert iam_client.UserAnonymousStatus(claims) is False
 
     setattr(claims, "Jflgs", 7)
-    assert client.UserAnonymousStatus(claims) is True
+    assert iam_client.UserAnonymousStatus(claims) is True
 
 
 @iam_mock
-def test_HasBan(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    client.StartLocalValidation()
+def test_HasBan(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    iam_client.StartLocalValidation()
 
-    claims = client.ValidateAndParseClaims(client.ClientToken())
-    assert client.HasBan(claims, "Test Ban") is False
-
-
-@iam_mock
-def test_GetRolePermission(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-
-    assert isinstance(client.GetRolePermissions(role_id), list)
-    assert client.GetRolePermissions("This is an invalid roleId") == []
-
-    assert isinstance(client.rolePermissionCache.get(role_id), list)
-    assert client.rolePermissionCache.get("This is an invalid roleId") is None
+    claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
+    assert iam_client.HasBan(claims, "Test Ban") is False
 
 
 @iam_mock
-def test_GetClientInformation(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    client_info = client.GetClientInformation("sdktest", client.config.ClientID)
+def test_GetRolePermission(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+
+    assert isinstance(iam_client.GetRolePermissions(role_id), list)
+    assert iam_client.GetRolePermissions("This is an invalid roleId") == []
+
+    assert isinstance(iam_client.rolePermissionCache.get(role_id), list)
+    assert iam_client.rolePermissionCache.get("This is an invalid roleId") is None
+
+
+@iam_mock
+def test_GetClientInformation(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    client_info = iam_client.GetClientInformation("sdktest", iam_client.config.ClientID)
     assert client_info is not None
-    assert client_info == client.clientInfoCache.get(client.config.ClientID)
+    assert client_info == iam_client.clientInfoCache.get(iam_client.config.ClientID)
 
 
 @iam_mock
-def test_HealthCheck(client: DefaultClient) -> None:
-    client.ClientTokenGrant()
-    assert client.HealthCheck() is False
-    client.StartLocalValidation()
-    assert client.HealthCheck() is True
+def test_HealthCheck(iam_client: DefaultClient) -> None:
+    iam_client.ClientTokenGrant()
+    assert iam_client.HealthCheck() is False
+    iam_client.StartLocalValidation()
+    assert iam_client.HealthCheck() is True

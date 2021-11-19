@@ -15,20 +15,19 @@
 """Conftest module."""
 
 
-import pytest
-from flask import Flask, jsonify
+import flask, pytest
 
 from iam_python_sdk.client import NewDefaultClient
 from iam_python_sdk.config import Config
-from iam_python_sdk.flask import IAM, token_required
+from iam_python_sdk.flask import IAM
 
-from .mock import iam_mock, IAM_BASE_URL, client_id, client_secret
+from .mock import client_id, client_secret, iam_base_url, iam_mock, flask_mock
 
 
 @pytest.fixture
-def client(request: pytest.FixtureRequest):
+def iam_client(request: pytest.FixtureRequest):
     cfg = Config(
-        BaseURL=IAM_BASE_URL,
+        BaseURL=iam_base_url,
         ClientID=client_id,
         ClientSecret=client_secret,
     )
@@ -38,24 +37,20 @@ def client(request: pytest.FixtureRequest):
 
 
 @pytest.fixture
-def flask(request: pytest.FixtureRequest):
-    app = Flask("test_app")
+def flask_app(request: pytest.FixtureRequest):
+    app = flask.Flask("test_app")
 
-    app.config["IAM_BASE_URL"] = IAM_BASE_URL
+    app.config["SERVER_NAME"] = "iam.mock"
+    app.config["TESTING"] = True
+
+    app.config["IAM_BASE_URL"] = iam_base_url
     app.config["IAM_CLIENT_ID"] = client_id
     app.config["IAM_CLIENT_SECRET"] = client_secret
+
+    app.register_blueprint(flask_mock)
 
     iam = IAM()
     with iam_mock:
         iam.init_app(app)
-
-    @app.route('/')
-    def unprotected():
-        return jsonify({'status': 'unprotected'})
-
-    @app.route('/protected')
-    @token_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
-    def protected():
-        return jsonify({'status': 'protected'})
 
     return app
