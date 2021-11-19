@@ -36,5 +36,5 @@ Features
 * Get role and validate permission
 * Validate scope, role and audience
 * Verify ban, phone and email user status
-* Backgroud refresh token, jwks and revocation list.
-* Flask framework support.
+* Background refresh token, jwks and revocation list
+* Flask framework support with CSRF protection and CORS options

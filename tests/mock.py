@@ -28,7 +28,7 @@ from iam_python_sdk.config import (
     REVOCATION_LIST_PATH,
     VERIFY_PATH,
 )
-from iam_python_sdk.flask import token_required
+from iam_python_sdk.flask import token_required, cors_options
 
 iam_base_url = "https://api.mock/iam"
 
@@ -205,4 +205,11 @@ def protected():
 @flask_mock.route('/protected_with_csrf')
 @token_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
 def protected_with_csrf():
+    return flask.jsonify({'status': 'protected'})
+
+
+@flask_mock.route('/protected_with_cors', methods=["POST"])
+@token_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
+@cors_options({"Access-Control-Allow-Headers": ["Device-Id", "Device-Os", "Device-Type"]})
+def protected_with_cors():
     return flask.jsonify({'status': 'protected'})

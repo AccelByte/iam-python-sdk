@@ -5,6 +5,9 @@ Frameworks
 Flask
 =====
 
+Usage
+-----
+
 To use iam-python-sdk on Flask frameworks, you have to init the iam-python-sdk Flask extensions:
 
 .. code-block:: python
@@ -75,3 +78,44 @@ You can customize these default configurations according to your service/apps ne
     make sure you enable the thread support with **--enable-threads** options when you use uWSGI.
     
     For more information about Flask deployment, please read more information `here <https://flask.palletsprojects.com/en/latest/deploying/>`_
+
+CORS Options
+------------
+
+This module support CORS options to set CORS header response. You can set the CORS headers with the *cors_options* decorator.
+
+.. code-block:: python
+
+    @app.route('/cors', methods=["GET", "POST"])
+    @cors_options({"Access-Control-Allow-Headers": ["Device-Id", "Device-Os", "Device-Type"]})
+    def get_cors_endpoint():
+        return 'You access a CORS page!'
+
+The sample response of this endpoint would be like:
+
+.. code-block:: console
+
+    HTTP/1.1 200 OK
+    Date: Fri, 12 Nov 2021 01:15:39 GMT
+    Server: Nginx
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Methods: GET, POST, OPTIONS
+    Access-Control-Allow-Headers: Device-Id, Device-Os, Device-Type
+    Access-Control-Allow-Credentials: true
+    .......
+
+.. note::
+    You can read more about CORS specification `here <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS>`_
+
+You can also set the default CORS headers for all endpoints with Flask application-wide config.
+
+.. code-block:: python
+
+    app.config["IAM_CORS_ENABLE"] = True
+    app.config["IAM_CORS_ORIGIN"] = "*"
+    app.config["IAM_CORS_HEADERS"] = "*"
+    app.config["IAM_CORS_METHODS"] = "*"
+    app.config["IAM_CORS_CREDENTIALS"] = True
+
+.. note::
+    These default configs will be overridden by the decorator *cors_options* for specific endpoints.

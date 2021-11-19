@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.12.0 (2021-11-19)
+-------------------
+
+* Add Flask CSRF support.
+* Add Flask CORS options.
+
 0.10.1 (2021-11-10)
 -------------------
 
