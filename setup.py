@@ -14,7 +14,7 @@ requirements = ['Click>=7.0', 'backoff==1.11.1', 'httpx>=1.0.0b0', 'pyjwt[crypto
 
 test_requirements = ['pytest>=3', 'respx==0.18.0']
 
-extras_require = {
+optional_requirements = {
     "flask": ["Flask>=1.0"]
 }
 
@@ -40,6 +40,7 @@ setup(
         ],
     },
     install_requires=requirements,
+    extras_require=optional_requirements,
     license="Apache Software License 2.0",
     long_description=readme + '\n\n' + changelog,
     long_description_content_type='text/x-rst',
@@ -50,6 +51,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://accelbyte.github.io/iam-python-sdk',
-    version='0.10.0',
+    version='0.10.1',
     zip_safe=False,
 )

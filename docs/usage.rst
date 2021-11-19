@@ -7,7 +7,11 @@ Prerequisite
 
 IAM Python SDK implement OAuth 2.0 specifications with client credetial flow. Before you can use IAM Python SDK,
 you need to get ``Client ID``, ``Client Secret`` and ``Base IAM URL`` from your Admin Portal (AP). To get these values,
-please read more on this `documentation <https://docs.accelbyte.io/esg/uam/iam-client.html>`_
+please read more on this `documentation <https://docs.accelbyte.io/guides/access/iam-client.html>`_
+
+.. note::
+    The ``Base IAM URL`` should be like: **[your-domain]/iam** wherein **[your-domain]** is the base URL of your accelbyte services.
+    It can be a sub-domain of accelbyte domain or your own custom domain, e.g.: **https://demo.accelbyte.io/iam**
 
 Init IAM client
 ===============
@@ -19,7 +23,7 @@ To use iam-python-sdk in a project, first you need to initiate IAM client:
     from iam_python_sdk import Config, NewDefaultClient
 
     config = Config(
-        BaseURL="<Base IAM URL>",
+        BaseURL="<Base IAM URL>",  # e.g.: https://demo.accelbyte.io/iam
         ClientID="<Client ID>",
         ClientSecret="<Client Secret>",
     )
