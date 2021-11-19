@@ -1,0 +1,474 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Usage &mdash; iam-python-sdk 0.12.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'0.12.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Frameworks" href="frameworks.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> iam-python-sdk
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.12.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisite">Prerequisite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#init-iam-client">Init IAM client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#grant-access-token">Grant access token</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validate-access-token">Validate access token</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validate-permission">Validate permission</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validate-role-and-scope">Validate role and scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-ban">Check Ban</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validate-audience">Validate audience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verify-user-info">Verify user info</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#email-status">Email status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#phone-status">Phone status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#anonymity-status">Anonymity status</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="frameworks.html">Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">iam-python-sdk</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Usage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+
+
+
+
+
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="prerequisite">
+<h2>Prerequisite<a class="headerlink" href="#prerequisite" title="Permalink to this headline">¶</a></h2>
+<p>IAM Python SDK implement OAuth 2.0 specifications with client credetial flow. Before you can use IAM Python SDK,
+you need to get <code class="docutils literal"><span class="pre">Client</span> <span class="pre">ID</span></code>, <code class="docutils literal"><span class="pre">Client</span> <span class="pre">Secret</span></code> and <code class="docutils literal"><span class="pre">Base</span> <span class="pre">IAM</span> <span class="pre">URL</span></code> from your Admin Portal (AP). To get these values,
+please read more on this <a class="reference external" href="https://docs.accelbyte.io/guides/access/iam-client.html">documentation</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <code class="docutils literal"><span class="pre">Base</span> <span class="pre">IAM</span> <span class="pre">URL</span></code> should be like: <strong>[your-domain]/iam</strong> wherein <strong>[your-domain]</strong> is the base URL of your accelbyte services.
+It can be a sub-domain of accelbyte domain or your own custom domain, e.g.: <strong>https://demo.accelbyte.io/iam</strong></p>
+</div>
+</div>
+<div class="section" id="init-iam-client">
+<h2>Init IAM client<a class="headerlink" href="#init-iam-client" title="Permalink to this headline">¶</a></h2>
+<p>To use iam-python-sdk in a project, first you need to initiate IAM client:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iam_python_sdk</span> <span class="kn">import</span> <span class="n">Config</span><span class="p">,</span> <span class="n">NewDefaultClient</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+    <span class="n">BaseURL</span><span class="o">=</span><span class="s2">&quot;&lt;Base IAM URL&gt;&quot;</span><span class="p">,</span>  <span class="c1"># e.g.: https://demo.accelbyte.io/iam</span>
+    <span class="n">ClientID</span><span class="o">=</span><span class="s2">&quot;&lt;Client ID&gt;&quot;</span><span class="p">,</span>
+    <span class="n">ClientSecret</span><span class="o">=</span><span class="s2">&quot;&lt;Client Secret&gt;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">NewDefaultClient</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="grant-access-token">
+<h2>Grant access token<a class="headerlink" href="#grant-access-token" title="Permalink to this headline">¶</a></h2>
+<p>To get access token, you need to call <cite>ClientTokenGrant</cite> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iam_python_sdk.errors</span> <span class="kn">import</span> <span class="n">ClientTokenGrantError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">ClientTokenGrant</span><span class="p">()</span>
+    <span class="c1"># Client token grant success</span>
+<span class="k">except</span> <span class="n">ClientTokenGrantError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Cant get access token from IAM</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>You can check the access token using <cite>ClientToken</cite> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">access_token</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">ClientToken</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can use this <strong>access token</strong> to access many AccelByte services
+based on permission and role that you have set before on AP.</p>
+</div>
+</div>
+<div class="section" id="validate-access-token">
+<h2>Validate access token<a class="headerlink" href="#validate-access-token" title="Permalink to this headline">¶</a></h2>
+<p>There are two methods to validate access token.
+First, you can validate access token live on IAM service using <cite>ValidateAccessToken</cite> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iam_python_sdk.errors</span> <span class="kn">import</span> <span class="n">ValidateAccessTokenError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">is_token_valid</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">ValidateAccessToken</span><span class="p">(</span><span class="n">access_token</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_token_valid</span><span class="p">:</span>
+        <span class="c1"># Token is valid</span>
+        <span class="k">pass</span>
+<span class="k">except</span> <span class="n">ValidateAccessTokenError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Cant validate access token on IAM service</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Second, you can validate access token localy using JWKs and revocation list.
+To do local validation, once you need to enable local validation using <cite>StartLocalValidation</cite> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iam_python_sdk.errors</span> <span class="kn">import</span> <span class="n">StartLocalValidationError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">StartLocalValidation</span><span class="p">()</span>
+<span class="k">except</span> <span class="n">StartLocalValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Cant enable local validation</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Then, you can validate access token locally using <cite>ValidateAndParseClaims</cite> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iam_python_sdk.errors</span> <span class="kn">import</span> <span class="n">NoLocalValidationError</span><span class="p">,</span> <span class="n">ValidateAndParseClaimsError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">claims</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">ValidateAndParseClaims</span><span class="p">(</span><span class="n">access_token</span><span class="p">)</span>
+    <span class="c1"># Access token is valid</span>
+<span class="k">except</span> <span class="n">NoLocalValidationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># You need to call StartLocalValidation method once</span>
+    <span class="k">pass</span>
+<span class="k">except</span> <span class="n">ValidateAndParseClaimsError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Cant validate and parse claim locally</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Store the <strong>claims</strong> output if you need to validate it&#8217;s permission, role, or other properties.</p>
+</div>
+</div>
+<div class="section" id="validate-permission">
+<h2>Validate permission<a class="headerlink" href="#validate-permission" title="Permalink to this headline">¶</a></h2>
+<p>For example, you have a resource permission that needs <em>NAMESPACE:{namespace}:USER:{userId}</em> resource string and 4 [UPDATE] action to access.</p>
+<p>Using claims you can verify if the token owner is allowed to access the resource using <cite>ValidatePermission</cite> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iam_python_sdk.errors</span> <span class="kn">import</span> <span class="n">ValidatePermissionError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">required_permission</span> <span class="o">=</span> <span class="n">Permission</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;Action&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Resource&quot;</span><span class="p">:</span> <span class="s2">&quot;NAMESPACE:</span><span class="si">{namespace}</span><span class="s2">:USER:</span><span class="si">{userId}</span><span class="s2">&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">permission_resource</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;</span><span class="si">{namespace}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;sample-namespace&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{userId}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;sample-userid&quot;</span><span class="p">}</span>
+    <span class="n">valid_permission</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">ValidatePermission</span><span class="p">(</span>
+        <span class="n">claims</span><span class="p">,</span> <span class="n">required_permission</span><span class="p">,</span> <span class="n">permission_resource</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">valid_permission</span><span class="p">:</span>
+        <span class="c1"># Permission is valid and token owner is allowed to access the resource</span>
+        <span class="k">pass</span>
+<span class="k">except</span> <span class="n">ValidatePermissionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Cant get role permission from IAM service</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="validate-role-and-scope">
+<h2>Validate role and scope<a class="headerlink" href="#validate-role-and-scope" title="Permalink to this headline">¶</a></h2>
+<p>To validate token owner have a required role ID, you can use <cite>ValidateRole</cite> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">required_role_id</span> <span class="o">=</span> <span class="s1">&#39;sample_role_id_12345&#39;</span>
+<span class="n">valid_role</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">ValidateRole</span><span class="p">(</span><span class="n">required_role_id</span><span class="p">,</span> <span class="n">claims</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">valid_role</span><span class="p">:</span>
+    <span class="c1"># Role is valid and token owner have the required role id</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>To validate token owner have required scope, you can use <cite>ValidateScope</cite> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iam_python_sdk.errors</span> <span class="kn">import</span> <span class="n">ValidateScopeError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">required_scope</span> <span class="o">=</span> <span class="s1">&#39;sample_scope&#39;</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">ValidateScope</span><span class="p">(</span><span class="n">required_scope</span><span class="p">,</span> <span class="n">claims</span><span class="p">)</span>
+    <span class="c1"># Scope is valid and token owner have the required scope</span>
+<span class="k">except</span> <span class="n">ValidateScopeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># Scope is invalid</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-ban">
+<h2>Check Ban<a class="headerlink" href="#check-ban" title="Permalink to this headline">¶</a></h2>
+<p>To check if user have been banned, you can use <cite>HasBan</cite> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ban_status</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">HasBan</span><span class="p">(</span><span class="n">claims</span><span class="p">,</span> <span class="s1">&#39;sample-ban-type&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">ban_status</span><span class="p">:</span>
+    <span class="c1"># User have been banned</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="validate-audience">
+<h2>Validate audience<a class="headerlink" href="#validate-audience" title="Permalink to this headline">¶</a></h2>
+<p>To validate JWT claims have a valid audience, you can use <cite>ValidateAudience</cite> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iam_python_sdk.errors</span> <span class="kn">import</span> <span class="n">ValidateAudienceError</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">client</span><span class="o">.</span><span class="n">ValidateAudience</span><span class="p">(</span><span class="n">claims</span><span class="p">)</span>
+    <span class="c1"># JWT claims have valid audience</span>
+<span class="k">except</span> <span class="n">ValidateAudienceError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="c1"># JWT claims have invalid audience</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If no audience is found in the claims, <cite>ValidateAudience</cite> method will not check the audience
+and assume that the audience in JWT claims is valid [<a class="reference external" href="https://tools.ietf.org/html/rfc7519#section-4.1.3">https://tools.ietf.org/html/rfc7519#section-4.1.3</a>]</p>
+</div>
+</div>
+<div class="section" id="verify-user-info">
+<h2>Verify user info<a class="headerlink" href="#verify-user-info" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="email-status">
+<h3>Email status<a class="headerlink" href="#email-status" title="Permalink to this headline">¶</a></h3>
+<p>You can check user email verification status using <cite>UserEmailVerificationStatus</cite> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">email_verified</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">UserEmailVerificationStatus</span><span class="p">(</span><span class="n">claims</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">email_verified</span><span class="p">:</span>
+    <span class="c1"># User&#39;s email have been verified</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="phone-status">
+<h3>Phone status<a class="headerlink" href="#phone-status" title="Permalink to this headline">¶</a></h3>
+<p>You can check user phone verification status using <cite>UserPhoneVerificationStatus</cite> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">phone_verified</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">UserPhoneVerificationStatus</span><span class="p">(</span><span class="n">claims</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">phone_verified</span><span class="p">:</span>
+    <span class="c1"># User&#39;s phone have been verified</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="anonymity-status">
+<h3>Anonymity status<a class="headerlink" href="#anonymity-status" title="Permalink to this headline">¶</a></h3>
+<p>You can check user anonymity status using <cite>UserAnonymousStatus</cite> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">user_anonymous</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">UserAnonymousStatus</span><span class="p">(</span><span class="n">claims</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">user_anonymous</span><span class="p">:</span>
+    <span class="c1"># User is anonymous</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="frameworks.html" class="btn btn-neutral float-right" title="Frameworks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, AccelByte.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: 0.12.0
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../0.10.0/usage.html">0.10.0</a></dd>
+            <dd><a href="../0.10.1/usage.html">0.10.1</a></dd>
+            <dd><a href="usage.html">0.12.0</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../main/usage.html">main</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

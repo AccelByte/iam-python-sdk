@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>iam_python_sdk package &mdash; iam-python-sdk 0.10.1 documentation</title>
+  <title>iam_python_sdk package &mdash; iam-python-sdk 0.12.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'./',
-              VERSION:'0.10.1',
+              VERSION:'0.12.0',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                0.10.1
+                0.12.0
               </div>
             
           
@@ -203,7 +203,7 @@
 
 
 
-    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../0.10.1/iam_python_sdk.html"><b>Warning:</b> This document is for the development version of iam-python-sdk. The latest version is 0.10.1.</a></p>
+    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../0.12.0/iam_python_sdk.html"><b>Warning:</b> This document is for the development version of iam-python-sdk. The latest version is 0.12.0.</a></p>
 <div class="section" id="iam-python-sdk-package">
 <h1>iam_python_sdk package<a class="headerlink" href="#iam-python-sdk-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
@@ -793,9 +793,11 @@ required_permission (Union[dict, Permission]): Required permission that needed,<
 
 <dl class="method">
 <dt id="iam_python_sdk.flask.IAM.validate_token_in_request">
-<code class="descname">validate_token_in_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; typing.Union[iam_python_sdk.models.JWTClaims, NoneType]<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.validate_token_in_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.validate_token_in_request" title="Permalink to this definition">¶</a></dt>
+<code class="descname">validate_token_in_request</code><span class="sig-paren">(</span><em>validate_referer: bool</em><span class="sig-paren">)</span> &#x2192; iam_python_sdk.models.JWTClaims<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.validate_token_in_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.validate_token_in_request" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate token in the Flask request. This method support headers and cookies with based token.</p>
 <dl class="docutils">
+<dt>Args:</dt>
+<dd>validate_referer (bool): Validate referer for CSRF protection</dd>
 <dt>Raises:</dt>
 <dd>EmptyTokenError: Error if token is not found
 UnauthorizedError: Error if token permission is not sufficient</dd>
@@ -807,15 +809,30 @@ UnauthorizedError: Error if token permission is not sufficient</dd>
 </dd></dl>
 
 <dl class="function">
+<dt id="iam_python_sdk.flask.cors_options">
+<code class="descclassname">iam_python_sdk.flask.</code><code class="descname">cors_options</code><span class="sig-paren">(</span><em>headers: dict = {}</em>, <em>preflight_options: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/iam_python_sdk/flask.html#cors_options"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.cors_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for set the CORS response header. This method will override
+default app-wide CORS options if it has enabled.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>headers (dict, optional): CORS headers key and value to be added to the response. Defaults to {}.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="iam_python_sdk.flask.token_required">
-<code class="descclassname">iam_python_sdk.flask.</code><code class="descname">token_required</code><span class="sig-paren">(</span><em>required_permission: dict</em>, <em>permission_resource: dict = {}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/iam_python_sdk/flask.html#token_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.token_required" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">iam_python_sdk.flask.</code><code class="descname">token_required</code><span class="sig-paren">(</span><em>required_permission: dict</em>, <em>permission_resource: dict = {}</em>, <em>csrf_protect: bool = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/iam_python_sdk/flask.html#token_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.token_required" title="Permalink to this definition">¶</a></dt>
 <dd><p>The decorator to protect endpoint using IAM service.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">required_permission (dict): Required permission with format {&#8220;resource&#8221;: xxx, &#8220;action&#8221;: n}
 permission_resource (dict, optional): Optional permission resource if needed with format</p>
-<blockquote class="last">
+<blockquote>
 <div>{&#8220;{xxx}&#8221;: &#8220;xxx replacement&#8221;}. Defaults to {}.</div></blockquote>
+<dl class="last docutils">
+<dt>csrf_protect (bool): CSRF protection (Note: CSRF protect is available only on cookie token).</dt>
+<dd>Defaults to IAM_CSRF_PROTECTION config.</dd>
+</dl>
 </dd>
 </dl>
 </dd></dl>
@@ -1309,6 +1326,7 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
             <dt>Tags</dt>
             <dd><a href="../0.10.0/iam_python_sdk.html">0.10.0</a></dd>
             <dd><a href="../0.10.1/iam_python_sdk.html">0.10.1</a></dd>
+            <dd><a href="../0.12.0/iam_python_sdk.html">0.12.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
