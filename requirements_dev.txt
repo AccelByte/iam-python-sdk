@@ -16,3 +16,5 @@ pyjwt[crypto]==2.2.0
 crontab==0.23.0
 respx==0.18.0
 Flask>=1.0
+bitarray==2.3.4
+mmh3==3.0.0

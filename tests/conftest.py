@@ -52,6 +52,8 @@ def flask_app(request: pytest.FixtureRequest):
 
     app.register_blueprint(flask_mock)
 
+    app.register_blueprint(flask_mock)
+
     iam = IAM()
     with iam_mock:
         iam.init_app(app)

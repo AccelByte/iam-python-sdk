@@ -18,7 +18,6 @@ from typing import Any, List
 from crontab import CronTab
 from datetime import datetime
 
-from .bloom import BloomFilter
 from .utils import decode_model
 
 
@@ -151,6 +150,12 @@ class JWTClaims(Model):
     Aud: List[str] = [""]
 
 
+class BloomFilterJSON(Model):
+    K: int = 0
+    M: int = 0
+    Bits: List[int] = [0]
+
+
 class UserRevocationListRecord(Model):
     """Used to store revoked user data."""
     Id: str = ""
@@ -159,7 +164,7 @@ class UserRevocationListRecord(Model):
 
 class RevocationList(Model):
     """Contains revoked user and token."""
-    RevokedTokens: BloomFilter = BloomFilter()
+    RevokedTokens: BloomFilterJSON = BloomFilterJSON()
     RevokedUsers: List[UserRevocationListRecord] = [UserRevocationListRecord()]
 
 

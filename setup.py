@@ -10,7 +10,15 @@ with open('README.rst') as readme_file:
 with open('CHANGELOG.rst') as changelog_file:
     changelog = changelog_file.read()
 
-requirements = ['Click>=7.0', 'backoff==1.11.1', 'httpx>=1.0.0b0', 'pyjwt[crypto]==2.2.0', 'crontab==0.23.0']
+requirements = [
+    'Click>=7.0',
+    'backoff==1.11.1',
+    'httpx>=1.0.0b0',
+    'pyjwt[crypto]==2.2.0',
+    'crontab==0.23.0',
+    'bitarray==2.3.4',
+    'mmh3==3.0.0'
+]
 
 test_requirements = ['pytest>=3', 'respx==0.18.0']
 
@@ -23,7 +31,7 @@ setup(
     author_email='justice-analytics-team@accelbyte.net',
     python_requires='>=3.6',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
@@ -51,6 +59,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://accelbyte.github.io/iam-python-sdk',
-    version='0.12.0',
+    version='1.0.0',
     zip_safe=False,
 )

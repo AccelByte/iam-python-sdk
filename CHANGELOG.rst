@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.0.0 (2021-11-25)
+------------------
+
+* Add bloom filter support for token revocation.
+
 0.12.0 (2021-11-19)
 -------------------
 

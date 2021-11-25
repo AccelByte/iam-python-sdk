@@ -14,26 +14,73 @@
 
 """Bloom filter module."""
 
-from typing import List
+import mmh3, struct
 
-
-DEFAULT_FPP = 1e-05
+from bitarray import bitarray
 
 
 class BloomFilter:
     """Bloom Filer class."""
 
-    # TODO: Need to implement bloom filter as in the iam-go-sdk.
-
     def __init__(self) -> None:
         self.K: int = 0
         self.M: int = 0
-        self.Bits: List[int] = [0]
+        self.Bits: bitarray = bitarray(endian="little")
+
+    def _get_index(self, item: str, k: int, m: int) -> list:
+        """Get the index of bitarray to be set
+
+        Args:
+            item (str): String of item
+            k (int): Hash number
+            m (int): Number of bits
+
+        Returns:
+            list: Index to be set
+        """
+        indexes = []
+        h1, h2 = mmh3.hash64(item, signed=False)  # Hash the data with mmh3 algorithm
+        combined = h1 & 0xffffffffffffffff  # Convert to unsigned int 64-bit
+
+        # Get the index number to set
+        for i in range(k):
+            indexes.insert(i, (combined & 0x7fffffffffffffff) % m)
+            combined += h2
+
+        return indexes
+
+    def loads(self, bits: list, k: int, m: int):
+        """Loads bitarray from bitset go format
+
+        Args:
+            bits (list): List of unpacked bits struct
+            k (int): Hash number
+            m (int): Number of bits
+        """
+        bitset = struct.pack("Q" * len(bits), *bits)
+        self.Bits.frombytes(bitset)
+        self.K = k
+        self.M = m
 
     def insert(self, item: str) -> None:
         # TODO: Insert item to the bloom filter
         pass
 
-    def contain(self, item: str) -> bool:
-        # TODO: Check if the item is in bloom filter
-        return False
+    def contains(self, item: str) -> bool:
+        """Check of item is in a BloomFilter
+
+        Args:
+            item (str): String of item
+
+        Returns:
+            bool: Status of item in a BloomFilter
+        """
+        indexes = self._get_index(item, self.K, self.M)
+        for i in indexes:
+            # If one index is false, then the item is not in the filter
+            # because bloom filter have no false negative
+            if not self.Bits[i]:
+                return False
+        # If all indexes is true, the item might be in the filter
+        # because bloom filter can have false positive
+        return True

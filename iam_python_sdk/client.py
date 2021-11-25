@@ -28,7 +28,7 @@ from .errors import ClientTokenGrantError, GetClientInformationError, GetJWKSErr
     GetRolePermissionError, HTTPClientError, InvalidTokenSignatureKeyError, NilClaimError, NoLocalValidationError, \
     RefreshAccessTokenError, StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAccessTokenError, \
     ValidateAndParseClaimsError, ValidateAudienceError, ValidateJWTError, ValidatePermissionError, ValidateScopeError
-from .models import ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse
+from .models import BloomFilterJSON, ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse
 from .log import logger
 from .task import Task
 from .utils import parse_nanotimestamp
@@ -88,7 +88,7 @@ class DefaultClient:
         self._localValidationActive = False
         self._jwks = {}
         self._revokedUsers = {}
-        self._revocationFilter = None
+        self._revocationFilter = BloomFilter()
         self.config = config
         self.httpClient = httpClient
         self.rolePermissionCache = rolePermissionCache
@@ -138,14 +138,26 @@ class DefaultClient:
         with self._lock:
             return self._revokedUsers.get(uid)
 
-    def _set_revocation_filter(self, filer: BloomFilter) -> None:
+    def _set_revocation_filter(self, filter: BloomFilterJSON) -> None:
         """Set revocation token filter (thread-safe)
 
         Args:
-            filer (BloomFilter): Bloom filter object
+            filter (BloomFilter): Bloom filter object
         """
         with self._lock:
-            self._revocationFilter = filer
+            self._revocationFilter.loads(filter.Bits, filter.K, filter.M)
+
+    def _get_revocation_filter(self, access_token: str) -> bool:
+        """Get revocation token filter by access token (thread-safe)
+
+        Args:
+            access_token (str): Access token string
+
+        Returns:
+            bool: Access token revocation status
+        """
+        with self._lock:
+            return self._revocationFilter.contains(access_token)
 
     def _refresh_access_token(self) -> None:
         """Refresh user token"
@@ -176,6 +188,10 @@ class DefaultClient:
                     f"unable to get JWKS: error code {resp.status_code},"
                     f"error message: {resp.reason_phrase}"
                 )
+                raise GetJWKSError(
+                    f"unable to get JWKS: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
 
             jwks = jwt.PyJWKSet(resp.json().get("keys", []))
             for jwk in jwks.keys:
@@ -202,6 +218,10 @@ class DefaultClient:
 
             if not resp.is_success:
                 logger.warning(
+                    f"unable to get JWKS: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
+                raise GetRevocationListError(
                     f"unable to get JWKS: error code {resp.status_code},"
                     f"error message: {resp.reason_phrase}"
                 )
@@ -278,8 +298,7 @@ class DefaultClient:
         Returns:
             bool: Access token revoked status
         """
-        # TODO: Check if access_token maybe in revoked tokens bloom filter
-        return False
+        return self._get_revocation_filter(access_token)
 
     def _resource_allowed(self, accessPermissionResource: str, requiredPermissionResource: str) -> bool:
         """Check if user have permission to the required resource or not
@@ -385,6 +404,10 @@ class DefaultClient:
                                         )
             if not resp.is_success:
                 logger.warning(
+                    f"unable to grant client token: error code : {resp.status_code}, "
+                    f"error message : {resp.reason_phrase}"
+                )
+                raise ClientTokenGrantError(
                     f"unable to grant client token: error code : {resp.status_code}, "
                     f"error message : {resp.reason_phrase}"
                 )
