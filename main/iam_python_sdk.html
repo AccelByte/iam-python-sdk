@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>iam_python_sdk package &mdash; iam-python-sdk 0.12.0 documentation</title>
+  <title>iam_python_sdk package &mdash; iam-python-sdk 1.0.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'./',
-              VERSION:'0.12.0',
+              VERSION:'1.0.0',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                0.12.0
+                1.0.0
               </div>
             
           
@@ -203,7 +203,7 @@
 
 
 
-    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../0.12.0/iam_python_sdk.html"><b>Warning:</b> This document is for the development version of iam-python-sdk. The latest version is 0.12.0.</a></p>
+    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../1.0.0/iam_python_sdk.html"><b>Warning:</b> This document is for the development version of iam-python-sdk. The latest version is 1.0.0.</a></p>
 <div class="section" id="iam-python-sdk-package">
 <h1>iam_python_sdk package<a class="headerlink" href="#iam-python-sdk-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
@@ -218,14 +218,33 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Bloom Filer class.</p>
 <dl class="method">
-<dt id="iam_python_sdk.bloom.BloomFilter.contain">
-<code class="descname">contain</code><span class="sig-paren">(</span><em>item: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/bloom.html#BloomFilter.contain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.bloom.BloomFilter.contain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="iam_python_sdk.bloom.BloomFilter.contains">
+<code class="descname">contains</code><span class="sig-paren">(</span><em>item: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/bloom.html#BloomFilter.contains"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.bloom.BloomFilter.contains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check of item is in a BloomFilter</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>item (str): String of item</dd>
+<dt>Returns:</dt>
+<dd>bool: Status of item in a BloomFilter</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="iam_python_sdk.bloom.BloomFilter.insert">
 <code class="descname">insert</code><span class="sig-paren">(</span><em>item: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/bloom.html#BloomFilter.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.bloom.BloomFilter.insert" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.bloom.BloomFilter.loads">
+<code class="descname">loads</code><span class="sig-paren">(</span><em>bits: list</em>, <em>k: int</em>, <em>m: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/iam_python_sdk/bloom.html#BloomFilter.loads"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.bloom.BloomFilter.loads" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads bitarray from bitset go format</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>bits (list): List of unpacked bits struct
+k (int): Hash number
+m (int): Number of bits</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -845,6 +864,27 @@ permission_resource (dict, optional): Optional permission resource if needed wit
 <span id="iam-python-sdk-models-module"></span><h2>iam_python_sdk.models module<a class="headerlink" href="#module-iam_python_sdk.models" title="Permalink to this headline">¶</a></h2>
 <p>Model module.</p>
 <dl class="class">
+<dt id="iam_python_sdk.models.BloomFilterJSON">
+<em class="property">class </em><code class="descclassname">iam_python_sdk.models.</code><code class="descname">BloomFilterJSON</code><a class="reference internal" href="_modules/iam_python_sdk/models.html#BloomFilterJSON"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.models.BloomFilterJSON" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.models.Model" title="iam_python_sdk.models.Model"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.models.Model</span></code></a></p>
+<dl class="attribute">
+<dt id="iam_python_sdk.models.BloomFilterJSON.Bits">
+<code class="descname">Bits</code><em class="property"> = [0]</em><a class="headerlink" href="#iam_python_sdk.models.BloomFilterJSON.Bits" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.BloomFilterJSON.K">
+<code class="descname">K</code><em class="property"> = 0</em><a class="headerlink" href="#iam_python_sdk.models.BloomFilterJSON.K" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.BloomFilterJSON.M">
+<code class="descname">M</code><em class="property"> = 0</em><a class="headerlink" href="#iam_python_sdk.models.BloomFilterJSON.M" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="iam_python_sdk.models.ClientInformation">
 <em class="property">class </em><code class="descclassname">iam_python_sdk.models.</code><code class="descname">ClientInformation</code><a class="reference internal" href="_modules/iam_python_sdk/models.html#ClientInformation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.models.ClientInformation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.models.Model" title="iam_python_sdk.models.Model"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.models.Model</span></code></a></p>
@@ -1065,7 +1105,7 @@ permission_resource (dict, optional): Optional permission resource if needed wit
 <p>Contains revoked user and token.</p>
 <dl class="attribute">
 <dt id="iam_python_sdk.models.RevocationList.RevokedTokens">
-<code class="descname">RevokedTokens</code><em class="property"> = &lt;iam_python_sdk.bloom.BloomFilter object&gt;</em><a class="headerlink" href="#iam_python_sdk.models.RevocationList.RevokedTokens" title="Permalink to this definition">¶</a></dt>
+<code class="descname">RevokedTokens</code><em class="property"> = &lt;iam_python_sdk.models.BloomFilterJSON object&gt;</em><a class="headerlink" href="#iam_python_sdk.models.RevocationList.RevokedTokens" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1327,6 +1367,7 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
             <dd><a href="../0.10.0/iam_python_sdk.html">0.10.0</a></dd>
             <dd><a href="../0.10.1/iam_python_sdk.html">0.10.1</a></dd>
             <dd><a href="../0.12.0/iam_python_sdk.html">0.12.0</a></dd>
+            <dd><a href="../1.0.0/iam_python_sdk.html">1.0.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
