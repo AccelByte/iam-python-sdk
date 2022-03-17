@@ -66,9 +66,10 @@ class HttpClient:
         max_time=MAX_BACKOFF_TIME, on_giveup=backoff_giveup_handler
     )
     def request(self, method: str = "GET", *args, **kwargs) -> httpx.Response:
-        resp = httpx.request(method, *args, **kwargs)
-        if resp.status_code >= 500:
-            resp.raise_for_status()
+        with httpx.Client() as client:
+            resp = client.request(method, *args, **kwargs)
+            if resp.status_code >= 500:
+                resp.raise_for_status()
 
         return resp
 
