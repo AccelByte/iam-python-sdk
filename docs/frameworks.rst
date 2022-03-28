@@ -161,7 +161,7 @@ Then you can protect your endpoint with *permission_required* dependency from un
         )
     ])
     def get_protected_endpoint():
-        return return 'You have authorized access!'
+        return 'You have authorized access!'
 
 By default, *permission_required* dependency will check the access token on the Authorization header with Bearer type.
 You can customize these default configurations according to your service/apps needs:
