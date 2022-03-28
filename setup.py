@@ -20,10 +20,11 @@ requirements = [
     'mmh3==3.0.0'
 ]
 
-test_requirements = ['pytest>=3', 'respx==0.18.0']
+test_requirements = ['pytest==6.2.4', 'pytest-asyncio==0.18.2', 'respx==0.18.0']
 
 optional_requirements = {
-    "flask": ["Flask>=1.0"]
+    "flask": ["Flask>=1.0"],
+    "fastapi": ["fastapi"]
 }
 
 setup(
@@ -59,6 +60,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://accelbyte.github.io/iam-python-sdk',
-    version='1.0.0',
+    version='1.1.0',
     zip_safe=False,
 )

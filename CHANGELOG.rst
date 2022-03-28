@@ -2,6 +2,12 @@
 Changelog
 =========
 
+1.1.0 (2022-03-28)
+------------------
+
+* Add asyncio client support.
+* Add FastAPI frameworks support.
+
 1.0.0 (2021-11-25)
 ------------------
 

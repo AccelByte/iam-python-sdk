@@ -4,6 +4,14 @@ iam\_python\_sdk package
 Submodules
 ----------
 
+iam\_python\_sdk\.async\_client module
+--------------------------------------
+
+.. automodule:: iam_python_sdk.async_client
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 iam\_python\_sdk\.bloom module
 ------------------------------
 
@@ -48,6 +56,14 @@ iam\_python\_sdk\.errors module
 -------------------------------
 
 .. automodule:: iam_python_sdk.errors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+iam\_python\_sdk\.fastapi module
+--------------------------------
+
+.. automodule:: iam_python_sdk.fastapi
     :members:
     :undoc-members:
     :show-inheritance:

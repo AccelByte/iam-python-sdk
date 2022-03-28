@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""IAM Python SDK client module."""
+"""IAM Python SDK async client module."""
 
+import asyncio
+from time import time
 import backoff, httpx, json, jwt
 
 from threading import RLock
@@ -30,7 +32,7 @@ from .errors import ClientTokenGrantError, GetClientInformationError, GetJWKSErr
     ValidateAndParseClaimsError, ValidateAudienceError, ValidateJWTError, ValidatePermissionError, ValidateScopeError
 from .models import BloomFilterJSON, ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse
 from .log import logger
-from .task import Task
+from .task import AsyncTask
 from .utils import parse_nanotimestamp
 
 
@@ -55,27 +57,27 @@ def backoff_giveup_handler(backoff) -> None:
 class HttpClient:
     """HttpClient class to do http request."""
 
-    def get(self, *args, **kwargs) -> httpx.Response:
-        return self.request("GET", *args, **kwargs)
+    async def get(self, *args, **kwargs) -> httpx.Response:
+        return await self.request("GET", *args, **kwargs)
 
-    def post(self, *args, **kwargs) -> httpx.Response:
-        return self.request("POST", *args, **kwargs)
+    async def post(self, *args, **kwargs) -> httpx.Response:
+        return await self.request("POST", *args, **kwargs)
 
     @backoff.on_exception(
         backoff.expo, (httpx.HTTPStatusError, httpx.RequestError),
         max_time=MAX_BACKOFF_TIME, on_giveup=backoff_giveup_handler
     )
-    def request(self, method: str = "GET", *args, **kwargs) -> httpx.Response:
-        with httpx.Client() as client:
-            resp = client.request(method, *args, **kwargs)
+    async def request(self, method: str = "GET", *args, **kwargs) -> httpx.Response:
+        async with httpx.AsyncClient() as client:
+            resp = await client.request(method, *args, **kwargs)
             if resp.status_code >= 500:
                 resp.raise_for_status()
 
         return resp
 
 
-class DefaultClient:
-    """Default Client class."""
+class AsyncClient:
+    """Async Client class."""
 
     def __init__(self, config: Config,
                  rolePermissionCache: Cache,
@@ -83,7 +85,7 @@ class DefaultClient:
                  httpClient: HttpClient
                  ) -> None:
         self._lock = RLock()
-        self._threads = {}
+        self._tasks = {}
         self._clientAccessToken = ""
         self._tokenRefreshActive = False
         self._localValidationActive = False
@@ -160,19 +162,19 @@ class DefaultClient:
         with self._lock:
             return self._revocationFilter.contains(access_token)
 
-    def _refresh_access_token(self) -> None:
+    async def _refresh_access_token(self) -> None:
         """Refresh user token"
 
         Raises:
             RefreshAccessTokenError: exception failed to refresh token
         """
         try:
-            self.ClientTokenGrant()
+            await self.ClientTokenGrant()
             logger.info("client token refreshed")
         except ClientTokenGrantError as e:
             raise RefreshAccessTokenError("unable to refresh token") from e
 
-    def _get_jwks(self) -> None:
+    async def _get_jwks(self) -> None:
         """Get JWKS data
 
         Raises:
@@ -181,9 +183,9 @@ class DefaultClient:
             GetJWKSError: unexpected error
         """
         try:
-            resp = self.httpClient.get(self.config.BaseURL + JWKS_PATH,
-                                       auth=(self.config.ClientID, self.config.ClientSecret)
-                                       )
+            resp = await self.httpClient.get(self.config.BaseURL + JWKS_PATH,
+                                             auth=(self.config.ClientID, self.config.ClientSecret)
+                                             )
             if not resp.is_success:
                 logger.warning(
                     f"unable to get JWKS: error code {resp.status_code},"
@@ -205,7 +207,7 @@ class DefaultClient:
         except HTTPClientError as e:
             raise GetJWKSError(f"{e.message}") from e
 
-    def _get_revocation_list(self) -> None:
+    async def _get_revocation_list(self) -> None:
         """Get user and token revocation list
 
         Raises:
@@ -213,9 +215,9 @@ class DefaultClient:
             GetRevocationListError: unexpected error
         """
         try:
-            resp = self.httpClient.get(self.config.BaseURL + REVOCATION_LIST_PATH,
-                                       auth=(self.config.ClientID, self.config.ClientSecret)
-                                       )
+            resp = await self.httpClient.get(self.config.BaseURL + REVOCATION_LIST_PATH,
+                                             auth=(self.config.ClientID, self.config.ClientSecret)
+                                             )
 
             if not resp.is_success:
                 logger.warning(
@@ -391,7 +393,7 @@ class DefaultClient:
 
         return grantedPermissions
 
-    def ClientTokenGrant(self) -> None:
+    async def ClientTokenGrant(self) -> None:
         """Starts client token grant to get client bearer token for role caching
 
         Raises:
@@ -399,10 +401,10 @@ class DefaultClient:
             ClientTokenGrantError: exceptions http request error
         """
         try:
-            resp = self.httpClient.post(self.config.BaseURL + GRANT_PATH,
-                                        data={'grant_type': 'client_credentials'},
-                                        auth=(self.config.ClientID, self.config.ClientSecret)
-                                        )
+            resp = await self.httpClient.post(self.config.BaseURL + GRANT_PATH,
+                                              data={'grant_type': 'client_credentials'},
+                                              auth=(self.config.ClientID, self.config.ClientSecret)
+                                              )
             if not resp.is_success:
                 logger.warning(
                     f"unable to grant client token: error code : {resp.status_code}, "
@@ -419,7 +421,8 @@ class DefaultClient:
 
             if not self._tokenRefreshActive:
                 self._tokenRefreshActive = True
-                self._threads["refresh_token"] = Task(
+
+                self._tasks["refresh_token"] = AsyncTask(
                     token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE,
                     self._refresh_access_token
                 )
@@ -429,7 +432,7 @@ class DefaultClient:
         except HTTPClientError as e:
             raise ClientTokenGrantError(f"{e.message}") from e
 
-    def ClientToken(self) -> str:
+    async def ClientToken(self) -> str:
         """Returns client access token
 
         Returns:
@@ -437,19 +440,19 @@ class DefaultClient:
         """
         return self._clientAccessToken
 
-    def StartLocalValidation(self) -> None:
+    async def StartLocalValidation(self) -> None:
         """Starts thread to refresh JWK and revocation list periodically this enables local token validation"""
         try:
-            self._get_jwks()
-            self._get_revocation_list()
+            await self._get_jwks()
+            await self._get_revocation_list()
 
             if not self._localValidationActive:
                 self._localValidationActive = True
-                self._threads["refresh_jwks"] = Task(
+                self._tasks["refresh_jwks"] = AsyncTask(
                     DEFAULT_JWKS_REFRESH_INTERVAL,
                     self._get_jwks
                 )
-                self._threads["refresh_revocation"] = Task(
+                self._tasks["refresh_revocation"] = AsyncTask(
                     DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL,
                     self._get_revocation_list
                 )
@@ -459,7 +462,7 @@ class DefaultClient:
         except GetRevocationListError as e:
             raise StartLocalValidationError("unable to get revocation list") from e
 
-    def ValidateAccessToken(self, accessToken: str) -> bool:
+    async def ValidateAccessToken(self, accessToken: str) -> bool:
         """Validates access token by calling IAM service
 
         Args:
@@ -473,15 +476,15 @@ class DefaultClient:
             bool: access token validity status
         """
         try:
-            resp = self.httpClient.post(self.config.BaseURL + VERIFY_PATH,
-                                        data={'token': accessToken},
-                                        auth=(self.config.ClientID, self.config.ClientSecret)
-                                        )
+            resp = await self.httpClient.post(self.config.BaseURL + VERIFY_PATH,
+                                              data={'token': accessToken},
+                                              auth=(self.config.ClientID, self.config.ClientSecret)
+                                              )
             if resp.status_code == 401:
                 logger.warning("unauthorized")
                 # Refresh Token
-                self._refresh_access_token()
-                return self.ValidateAccessToken(accessToken)
+                await self._refresh_access_token()
+                return await self.ValidateAccessToken(accessToken)
 
             elif not resp.is_success:
                 logger.warning(
@@ -498,7 +501,7 @@ class DefaultClient:
         except HTTPClientError as e:
             raise ValidateAccessTokenError(f"{e.message}") from e
 
-    def ValidateAndParseClaims(self, accessToken: str) -> Union[JWTClaims, None]:
+    async def ValidateAndParseClaims(self, accessToken: str) -> Union[JWTClaims, None]:
         """Validates access token locally and returns the JWT claims contained in the token
 
         Args:
@@ -524,8 +527,8 @@ class DefaultClient:
 
         return jwt_claims
 
-    def ValidatePermission(self, claims: Union[JWTClaims, None], requiredPermission: Permission,
-                           permissionResources: Dict[str, str]) -> bool:
+    async def ValidatePermission(self, claims: Union[JWTClaims, None], requiredPermission: Permission,
+                                 permissionResources: Dict[str, str]) -> bool:
         """Validates if an access token has right for a specific permission
 
         Args:
@@ -552,7 +555,7 @@ class DefaultClient:
         for namespace_role in namespace_roles:
             granted_role_permissions = []
             try:
-                granted_role_permissions = self.GetRolePermissions(namespace_role.Roleid)
+                granted_role_permissions = await self.GetRolePermissions(namespace_role.Roleid)
                 granted_role_permissions = self._apply_user_permission_resource_values(
                     granted_role_permissions, claims, namespace_role.Namespace
                 )
@@ -568,7 +571,7 @@ class DefaultClient:
         for role_id in roles:
             granted_role_permissions = []
             try:
-                granted_role_permissions = self.GetRolePermissions(role_id)
+                granted_role_permissions = await self.GetRolePermissions(role_id)
                 granted_role_permissions = self._apply_user_permission_resource_values(
                     granted_role_permissions, claims, ""
                 )
@@ -582,7 +585,7 @@ class DefaultClient:
         logger.info("permission not allowed to access resource")
         return False
 
-    def ValidateRole(self, requiredRoleID: str, claims: Union[JWTClaims, None]) -> bool:
+    async def ValidateRole(self, requiredRoleID: str, claims: Union[JWTClaims, None]) -> bool:
         """Validates if an access token has a specific role
 
         Args:
@@ -602,7 +605,7 @@ class DefaultClient:
         logger.warning("role not allowed to access resource")
         return False
 
-    def UserPhoneVerificationStatus(self, claims: Union[JWTClaims, None]) -> bool:
+    async def UserPhoneVerificationStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user phone verification status on access token
 
         Args:
@@ -619,7 +622,7 @@ class DefaultClient:
 
         return phone_verified_status
 
-    def UserEmailVerificationStatus(self, claims: Union[JWTClaims, None]) -> bool:
+    async def UserEmailVerificationStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user email verification status on access token
 
         Args:
@@ -636,7 +639,7 @@ class DefaultClient:
 
         return email_verification_status
 
-    def UserAnonymousStatus(self, claims: Union[JWTClaims, None]) -> bool:
+    async def UserAnonymousStatus(self, claims: Union[JWTClaims, None]) -> bool:
         """Gets user anonymous status on access token
 
         Args:
@@ -653,7 +656,7 @@ class DefaultClient:
 
         return user_anonymous_status
 
-    def HasBan(self, claims: Union[JWTClaims, None], banType: str) -> bool:
+    async def HasBan(self, claims: Union[JWTClaims, None], banType: str) -> bool:
         """Validates if certain ban exist
 
         Args:
@@ -675,16 +678,16 @@ class DefaultClient:
         logger.info("user not banned")
         return False
 
-    def HealthCheck(self) -> bool:
+    async def HealthCheck(self) -> bool:
         """Lets caller know the health of the IAM client
 
         Returns:
             bool: health status
         """
         with self._lock:
-            refresh_token = self._threads.get("refresh_token")
-            refresh_jwks = self._threads.get("refresh_jwks")
-            refresh_revocation = self._threads.get("refresh_revocation")
+            refresh_token = self._tasks.get("refresh_token")
+            refresh_jwks = self._tasks.get("refresh_jwks")
+            refresh_revocation = self._tasks.get("refresh_revocation")
 
         if not refresh_token or not refresh_jwks or not refresh_revocation:
             logger.warning("refresh token, jwks or revocation list background thread not started")
@@ -709,7 +712,7 @@ class DefaultClient:
 
         return True
 
-    def ValidateAudience(self, claims: Union[JWTClaims, None]) -> None:
+    async def ValidateAudience(self, claims: Union[JWTClaims, None]) -> None:
         """Validate audience of user access token
 
         Args:
@@ -725,7 +728,7 @@ class DefaultClient:
             return None
 
         try:
-            client_info = self.GetClientInformation(claims.Namespace, self.config.ClientID)
+            client_info = await self.GetClientInformation(claims.Namespace, self.config.ClientID)
             if claims.Aud and getattr(client_info, "Baseuri") not in claims.Aud:
                 raise ValidateAudienceError("audience is not valid")
 
@@ -735,7 +738,7 @@ class DefaultClient:
         except GetClientInformationError as e:
             raise ValidateAudienceError("get client detail returns error") from e
 
-    def ValidateScope(self, claims: Union[JWTClaims, None], reqScope: str) -> None:
+    async def ValidateScope(self, claims: Union[JWTClaims, None], reqScope: str) -> None:
         """Validate scope of user access token
 
         Args:
@@ -751,7 +754,7 @@ class DefaultClient:
 
         logger.info("scope valid")
 
-    def GetRolePermissions(self, roleID: str) -> List[Permission]:
+    async def GetRolePermissions(self, roleID: str) -> List[Permission]:
         """Get permssions of a role
 
         Args:
@@ -772,14 +775,14 @@ class DefaultClient:
                 return role_permissions
 
             # Get permissions
-            resp = self.httpClient.get(self.config.BaseURL + GET_ROLE_PATH + "/" + roleID,
-                                       headers={"Authorization": f"Bearer {self._clientAccessToken}"}
-                                       )
+            resp = await self.httpClient.get(self.config.BaseURL + GET_ROLE_PATH + "/" + roleID,
+                                             headers={"Authorization": f"Bearer {self._clientAccessToken}"}
+                                             )
             if resp.status_code == 401:
                 logger.warning("unauthorized")
                 # Refresh Token
-                self._refresh_access_token()
-                return self.GetRolePermissions(roleID)
+                await self._refresh_access_token()
+                return await self.GetRolePermissions(roleID)
             elif resp.status_code == 403:
                 logger.warning("forbidden")
                 return []
@@ -803,7 +806,7 @@ class DefaultClient:
         except HTTPClientError as e:
             raise GetRolePermissionError(f"{e.message}") from e
 
-    def GetClientInformation(self, namespace: str, clientID: str) -> Union[ClientInformation, None]:
+    async def GetClientInformation(self, namespace: str, clientID: str) -> Union[ClientInformation, None]:
         """Gets IAM client information, it will look into cache first, if not found then fetch it to IAM.
 
         Args:
@@ -820,14 +823,14 @@ class DefaultClient:
 
         # Get client informations
         try:
-            resp = self.httpClient.get(self.config.BaseURL + CLIENT_INFORMATION_PATH % (namespace, clientID),
-                                       headers={"Authorization": f"Bearer {self._clientAccessToken}"}
-                                       )
+            resp = await self.httpClient.get(self.config.BaseURL + CLIENT_INFORMATION_PATH % (namespace, clientID),
+                                             headers={"Authorization": f"Bearer {self._clientAccessToken}"}
+                                             )
             if resp.status_code == 401:
                 logger.warning("unauthorized")
                 # Refresh Token
-                self._refresh_access_token()
-                return self.GetClientInformation(namespace, clientID)
+                await self._refresh_access_token()
+                return await self.GetClientInformation(namespace, clientID)
             elif not resp.is_success:
                 logger.warning(
                     f"unable to get client information: error code {resp.status_code},"
@@ -847,7 +850,7 @@ class DefaultClient:
             raise GetClientInformationError(f"{e.message}") from e
 
 
-class NewDefaultClient(DefaultClient):
+class NewAsyncClient(AsyncClient):
     def __init__(self, config: Config) -> None:
         self.config = config
         self.httpClient = HttpClient()

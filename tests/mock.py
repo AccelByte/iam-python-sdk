@@ -14,7 +14,7 @@
 
 """Mock module."""
 
-import httpx, flask, json, jwt, respx, secrets, time
+import httpx, fastapi, flask, json, jwt, respx, secrets, time
 
 from cryptography.hazmat.primitives.asymmetric import rsa
 from jwt.algorithms import RSAAlgorithm
@@ -29,6 +29,7 @@ from iam_python_sdk.config import (
     VERIFY_PATH,
 )
 from iam_python_sdk.flask import token_required, cors_options
+from iam_python_sdk.fastapi import permission_required as fastapi_permission_required
 
 iam_base_url = "https://api.mock/iam"
 
@@ -213,3 +214,27 @@ def protected_with_csrf():
 @cors_options({"Access-Control-Allow-Headers": ["Device-Id", "Device-Os", "Device-Type"]})
 def protected_with_cors():
     return flask.jsonify({'status': 'protected'})
+
+
+# FastAPI mock
+fastapi_mock = fastapi.APIRouter()
+
+
+@fastapi_mock.get('/')
+def fastapi_unprotected():
+    return fastapi.responses.JSONResponse(content={'status': 'unprotected'})
+
+
+@fastapi_mock.get('/protected', dependencies=[fastapi.Depends(fastapi_permission_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"}, False))])
+def fastapi_protected():
+    return fastapi.responses.JSONResponse(content={'status': 'protected'})
+
+
+@fastapi_mock.get('/protected_with_csrf', dependencies=[fastapi.Depends(fastapi_permission_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"}))])
+def fastapi_protected_with_csrf():
+    return fastapi.responses.JSONResponse(content={'status': 'protected'})
+
+
+@fastapi_mock.post('/protected_with_cors')
+def fastapi_protected_with_cors():
+    return fastapi.responses.JSONResponse(content={'status': 'protected'})

@@ -119,3 +119,98 @@ You can also set the default CORS headers for all endpoints with Flask applicati
 
 .. note::
     These default configs will be overridden by the decorator *cors_options* for specific endpoints.
+
+
+FastAPI
+=======
+
+Usage
+-----
+
+To use iam-python-sdk on FastAPI frameworks, you have to init the iam-python-sdk when FastAPI app started:
+
+.. code-block:: python
+
+    from fastapi import FastAPI
+    from iam_python_sdk.fastapi import IAM, Settings
+
+    app = FastAPI()
+
+    @app.on_event("startup")
+    async def startup_event():
+        config = Settings(
+            iam_base_url="<Base IAM URL>",
+            iam_client_id="<Client ID>",
+            iam_client_secret="<Client Secret>",
+        )
+        app.state.iam = IAM(app, config)
+
+Then you can protect your endpoint with *permission_required* dependency from unauthorized access:
+
+.. code-block:: python
+
+    from iam-python-sdk.fastapi import permission_required
+
+    @app.get('/protected', dependencies=[
+        Depends(
+            permission_required(
+                {"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2},
+                {"{namespace}": "sdktest"},
+                csrf_protect=True
+            )
+        )
+    ])
+    def get_protected_endpoint():
+        return 'You have authorized access!'
+
+By default, *permission_required* dependency will check the access token on the Authorization header with Bearer type.
+You can customize these default configurations according to your service/apps needs:
+
+.. code-block:: python
+
+    settings.iam_base_url = ""
+    settings.iam_client_id = ""
+    settings.iam_client_secret = ""
+    settings.iam_token_locations = ["headers", "cookies"]
+    settings.iam_token_header_name = "Authorization"
+    settings.iam_token_header_type = "Bearer"
+    settings.iam_token_cookie_name = "access_token"
+    settings.iam_token_cookie_path = "/"
+    settings.iam_csrf_protection = True
+    settings.iam_strict_referer = True
+
+.. note::
+    This module has been tested with FastAPI default uvicorn server for development.
+    For production use, this module has been tested with *Gunicorn*.
+    You can use Gunicorn with ``uvicorn.workers.UvicornWorker`` class worker.
+    
+    For more information about FastAPI deployment, please read more information `here <https://fastapi.tiangolo.com/deployment/server-workers/>`_
+
+CORS Middleware
+---------------
+
+This module support CORS middleware to set CORS header response. You can set the CORS headers with these settings.
+
+.. code-block:: python
+
+    settings.iam_cors_enable = False
+    settings.iam_cors_origin = "*"
+    settings.iam_cors_headers = "*"
+    settings.iam_cors_methods = "*"
+    settings.iam_cors_credentials = True
+
+The sample response of this endpoint would be like:
+
+.. code-block:: console
+
+    HTTP/1.1 200 OK
+    Date: Fri, 12 Nov 2021 01:15:39 GMT
+    Server: Nginx
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Methods: GET, POST, OPTIONS
+    Access-Control-Allow-Headers: Device-Id, Device-Os, Device-Type
+    Access-Control-Allow-Credentials: true
+    .......
+
+.. note::
+    You can read more about CORS specification `here <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS>`_

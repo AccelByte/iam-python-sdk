@@ -15,13 +15,16 @@
 """Conftest module."""
 
 
-import flask, pytest
+import flask, fastapi, pytest
 
 from iam_python_sdk.client import NewDefaultClient
+from iam_python_sdk.async_client import NewAsyncClient
 from iam_python_sdk.config import Config
 from iam_python_sdk.flask import IAM
+from iam_python_sdk.fastapi import IAM as FastAPI_IAM
+from iam_python_sdk.fastapi import Settings
 
-from .mock import client_id, client_secret, iam_base_url, iam_mock, flask_mock
+from .mock import client_id, client_secret, iam_base_url, iam_mock, flask_mock, fastapi_mock
 
 
 @pytest.fixture
@@ -50,12 +53,42 @@ def flask_app(request: pytest.FixtureRequest):
 
     app.register_blueprint(flask_mock)
 
-    app.register_blueprint(flask_mock)
-
-    app.register_blueprint(flask_mock)
-
     iam = IAM()
     with iam_mock:
         iam.init_app(app)
+
+    return app
+
+
+@pytest.fixture
+def async_iam_client():
+    cfg = Config(
+        BaseURL=iam_base_url,
+        ClientID=client_id,
+        ClientSecret=client_secret,
+    )
+    client = NewAsyncClient(cfg)
+
+    return client
+
+
+@pytest.fixture
+def fastapi_app():
+    config = Settings(
+        iam_base_url=iam_base_url,  # type: ignore
+        iam_client_id=client_id,  # type: ignore
+        iam_client_secret=client_secret,  # type: ignore
+        iam_cors_enable=True,  # type: ignore
+        iam_cors_headers="Device-Id,Device-Os,Device-Type"  # type: ignore
+    )
+
+    app = fastapi.FastAPI()
+
+    # Grant token on FastAPI startup
+    @app.on_event("startup")
+    async def startup_event():
+        app.state.iam = FastAPI_IAM(app, config)
+
+    app.include_router(fastapi_mock)
 
     return app
