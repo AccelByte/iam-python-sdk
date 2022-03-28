@@ -18,6 +18,7 @@
 import flask, pytest
 
 from iam_python_sdk.client import NewDefaultClient
+from iam_python_sdk.async_client import NewAsyncClient
 from iam_python_sdk.config import Config
 from iam_python_sdk.flask import IAM
 
@@ -55,3 +56,17 @@ def flask_app(request: pytest.FixtureRequest):
         iam.init_app(app)
 
     return app
+
+
+@pytest.fixture
+def async_iam_client():
+    cfg = Config(
+        BaseURL=iam_base_url,
+        ClientID=client_id,
+        ClientSecret=client_secret,
+    )
+    client = NewAsyncClient(cfg)
+
+    return client
+
+

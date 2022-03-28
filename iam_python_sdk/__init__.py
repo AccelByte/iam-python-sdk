@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from iam_python_sdk.client import NewDefaultClient
+from iam_python_sdk.async_client import NewAsyncClient
 from iam_python_sdk.config import Config
 
 __author__ = """Analytics AccelByte"""
@@ -20,5 +21,6 @@ __email__ = 'justice-analytics-team@accelbyte.net'
 __version__ = '1.0.0'
 __all__ = [
     'NewDefaultClient',
+    'NewAsyncClient',
     'Config'
 ]

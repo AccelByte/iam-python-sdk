@@ -4,6 +4,14 @@ iam\_python\_sdk package
 Submodules
 ----------
 
+iam\_python\_sdk\.async\_client module
+--------------------------------------
+
+.. automodule:: iam_python_sdk.async_client
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 iam\_python\_sdk\.bloom module
 ------------------------------
 

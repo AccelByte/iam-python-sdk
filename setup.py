@@ -20,7 +20,7 @@ requirements = [
     'mmh3==3.0.0'
 ]
 
-test_requirements = ['pytest>=3', 'respx==0.18.0']
+test_requirements = ['pytest==6.2.4', 'pytest-asyncio==0.18.2', 'respx==0.18.0']
 
 optional_requirements = {
     "flask": ["Flask>=1.0"]
