@@ -141,7 +141,13 @@ async def validate_referer_header(request: Request, jwt_claims: JWTClaims) -> bo
     Returns:
         bool: Is referrer header valid
     """
-    iam = request.app.state.iam
+    try:
+        iam = request.app.state.iam
+    except AttributeError:
+        raise RuntimeError(
+            "You must initialize a IAM with on fastapi "
+            "startup event before using this method"
+        )
 
     try:
         client_info = await iam.client.GetClientInformation(jwt_claims.Namespace, jwt_claims.ClientId)
@@ -183,7 +189,14 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
         bearer: Optional[HTTPAuthorizationCredentials] = Security(HTTPBearer(auto_error=False)),
         cookie: Optional[str] = Security(APIKeyCookie(name="access_token", auto_error=False)),
     ) -> JWTClaims:
-        iam = request.app.state.iam
+        try:
+            iam = request.app.state.iam
+        except AttributeError:
+            raise RuntimeError(
+                "You must initialize a IAM with on fastapi "
+                "startup event before using this method"
+            )
+
         access_token = ""
         token_location = iam.config.iam_token_locations
         for location in token_location:
@@ -240,7 +253,13 @@ def permission_required(
         Callable: _description_
     """
     async def _dependency(request: Request, jwt_claims: JWTClaims = Depends(token_required(csrf_protect))) -> JWTClaims:
-        iam = request.app.state.iam
+        try:
+            iam = request.app.state.iam
+        except AttributeError:
+            raise RuntimeError(
+                "You must initialize a IAM with on fastapi "
+                "startup event before using this method"
+            )
 
         permission_required = None
         if isinstance(required_permission, dict):
