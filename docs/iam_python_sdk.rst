@@ -60,6 +60,14 @@ iam\_python\_sdk\.errors module
     :undoc-members:
     :show-inheritance:
 
+iam\_python\_sdk\.fastapi module
+--------------------------------
+
+.. automodule:: iam_python_sdk.fastapi
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 iam\_python\_sdk\.flask module
 ------------------------------
 

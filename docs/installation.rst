@@ -42,6 +42,14 @@ To install iam-python-sdk with *Flask* frameworks support, run this command in y
 
 This will install flask frameworks with the latest stable version.
 
+To install iam-python-sdk with *FastAPI* frameworks support, run this command in your terminal:
+
+.. code-block:: console
+
+    $ pip install 'iam-python-sdk[fastapi]'
+
+This will install fastapi frameworks with the latest stable version.
+
 
 From sources
 ------------

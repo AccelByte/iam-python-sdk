@@ -23,7 +23,8 @@ requirements = [
 test_requirements = ['pytest==6.2.4', 'pytest-asyncio==0.18.2', 'respx==0.18.0']
 
 optional_requirements = {
-    "flask": ["Flask>=1.0"]
+    "flask": ["Flask>=1.0"],
+    "fastapi": ["fastapi==0.75.0"]
 }
 
 setup(
