@@ -31,12 +31,12 @@ from .models import JWTClaims, Permission
 class IAM:
     """IAM Flask extensions class.
     """
-    def __init__(self, app: Flask = None) -> None:
+    def __init__(self, app: Union[Flask, None] = None) -> None:
         self.app = app
         if app is not None:
             self.init_app(app)
 
-    def init_app(self, app: Flask):
+    def init_app(self, app: Flask) -> None:
         """Init IAM flask extensions with Flask app.
         Client token grant and local validation will be executed once here,
         then the background thread will spawn to refresh token, jwks and revocation list.
@@ -55,7 +55,7 @@ class IAM:
         self._set_default_config(app)
         self._set_default_errors(app)
 
-        self.client = self._grant_token(app)
+        self.client = self.grant_token(app)
 
         if not hasattr(app, "extensions"):
             app.extensions = {}
@@ -92,7 +92,7 @@ class IAM:
         allowed_origin = current_app.config.get("IAM_CORS_ORIGIN")
         allowed_headers = current_app.config.get("IAM_CORS_HEADERS")
         allow_credentials = str(current_app.config.get("IAM_CORS_CREDENTIALS")).lower()
-        allowed_methods = list(request.url_rule.methods) if request.url_rule \
+        allowed_methods = list(request.url_rule.methods or ()) if request.url_rule \
             else current_app.config.get("IAM_CORS_METHODS")
 
         if isinstance(allowed_methods, list):
@@ -107,7 +107,7 @@ class IAM:
 
         return response
 
-    def _grant_token(self, app: Flask) -> DefaultClient:
+    def grant_token(self, app: Flask) -> DefaultClient:
         config = Config(
             BaseURL=app.config["IAM_BASE_URL"],
             ClientID=app.config["IAM_CLIENT_ID"],
@@ -124,7 +124,7 @@ class IAM:
 
         return client
 
-    def _validate_referer_header(self, jwt_claims: JWTClaims) -> bool:
+    def validate_referer_header(self, jwt_claims: JWTClaims) -> bool:
         try:
             client_info = self.client.GetClientInformation(jwt_claims.Namespace, jwt_claims.ClientId)
         except GetClientInformationError:
@@ -160,7 +160,7 @@ class IAM:
             JWTClaims: JWT claims data
         """
         access_token = ""
-        token_location = current_app.config.get("IAM_TOKEN_LOCATIONS")
+        token_location = current_app.config.get("IAM_TOKEN_LOCATIONS", [])
         for location in token_location:
             # Get token from headers
             if location == "headers":
@@ -197,7 +197,7 @@ class IAM:
 
         # Validate referer header for cookie token
         if access_token[1] == "cookie" and validate_referer:
-            if self._validate_referer_header(jwt_claims) is not True:
+            if self.validate_referer_header(jwt_claims) is not True:
                 raise UnauthorizedError("Invalid referer header")
 
         return jwt_claims
@@ -225,13 +225,13 @@ class IAM:
             required_permission = Permission.loads(required_permission)
 
         if not isinstance(required_permission, Permission):
-            raise UnauthorizedError
+            raise UnauthorizedError("Permision Invalid")
 
         return self.client.ValidatePermission(jwt_claims, required_permission, permission_resource)
 
 
-def token_required(required_permission: dict, permission_resource: dict = {},
-                   csrf_protect: bool = None):
+def permission_required(required_permission: dict, permission_resource: dict = {},
+                        csrf_protect: Union[bool, None] = None):
     """The decorator to protect endpoint using IAM service.
 
     Args:

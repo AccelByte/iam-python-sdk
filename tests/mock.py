@@ -28,7 +28,9 @@ from iam_python_sdk.config import (
     REVOCATION_LIST_PATH,
     VERIFY_PATH,
 )
-from iam_python_sdk.flask import token_required, cors_options
+
+from iam_python_sdk.flask import permission_required as flask_permission_required
+from iam_python_sdk.flask import cors_options as flask_cors_options
 from iam_python_sdk.fastapi import permission_required as fastapi_permission_required
 
 iam_base_url = "https://api.mock/iam"
@@ -193,26 +195,26 @@ flask_mock = flask.Blueprint("flask_mock", __name__)
 
 
 @flask_mock.route('/')
-def unprotected():
+def flask_unprotected():
     return flask.jsonify({'status': 'unprotected'})
 
 
 @flask_mock.route('/protected')
-@token_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"}, False)
-def protected():
+@flask_permission_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"}, False)
+def flask_protected():
     return flask.jsonify({'status': 'protected'})
 
 
 @flask_mock.route('/protected_with_csrf')
-@token_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
-def protected_with_csrf():
+@flask_permission_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
+def flask_protected_with_csrf():
     return flask.jsonify({'status': 'protected'})
 
 
 @flask_mock.route('/protected_with_cors', methods=["POST"])
-@token_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
-@cors_options({"Access-Control-Allow-Headers": ["Device-Id", "Device-Os", "Device-Type"]})
-def protected_with_cors():
+@flask_permission_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
+@flask_cors_options({"Access-Control-Allow-Headers": ["Device-Id", "Device-Os", "Device-Type"]})
+def flask_protected_with_cors():
     return flask.jsonify({'status': 'protected'})
 
 
