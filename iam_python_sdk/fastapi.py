@@ -14,7 +14,7 @@
 
 """FastAPI module."""
 from pydantic import BaseSettings
-from typing import Callable, List, Optional, Union
+from typing import Callable, Optional, Union
 from urllib.parse import urlparse
 
 from fastapi import Depends, FastAPI, Request, Security
