@@ -252,7 +252,7 @@ def permission_required(
     Returns:
         Callable: _description_
     """
-    async def _dependency(request: Request, jwt_claims: JWTClaims = Depends(token_required(csrf_protect))) -> JWTClaims:
+    async def _dependency(request: Request, jwt_claims: JWTClaims = Depends(token_required(csrf_protect))) -> None:
         try:
             iam = request.app.state.iam
         except AttributeError:
@@ -274,7 +274,5 @@ def permission_required(
 
         if not is_permitted:
             raise UnauthorizedError("Token do not have required permissions")
-
-        return jwt_claims
 
     return _dependency
