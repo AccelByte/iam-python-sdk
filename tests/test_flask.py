@@ -51,14 +51,14 @@ def test_protected_endpoint(flask_app: Flask) -> None:
         assert resp.status_code == 401
         # Invalid headers token
         resp = c.get('/protected', headers={"Authorization": "Bearer invalid_token"})
-        assert resp.status_code == 403
+        assert resp.status_code == 401
         # Valid headers token
         resp = c.get('/protected', headers={"Authorization": f"Bearer {client_token['access_token']}"})
         assert resp.status_code == 200
         # Invalid cookies token
         c.set_cookie("localhost", "access_token", "invalid_token")
         resp = c.get('/protected')
-        assert resp.status_code == 403
+        assert resp.status_code == 401
         # Valid cookies token
         c.set_cookie("localhost", "access_token", client_token['access_token'])
         resp = c.get('/protected')
@@ -74,7 +74,7 @@ def test_protected_with_csrf_endpoint(flask_app: Flask) -> None:
         assert resp.status_code == 200
         # Invalid referer header
         resp = c.get('/protected_with_csrf', headers={"Referer": "http://foo.bar"})
-        assert resp.status_code == 403
+        assert resp.status_code == 401
 
 
 @iam_mock
