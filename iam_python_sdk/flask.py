@@ -139,7 +139,6 @@ class IAM:
             BaseURL=app.config["IAM_BASE_URL"],
             ClientID=app.config["IAM_CLIENT_ID"],
             ClientSecret=app.config["IAM_CLIENT_SECRET"],
-            Debug=True,
         )
         client = NewDefaultClient(config)
 
