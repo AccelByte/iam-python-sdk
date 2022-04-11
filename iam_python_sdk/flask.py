@@ -15,28 +15,43 @@
 """Flask module."""
 
 from functools import wraps
-from typing import Union
-from flask import current_app, jsonify, Flask, request
+from typing import Optional, Union
+from flask import current_app, Flask, request
 from flask.helpers import make_response
 from flask.wrappers import Response
 from urllib.parse import urlparse
+from werkzeug.exceptions import HTTPException
 
 from .config import Config
 from .client import DefaultClient, NewDefaultClient
-from .errors import ClientTokenGrantError, EmptyTokenError, GetClientInformationError, StartLocalValidationError, \
-    TokenRevokedError, UnauthorizedError, UserRevokedError, ValidateAndParseClaimsError
+from .errors import Error as IAMError, ClientTokenGrantError, GetClientInformationError, StartLocalValidationError, \
+    TokenRevokedError, UserRevokedError, ValidateAndParseClaimsError, ValidatePermissionError
+from .http_errors import InsufficientPermissions, InternalServerError, InvalidRefererHeader, UnauthorizedAccess
 from .models import JWTClaims, Permission
+
+
+# ---------- Exceptions ---------- #
+
+class HTTPError(HTTPException):
+    def __init__(self, http_code: int, error_code: int, message: str, description: Optional[str] = None) -> None:
+        super().__init__(description)
+        self.code = http_code
+        self.error_code = error_code
+        self.message = message
+        self.description = description
+
+# ---------- Extensions ---------- #
 
 
 class IAM:
     """IAM Flask extensions class.
     """
-    def __init__(self, app: Flask = None) -> None:
+    def __init__(self, app: Union[Flask, None] = None) -> None:
         self.app = app
         if app is not None:
             self.init_app(app)
 
-    def init_app(self, app: Flask):
+    def init_app(self, app: Flask) -> None:
         """Init IAM flask extensions with Flask app.
         Client token grant and local validation will be executed once here,
         then the background thread will spawn to refresh token, jwks and revocation list.
@@ -45,17 +60,17 @@ class IAM:
             app (Flask): Flask app instance
 
         Raises:
-            ValueError: Error if the requirement configs are not set
+            IAMError: Error if the requirement configs are not set
         """
         if not (
             app.config.get("IAM_BASE_URL") and app.config.get("IAM_CLIENT_ID") and app.config.get("IAM_CLIENT_SECRET")
         ):
-            raise ValueError("IAM_BASE_URL, IAM_CLIENT_ID, IAM_CLIENT_SECRET need to set.")
+            raise IAMError("IAM_BASE_URL, IAM_CLIENT_ID, IAM_CLIENT_SECRET need to set.")
 
         self._set_default_config(app)
         self._set_default_errors(app)
 
-        self.client = self._grant_token(app)
+        self.client = self.grant_token(app)
 
         if not hasattr(app, "extensions"):
             app.extensions = {}
@@ -80,19 +95,20 @@ class IAM:
         app.config.setdefault("IAM_CORS_CREDENTIALS", True)
 
     def _set_default_errors(self, app: Flask) -> None:
-        @app.errorhandler(EmptyTokenError)
-        def handle_token_not_found(error):
-            return jsonify({"error": str(error)}), 401
+        @app.errorhandler(HTTPError)
+        def handle_http_error(error):
+            return {'errorCode': error.error_code, 'errorMessage': f"{error.message}: {error.description}"}, error.code
 
-        @app.errorhandler(UnauthorizedError)
-        def handle_unauthorized(error):
-            return jsonify({"error": str(error)}), 403
+        @app.errorhandler(IAMError)
+        def handle_iam_error(error):
+            return {'errorCode': InternalServerError[1], 'errorMessage': f"{InternalServerError[1]}: {str(error)}"}, \
+                InternalServerError[0]
 
     def _set_default_cors_headers(self, response: Response) -> Response:
         allowed_origin = current_app.config.get("IAM_CORS_ORIGIN")
         allowed_headers = current_app.config.get("IAM_CORS_HEADERS")
         allow_credentials = str(current_app.config.get("IAM_CORS_CREDENTIALS")).lower()
-        allowed_methods = list(request.url_rule.methods) if request.url_rule \
+        allowed_methods = list(request.url_rule.methods or ()) if request.url_rule \
             else current_app.config.get("IAM_CORS_METHODS")
 
         if isinstance(allowed_methods, list):
@@ -107,7 +123,18 @@ class IAM:
 
         return response
 
-    def _grant_token(self, app: Flask) -> DefaultClient:
+    def grant_token(self, app: Flask) -> DefaultClient:
+        """Generate oauth IAM token
+
+        Args:
+            app (Flask): Flask app
+
+        Raises:
+            HTTPError: Unable to grant token
+
+        Returns:
+            DefaultClient: IAM SDK default client object
+        """
         config = Config(
             BaseURL=app.config["IAM_BASE_URL"],
             ClientID=app.config["IAM_CLIENT_ID"],
@@ -118,13 +145,21 @@ class IAM:
         try:
             client.ClientTokenGrant()
             client.StartLocalValidation()
-        except (ClientTokenGrantError, StartLocalValidationError):
+        except (ClientTokenGrantError, StartLocalValidationError) as e:
             # Cant get access token from IAM
-            raise
+            raise HTTPError(*InternalServerError, description=f"unable to grant token: {str(e)}")
 
         return client
 
-    def _validate_referer_header(self, jwt_claims: JWTClaims) -> bool:
+    def validate_referer_header(self, jwt_claims: JWTClaims) -> bool:
+        """Validate referer header for CSRF protection
+
+        Args:
+            jwt_claims (JWTClaims): JWT claims data
+
+        Returns:
+            bool: Is referer header valid or not
+        """
         try:
             client_info = self.client.GetClientInformation(jwt_claims.Namespace, jwt_claims.ClientId)
         except GetClientInformationError:
@@ -153,14 +188,13 @@ class IAM:
             validate_referer (bool): Validate referer for CSRF protection
 
         Raises:
-            EmptyTokenError: Error if token is not found
-            UnauthorizedError: Error if token permission is not sufficient
+            HTTPError: Error if token is not found or invalid
 
         Returns:
             JWTClaims: JWT claims data
         """
         access_token = ""
-        token_location = current_app.config.get("IAM_TOKEN_LOCATIONS")
+        token_location = current_app.config.get("IAM_TOKEN_LOCATIONS", [])
         for location in token_location:
             # Get token from headers
             if location == "headers":
@@ -185,20 +219,20 @@ class IAM:
                     access_token = auth_cookie, "cookie"
 
         if not access_token:
-            raise EmptyTokenError("Token not found")
+            raise HTTPError(*UnauthorizedAccess, description=f"Missing access token in {' or '.join(token_location)}")
 
         try:
             jwt_claims = self.client.ValidateAndParseClaims(access_token[0])
-        except (ValidateAndParseClaimsError, UserRevokedError, TokenRevokedError):
-            raise UnauthorizedError("Token is invalid or revoked")
+        except (ValidateAndParseClaimsError, UserRevokedError, TokenRevokedError) as e:
+            raise HTTPError(*UnauthorizedAccess, description=str(e))
 
         if not jwt_claims:
-            raise UnauthorizedError("Invalid referer header")
+            raise HTTPError(*UnauthorizedAccess, description=f"Invalid access token")
 
         # Validate referer header for cookie token
         if access_token[1] == "cookie" and validate_referer:
-            if self._validate_referer_header(jwt_claims) is not True:
-                raise UnauthorizedError("Invalid referer header")
+            if self.validate_referer_header(jwt_claims) is not True:
+                raise HTTPError(*InvalidRefererHeader, description="Invalid referrer header")
 
         return jwt_claims
 
@@ -215,23 +249,32 @@ class IAM:
             permission_resource (dict): Optional permission resource if needed
 
         Raises:
-            UnauthorizedError: Error if JWT claims data is not sufficient to access required permission and resource
+            HTTPError: Error if JWT claims data is not sufficient to access required permission and resource
 
         Returns:
             bool: Permission status
         """
 
-        if isinstance(required_permission, dict):
-            required_permission = Permission.loads(required_permission)
+        try:
+            if isinstance(required_permission, dict):
+                required_permission = Permission.loads(required_permission)
 
-        if not isinstance(required_permission, Permission):
-            raise UnauthorizedError
+            if not isinstance(required_permission, Permission):
+                raise ValueError('Invalid Permission')
 
-        return self.client.ValidatePermission(jwt_claims, required_permission, permission_resource)
+            is_permitted = self.client.ValidatePermission(jwt_claims, required_permission, permission_resource)
+
+        except (ValueError, ValidatePermissionError) as e:
+            raise HTTPError(*InternalServerError, description=f"unable to validate permission: {str(e)}")
+
+        return is_permitted
 
 
-def token_required(required_permission: dict, permission_resource: dict = {},
-                   csrf_protect: bool = None):
+# ---------- Decorators ---------- #
+
+
+def permission_required(required_permission: dict, permission_resource: dict = {},
+                        csrf_protect: Union[bool, None] = None):
     """The decorator to protect endpoint using IAM service.
 
     Args:
@@ -240,13 +283,20 @@ def token_required(required_permission: dict, permission_resource: dict = {},
             {"{xxx}": "xxx replacement"}. Defaults to {}.
         csrf_protect (bool): CSRF protection (Note: CSRF protect is available only on cookie token).
             Defaults to IAM_CSRF_PROTECTION config.
+
+        Raises:
+            IAMError: Error IAM init
+            HTTPError: Insufficient permission
+
+        Returns:
+            Callable: Wrapped function
     """
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
             iam = current_app.extensions.get("flask_iam")
             if not iam:
-                raise RuntimeError(
+                raise IAMError(
                     "You must initialize a IAM with this flask "
                     "application before using this method"
                 )
@@ -257,7 +307,9 @@ def token_required(required_permission: dict, permission_resource: dict = {},
             jwt_claims = iam.validate_token_in_request(validate_referer)
             is_permitted = iam.validate_permission(jwt_claims, required_permission, permission_resource)
             if not is_permitted:
-                raise UnauthorizedError("Token do not have required permissions")
+                raise HTTPError(
+                    *InsufficientPermissions, description="Access doesn't have required role permission(s)."
+                )
 
             return fn(*args, **kwargs)
 
@@ -272,6 +324,9 @@ def cors_options(headers: dict = {}, preflight_options: bool = True):
 
     Args:
         headers (dict, optional): CORS headers key and value to be added to the response. Defaults to {}.
+
+    Returns:
+        Callable: Wrapped functions.
     """
     def wrapper(fn):
         if preflight_options:

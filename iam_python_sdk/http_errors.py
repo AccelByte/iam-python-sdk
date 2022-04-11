@@ -1,4 +1,4 @@
-# Copyright 2021 AccelByte Inc
+# Copyright 2022 AccelByte Inc
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,15 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from iam_python_sdk.client import NewDefaultClient
-from iam_python_sdk.async_client import NewAsyncClient
-from iam_python_sdk.config import Config
 
-__author__ = """Analytics AccelByte"""
-__email__ = 'justice-analytics-team@accelbyte.net'
-__version__ = '1.2.0'
-__all__ = [
-    'NewDefaultClient',
-    'NewAsyncClient',
-    'Config'
-]
+# Error name = HTTP code, Error code, Message
+UnauthorizedAccess = 401, 20001, "unauthorized access"
+InvalidRefererHeader = 401, 20023, "invalid referer header"
+InsufficientPermissions = 403, 20013, "insufficient permissions"
+InternalServerError = 500, 20000, "internal server error"

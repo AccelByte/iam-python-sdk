@@ -14,19 +14,34 @@
 
 """FastAPI module."""
 from pydantic import BaseSettings
-from typing import Callable, List, Optional, Union
+from typing import Callable, Optional, Union
 from urllib.parse import urlparse
 
-from fastapi import Depends, FastAPI, Request, Security
+from fastapi import Depends, FastAPI, HTTPException, Request, Security
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer, APIKeyCookie
 
 from .config import Config
-from .async_client import AsyncClient, NewAsyncClient
-from .errors import ClientTokenGrantError, EmptyTokenError, GetClientInformationError, StartLocalValidationError, \
-    TokenRevokedError, UnauthorizedError, UserRevokedError, ValidateAndParseClaimsError
+from .async_client import NewAsyncClient
+from .errors import Error as IAMError, ClientTokenGrantError, GetClientInformationError, \
+    StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAndParseClaimsError, ValidatePermissionError
+from .http_errors import InsufficientPermissions, InternalServerError, InvalidRefererHeader, UnauthorizedAccess
 from .models import JWTClaims, Permission
+
+
+# ---------- Exceptions ---------- #
+
+class HTTPError(HTTPException):
+    def __init__(self, http_code: int, error_code: int, message: str, description: Optional[str] = None) -> None:
+        super().__init__(http_code, description)
+        self.code = http_code
+        self.error_code = error_code
+        self.message = message
+        self.description = description
+
+
+# ---------- Extensions ---------- #
 
 
 class Settings(BaseSettings):
@@ -66,12 +81,12 @@ class IAM:
             config (Settings): Configuration object
 
         Raises:
-            ValueError: Error if the requirement configs are not set
+            IAMError: Error if the requirement configs are not set
         """
         if not (
             config.iam_base_url and config.iam_client_id and config.iam_client_secret
         ):
-            raise ValueError("IAM_BASE_URL, IAM_CLIENT_ID, IAM_CLIENT_SECRET need to set.")
+            raise IAMError("IAM_BASE_URL, IAM_CLIENT_ID, IAM_CLIENT_SECRET need to set.")
 
         self.config = config
 
@@ -85,18 +100,18 @@ class IAM:
             await self.grant_token()
 
     def _set_default_errors(self, app: FastAPI) -> None:
-        @app.exception_handler(EmptyTokenError)
-        async def handle_token_not_found(request: Request, exc: EmptyTokenError):
+        @app.exception_handler(HTTPError)
+        def handle_http_error(request: Request, error: HTTPError):
             return JSONResponse(
-                status_code=401,
-                content={"error": str(exc)}
+                status_code=error.code,
+                content={'errorCode': error.error_code, 'errorMessage': f"{error.message}: {error.description}"}
             )
 
-        @app.exception_handler(UnauthorizedError)
-        async def handle_unauthorized(request: Request, exc: UnauthorizedError):
+        @app.exception_handler(IAMError)
+        def handle_iam_error(request: Request, error: IAMError):
             return JSONResponse(
-                status_code=403,
-                content={"error": str(exc)}
+                status_code=InternalServerError[0],
+                content={'errorCode': InternalServerError[1], 'errorMessage': f"{InternalServerError[1]}: {str(error)}"}
             )
 
     def _set_default_cors_headers(self, app: FastAPI) -> None:
@@ -113,7 +128,12 @@ class IAM:
             allow_headers=allowed_headers,
         )
 
-    async def grant_token(self) -> Union[AsyncClient, None]:
+    async def grant_token(self) -> None:
+        """Generate oauth IAM token
+
+        Raises:
+            HTTPError: Unable to grant token
+        """
         config = Config(
             BaseURL=self.config.iam_base_url,
             ClientID=self.config.iam_client_id,
@@ -124,11 +144,14 @@ class IAM:
         try:
             await client.ClientTokenGrant()
             await client.StartLocalValidation()
-        except (ClientTokenGrantError, StartLocalValidationError):
+        except (ClientTokenGrantError, StartLocalValidationError) as e:
             # Cant get access token from IAM
-            raise
+            raise HTTPError(*InternalServerError, description=f"unable to grant token: {str(e)}")
 
         self.client = client
+
+
+# ---------- Dependencies ---------- #
 
 
 async def validate_referer_header(request: Request, jwt_claims: JWTClaims) -> bool:
@@ -138,13 +161,16 @@ async def validate_referer_header(request: Request, jwt_claims: JWTClaims) -> bo
         request (Request): FastAPI request object
         jwt_claims (JWTClaims): JWT Claim data from token
 
+    Raises:
+        IAMError: Error IAM init
+
     Returns:
         bool: Is referrer header valid
     """
     try:
         iam = request.app.state.iam
     except AttributeError:
-        raise RuntimeError(
+        raise IAMError(
             "You must initialize a IAM with on fastapi "
             "startup event before using this method"
         )
@@ -175,11 +201,11 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
     """Validate token in the FastAPI request. This method support headers and cookies with based token.
 
     Args:
-        csrf_protect (bool): Validate referer for CSRF protection
+        csrf_protect (bool, None): Validate referer for CSRF protection
 
     Raises:
-        EmptyTokenError: Error if token is not found
-        UnauthorizedError: Error if token permission is not sufficient
+        IAMError: Error IAM init
+        HTTPError: Error if token is not found or invalid
 
     Returns:
         JWTClaims: JWT claims data
@@ -192,7 +218,7 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
         try:
             iam = request.app.state.iam
         except AttributeError:
-            raise RuntimeError(
+            raise IAMError(
                 "You must initialize a IAM with on fastapi "
                 "startup event before using this method"
             )
@@ -214,15 +240,15 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
                     access_token = cookie, "cookie"
 
         if not access_token:
-            raise EmptyTokenError("Token not found")
+            raise HTTPError(*UnauthorizedAccess, description=f"Missing access token in {' or '.join(token_location)}")
 
         try:
             jwt_claims = await iam.client.ValidateAndParseClaims(access_token[0])
-        except (ValidateAndParseClaimsError, UserRevokedError, TokenRevokedError):
-            raise UnauthorizedError("Token is invalid or revoked")
+        except (ValidateAndParseClaimsError, UserRevokedError, TokenRevokedError) as e:
+            raise HTTPError(*UnauthorizedAccess, description=str(e))
 
         if not jwt_claims:
-            raise UnauthorizedError("Invalid referer header")
+            raise HTTPError(*UnauthorizedAccess, description=f"Invalid access token")
 
         # Validate referer header for cookie token
         validate_referer = csrf_protect if csrf_protect is not None \
@@ -230,7 +256,7 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
 
         if access_token[1] == "cookie" and validate_referer:
             if await validate_referer_header(request, jwt_claims) is not True:
-                raise UnauthorizedError("Invalid referer header")
+                raise HTTPError(*InvalidRefererHeader, description="Invalid referrer header")
 
         return jwt_claims
 
@@ -249,32 +275,40 @@ def permission_required(
         permission_resource (dict, optional): The placeholder replacement if any. Defaults to {}.
         csrf_protect (Union[bool, None], optional): CSRF protect options. Defaults to None.
 
+    Raises:
+        IAMError: Error IAM init
+        HTTPError: Error if JWT claims data is not sufficient to access required permission and resource
+
     Returns:
         Callable: _description_
     """
-    async def _dependency(request: Request, jwt_claims: JWTClaims = Depends(token_required(csrf_protect))) -> JWTClaims:
+    async def _dependency(request: Request, jwt_claims: JWTClaims = Depends(token_required(csrf_protect))) -> None:
         try:
             iam = request.app.state.iam
         except AttributeError:
-            raise RuntimeError(
+            raise IAMError(
                 "You must initialize a IAM with on fastapi "
                 "startup event before using this method"
             )
 
         permission_required = None
-        if isinstance(required_permission, dict):
-            permission_required = Permission.loads(required_permission)
+        is_permitted = False
+        try:
+            if isinstance(required_permission, dict):
+                permission_required = Permission.loads(required_permission)
 
-        if not isinstance(permission_required, Permission):
-            raise UnauthorizedError("Permission error")
+            if not isinstance(permission_required, Permission):
+                raise ValueError('Invalid Permission')
 
-        is_permitted = await iam.client.ValidatePermission(
-            jwt_claims, permission_required, permission_resource
-        )
+            is_permitted = await iam.client.ValidatePermission(
+                jwt_claims, permission_required, permission_resource
+            )
+        except (ValueError, ValidatePermissionError) as e:
+            raise HTTPError(*InternalServerError, description=f"unable to validate permission: {str(e)}")
 
         if not is_permitted:
-            raise UnauthorizedError("Token do not have required permissions")
-
-        return jwt_claims
+            raise HTTPError(
+                *InsufficientPermissions, description="Access doesn't have required role permission(s)."
+            )
 
     return _dependency

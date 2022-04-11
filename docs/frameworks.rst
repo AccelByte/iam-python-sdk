@@ -45,12 +45,12 @@ Or you can init with `Flask factory pattern`_:
 
 .. _Flask factory pattern: https://flask.palletsprojects.com/en/latest/patterns/appfactories/
 
-Then you can protect your endpoint with *token_required* decorator from unauthorized access:
+Then you can protect your endpoint with *permission_required* decorator from unauthorized access:
 
 .. code-block:: python
 
     @app.route('/protected')
-    @token_required(
+    @permission_required(
         {"Action": 4, "Resource": "NAMESPACE:{namespace}:USER:{userId}"},
         {"{namespace}": "sample-namespace", "{userId}": "sample-userid"},
         csrf_protect=True
@@ -58,7 +58,7 @@ Then you can protect your endpoint with *token_required* decorator from unauthor
     def get_protected_endpoint():
         return 'You have authorized access!'
 
-By default, *token_required* decorator will check the access token on the Authorization header with Bearer type.
+By default, *permission_required* decorator will check the access token on the Authorization header with Bearer type.
 You can customize these default configurations according to your service/apps needs:
 
 .. code-block:: python

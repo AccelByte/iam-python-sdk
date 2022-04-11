@@ -14,8 +14,6 @@
 
 """Tests for `iam_python_sdk.fastapi` module."""
 
-import json, pytest
-
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -48,14 +46,14 @@ def test_protected_endpoint(fastapi_app: FastAPI) -> None:
         assert resp.status_code == 401
         # Invalid headers token
         resp = c.get('/protected', headers={"Authorization": "Bearer invalid_token"})
-        assert resp.status_code == 403
+        assert resp.status_code == 401
         # Valid headers token
         resp = c.get('/protected', headers={"Authorization": f"Bearer {client_token['access_token']}"})
         assert resp.status_code == 200
         # Invalid cookies token
         # c.set_cookie("localhost", "access_token", "invalid_token")
         resp = c.get('/protected', cookies={"access_token": "invalid_token"})
-        assert resp.status_code == 403
+        assert resp.status_code == 401
         # Valid cookies token
         resp = c.get('/protected', cookies={'access_token': client_token['access_token']})
         assert resp.status_code == 200
@@ -69,7 +67,7 @@ def test_protected_with_csrf_endpoint(fastapi_app: FastAPI) -> None:
         assert resp.status_code == 200
         # Invalid referer header
         resp = c.get('/protected_with_csrf', headers={"Referer": "http://foo.bar"}, cookies={"access_token": client_token['access_token']})
-        assert resp.status_code == 403
+        assert resp.status_code == 401
 
 
 @iam_mock

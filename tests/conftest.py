@@ -20,7 +20,7 @@ import flask, fastapi, pytest
 from iam_python_sdk.client import NewDefaultClient
 from iam_python_sdk.async_client import NewAsyncClient
 from iam_python_sdk.config import Config
-from iam_python_sdk.flask import IAM
+from iam_python_sdk.flask import IAM as Flask_IAM
 from iam_python_sdk.fastapi import IAM as FastAPI_IAM
 from iam_python_sdk.fastapi import Settings
 
@@ -28,7 +28,7 @@ from .mock import client_id, client_secret, iam_base_url, iam_mock, flask_mock, 
 
 
 @pytest.fixture
-def iam_client(request: pytest.FixtureRequest):
+def iam_client():
     cfg = Config(
         BaseURL=iam_base_url,
         ClientID=client_id,
@@ -40,7 +40,7 @@ def iam_client(request: pytest.FixtureRequest):
 
 
 @pytest.fixture
-def flask_app(request: pytest.FixtureRequest):
+def flask_app():
     app = flask.Flask("test_app")
 
     app.config["SERVER_NAME"] = "iam.mock"
@@ -53,8 +53,8 @@ def flask_app(request: pytest.FixtureRequest):
 
     app.register_blueprint(flask_mock)
 
-    iam = IAM()
-    with iam_mock:
+    iam = Flask_IAM()
+    with iam_mock:  # type: ignore
         iam.init_app(app)
 
     return app

@@ -14,8 +14,6 @@
 
 """IAM Python SDK async client module."""
 
-import asyncio
-from time import time
 import backoff, httpx, json, jwt
 
 from threading import RLock

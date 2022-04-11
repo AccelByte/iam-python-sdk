@@ -24,52 +24,59 @@ from .log import logger
 class Task:
     """Task module for background task.
     """
-    def __init__(self, interval: Union[int, float], function: Callable[..., Any], *args, **kwargs) -> None:
+    def __init__(self, interval: Union[int, float], function: Callable[..., Any], repeat: bool = True, *args, **kwargs) -> None:
         self._lock = RLock()
         self._timer = None
+        self._status = 'STOPPED'
         self.interval = interval
         self.function = function
+        self.repeat = repeat
         self.args = args
         self.kwargs = kwargs
-        self.status = 'STOP'
         self.error = None
 
         if kwargs.pop('autostart', True):
             self.start()
 
-    def _run(self) -> None:
+    @property
+    def status(self) -> str:
         with self._lock:
-            self.status = 'RUNNING'
+            return self._status
 
+    @status.setter
+    def status(self, status) -> None:
+        with self._lock:
+            self._status = status
+
+    def _run(self) -> None:
         try:
+            self.status = 'RUNNING'
             self.function(*self.args, **self.kwargs)
         except Exception as e:
             # We catch all exceptions here because we dont know what error will occur on background task
             logger.error(e)
             self.error = e
 
-        self.start(repeat=True)
+        if self.repeat:
+            self.start()
+        else:
+            self.stop()
 
-    def start(self, repeat: bool = False) -> None:
+    def start(self) -> None:
         """Start the thread in background(daemon).
-
-        Args:
-            repeat (bool, optional): Status if the task is repetitive. Defaults to False.
         """
-        with self._lock:
-            if repeat or self.status == 'STOP':
-                self.status = 'WAITING'
-                self._timer = Timer(self.interval, self._run)
-                self._timer.daemon = True
-                self._timer.start()
+        if self.repeat or self.status == 'STOPPED':
+            self.status = 'WAITING'
+            self._timer = Timer(self.interval, self._run)
+            self._timer.daemon = True
+            self._timer.start()
 
     def stop(self) -> None:
         """Stop the background task.
         """
-        with self._lock:
-            self.status = 'STOP'
-            if self._timer:
-                self._timer.cancel()
+        self.status = 'STOPPED'
+        if self._timer:
+            self._timer.cancel()
 
 
 class AsyncTask:
