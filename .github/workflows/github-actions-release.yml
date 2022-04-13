@@ -39,6 +39,7 @@ jobs:
           pip install -r requirements_dev.txt
           pip install sphinxcontrib-versioning
           pip install "jinja2<3.0.0"
+          pip install "markupsafe==2.0.1"
       - name: Build docs
         run: |
           sphinx-versioning build -a -b -t -p tags -B main -r main -w main docs docs/_build/html
