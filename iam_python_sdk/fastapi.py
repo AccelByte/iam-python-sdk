@@ -56,7 +56,7 @@ class Settings(BaseSettings):
     iam_token_cookie_name = "access_token"
     iam_token_cookie_path = "/"
     iam_csrf_protection = True
-    iam_strict_referer = True
+    iam_strict_referer = False
     iam_cors_enable = False
     iam_cors_origin = "*"
     iam_cors_headers = "*"
@@ -187,7 +187,7 @@ async def validate_referer_header(request: Request, jwt_claims: JWTClaims) -> bo
     client_redirect_uris = client_info.Redirecturi.split(",") if client_info else []
 
     for redirect_uri in client_redirect_uris:
-        if iam.config.iam_strict_referer:
+        if not iam.config.iam_strict_referer:
             parsed_uri = urlparse(redirect_uri)
             redirect_uri = f"{parsed_uri.scheme}://{parsed_uri.netloc}"
 

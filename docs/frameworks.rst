@@ -69,7 +69,7 @@ You can customize these default configurations according to your service/apps ne
     app.config["IAM_TOKEN_COOKIE_NAME"] = "access_token"
     app.config["IAM_TOKEN_COOKIE_PATH"] = "/"
     app.config["IAM_CSRF_PROTECTION"] = True
-    app.config["IAM_STRICT_REFERER"] = True
+    app.config["IAM_STRICT_REFERER"] = False
 
 .. note::
     This module has been tested with Flask default WSGI server for development.
@@ -177,7 +177,7 @@ You can customize these default configurations according to your service/apps ne
     settings.iam_token_cookie_name = "access_token"
     settings.iam_token_cookie_path = "/"
     settings.iam_csrf_protection = True
-    settings.iam_strict_referer = True
+    settings.iam_strict_referer = False
 
 .. note::
     This module has been tested with FastAPI default uvicorn server for development.

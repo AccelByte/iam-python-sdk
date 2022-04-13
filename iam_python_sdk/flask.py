@@ -87,7 +87,7 @@ class IAM:
         app.config.setdefault("IAM_TOKEN_COOKIE_NAME", "access_token")
         app.config.setdefault("IAM_TOKEN_COOKIE_PATH", "/")
         app.config.setdefault("IAM_CSRF_PROTECTION", True)
-        app.config.setdefault("IAM_STRICT_REFERER", True)
+        app.config.setdefault("IAM_STRICT_REFERER", False)
         app.config.setdefault("IAM_CORS_ENABLE", False)
         app.config.setdefault("IAM_CORS_ORIGIN", "*")
         app.config.setdefault("IAM_CORS_HEADERS", "*")
@@ -172,7 +172,7 @@ class IAM:
         client_redirect_uris = client_info.Redirecturi.split(",") if client_info else []
 
         for redirect_uri in client_redirect_uris:
-            if current_app.config.get("IAM_STRICT_REFERER"):
+            if not current_app.config.get("IAM_STRICT_REFERER"):
                 parsed_uri = urlparse(redirect_uri)
                 redirect_uri = f"{parsed_uri.scheme}://{parsed_uri.netloc}"
 
