@@ -37,4 +37,4 @@ Features
 * Validate scope, role and audience
 * Verify ban, phone and email user status
 * Background refresh token, jwks and revocation list
-* Flask framework support with CSRF protection and CORS options
+* Flask and FastAPI framework support with CSRF protection and CORS options

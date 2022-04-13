@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>IAM Python SDK &mdash; iam-python-sdk 1.0.0 documentation</title>
+  <title>IAM Python SDK &mdash; iam-python-sdk 1.2.1 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'./',
-              VERSION:'1.0.0',
+              VERSION:'1.2.1',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.2.1
               </div>
             
           
@@ -102,6 +102,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="asyncio.html">Asyncio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="frameworks.html">Frameworks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
@@ -201,7 +202,7 @@ that makes use of AccelByte User Account Management services [<a class="referenc
 <li>Validate scope, role and audience</li>
 <li>Verify ban, phone and email user status</li>
 <li>Background refresh token, jwks and revocation list</li>
-<li>Flask framework support with CSRF protection and CORS options</li>
+<li>Flask and FastAPI framework support with CSRF protection and CORS options</li>
 </ul>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
@@ -225,8 +226,10 @@ that makes use of AccelByte User Account Management services [<a class="referenc
 <li class="toctree-l2"><a class="reference internal" href="usage.html#verify-user-info">Verify user info</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="asyncio.html">Asyncio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="frameworks.html">Frameworks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="frameworks.html#flask">Flask</a></li>
+<li class="toctree-l2"><a class="reference internal" href="frameworks.html#fastapi">FastAPI</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a><ul>
@@ -248,15 +251,18 @@ that makes use of AccelByte User Account Management services [<a class="referenc
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">1.0.0 (2021-11-25)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">0.12.0 (2021-11-19)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id3">0.10.1 (2021-11-10)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">0.10.0 (2021-11-05)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id5">0.8.0 (2021-10-22)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id6">0.7.0 (2021-10-17)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id7">0.5.0 (2021-10-12)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id8">0.3.0 (2021-10-05)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#id9">0.1.0 (2021-09-09)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">1.2.1 (2022-04-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">1.2.0 (2022-04-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id3">1.1.0 (2022-03-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">1.0.0 (2021-11-25)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id5">0.12.0 (2021-11-19)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id6">0.10.1 (2021-11-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id7">0.10.0 (2021-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id8">0.8.0 (2021-10-22)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id9">0.7.0 (2021-10-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id10">0.5.0 (2021-10-12)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id11">0.3.0 (2021-10-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id12">0.1.0 (2021-09-09)</a></li>
 </ul>
 </li>
 </ul>
@@ -309,7 +315,7 @@ that makes use of AccelByte User Account Management services [<a class="referenc
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.0.0
+        v: 1.2.1
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -319,6 +325,9 @@ that makes use of AccelByte User Account Management services [<a class="referenc
             <dd><a href="0.10.1/index.html">0.10.1</a></dd>
             <dd><a href="0.12.0/index.html">0.12.0</a></dd>
             <dd><a href="1.0.0/index.html">1.0.0</a></dd>
+            <dd><a href="1.1.0/index.html">1.1.0</a></dd>
+            <dd><a href="1.2.0/index.html">1.2.0</a></dd>
+            <dd><a href="1.2.1/index.html">1.2.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

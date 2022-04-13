@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>iam_python_sdk package &mdash; iam-python-sdk 1.0.0 documentation</title>
+  <title>iam_python_sdk package &mdash; iam-python-sdk 1.2.1 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'./',
-              VERSION:'1.0.0',
+              VERSION:'1.2.1',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.2.1
               </div>
             
           
@@ -103,17 +103,21 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="asyncio.html">Asyncio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="frameworks.html">Frameworks</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Documentation</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">iam_python_sdk package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.async_client">iam_python_sdk.async_client module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.bloom">iam_python_sdk.bloom module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.cache">iam_python_sdk.cache module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.cli">iam_python_sdk.cli module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.client">iam_python_sdk.client module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.config">iam_python_sdk.config module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.errors">iam_python_sdk.errors module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.fastapi">iam_python_sdk.fastapi module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.flask">iam_python_sdk.flask module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.http_errors">iam_python_sdk.http_errors module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.log">iam_python_sdk.log module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.models">iam_python_sdk.models module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-iam_python_sdk.task">iam_python_sdk.task module</a></li>
@@ -205,6 +209,242 @@
 <h1>iam_python_sdk package<a class="headerlink" href="#iam-python-sdk-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-iam_python_sdk.async_client">
+<span id="iam-python-sdk-async-client-module"></span><h2>iam_python_sdk.async_client module<a class="headerlink" href="#module-iam_python_sdk.async_client" title="Permalink to this headline">¶</a></h2>
+<p>IAM Python SDK async client module.</p>
+<dl class="class">
+<dt id="iam_python_sdk.async_client.AsyncClient">
+<em class="property">class </em><code class="descclassname">iam_python_sdk.async_client.</code><code class="descname">AsyncClient</code><span class="sig-paren">(</span><em>config: iam_python_sdk.config.Config</em>, <em>rolePermissionCache: iam_python_sdk.cache.Cache</em>, <em>clientInfoCache: iam_python_sdk.cache.Cache</em>, <em>httpClient: iam_python_sdk.async_client.HttpClient</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Async Client class.</p>
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.ClientToken">
+<code class="descname">ClientToken</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.ClientToken"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.ClientToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns client access token</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>str: token</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.ClientTokenGrant">
+<code class="descname">ClientTokenGrant</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.ClientTokenGrant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.ClientTokenGrant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts client token grant to get client bearer token for role caching</p>
+<dl class="docutils">
+<dt>Raises:</dt>
+<dd>ClientTokenGrantError: exception response format error
+ClientTokenGrantError: exceptions http request error</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.GetClientInformation">
+<code class="descname">GetClientInformation</code><span class="sig-paren">(</span><em>namespace: str</em>, <em>clientID: str</em><span class="sig-paren">)</span> &#x2192; typing.Union[iam_python_sdk.models.ClientInformation, NoneType]<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.GetClientInformation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.GetClientInformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets IAM client information, it will look into cache first, if not found then fetch it to IAM.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>namespace (str): namespace
+clientID (str): client ID</dd>
+<dt>Returns:</dt>
+<dd>Union[ClientInformation, None]: client information or None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.GetRolePermissions">
+<code class="descname">GetRolePermissions</code><span class="sig-paren">(</span><em>roleID: str</em><span class="sig-paren">)</span> &#x2192; typing.List[iam_python_sdk.models.Permission]<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.GetRolePermissions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.GetRolePermissions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get permssions of a role</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>roleID (str): role id</dd>
+<dt>Raises:</dt>
+<dd>GetRolePermissionError: exception failed to refresh token
+GetRolePermissionError: exception response format error
+GetRolePermissionError: exceptions http request error</dd>
+<dt>Returns:</dt>
+<dd>Union[List[Permission], None]: list of permissions or None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.HasBan">
+<code class="descname">HasBan</code><span class="sig-paren">(</span><em>claims: typing.Union[iam_python_sdk.models.JWTClaims, NoneType], banType: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.HasBan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.HasBan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates if certain ban exist</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>claims (JWTClaims): JWT claims
+banType (str): ban type</dd>
+<dt>Returns:</dt>
+<dd>bool: ban status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.HealthCheck">
+<code class="descname">HealthCheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.HealthCheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.HealthCheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lets caller know the health of the IAM client</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>bool: health status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.StartLocalValidation">
+<code class="descname">StartLocalValidation</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.StartLocalValidation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.StartLocalValidation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts thread to refresh JWK and revocation list periodically this enables local token validation</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.UserAnonymousStatus">
+<code class="descname">UserAnonymousStatus</code><span class="sig-paren">(</span><em>claims: typing.Union[iam_python_sdk.models.JWTClaims, NoneType]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.UserAnonymousStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.UserAnonymousStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets user anonymous status on access token</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>claims (JWTClaims): JWT claims</dd>
+<dt>Returns:</dt>
+<dd>bool: user anonymous status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.UserEmailVerificationStatus">
+<code class="descname">UserEmailVerificationStatus</code><span class="sig-paren">(</span><em>claims: typing.Union[iam_python_sdk.models.JWTClaims, NoneType]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.UserEmailVerificationStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.UserEmailVerificationStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets user email verification status on access token</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>claims (JWTClaims): JWT claims</dd>
+<dt>Returns:</dt>
+<dd>bool: user email verification status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.UserPhoneVerificationStatus">
+<code class="descname">UserPhoneVerificationStatus</code><span class="sig-paren">(</span><em>claims: typing.Union[iam_python_sdk.models.JWTClaims, NoneType]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.UserPhoneVerificationStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.UserPhoneVerificationStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets user phone verification status on access token</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>claims (JWTClaims): JWT claims</dd>
+<dt>Returns:</dt>
+<dd>bool: user phone verification status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.ValidateAccessToken">
+<code class="descname">ValidateAccessToken</code><span class="sig-paren">(</span><em>accessToken: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.ValidateAccessToken"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.ValidateAccessToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates access token by calling IAM service</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>accessToken (str): access token</dd>
+<dt>Raises:</dt>
+<dd>ValidateAccessTokenError: exception failed to refresh token
+ValidateAccessTokenError: exceptions http request error</dd>
+<dt>Returns:</dt>
+<dd>bool: access token validity status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.ValidateAndParseClaims">
+<code class="descname">ValidateAndParseClaims</code><span class="sig-paren">(</span><em>accessToken: str</em><span class="sig-paren">)</span> &#x2192; typing.Union[iam_python_sdk.models.JWTClaims, NoneType]<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.ValidateAndParseClaims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.ValidateAndParseClaims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates access token locally and returns the JWT claims contained in the token</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>accessToken (str): access token</dd>
+<dt>Returns:</dt>
+<dd>Union[JWTClaims, None]: JWT claims or None</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.ValidateAudience">
+<code class="descname">ValidateAudience</code><span class="sig-paren">(</span><em>claims: typing.Union[iam_python_sdk.models.JWTClaims, NoneType]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.ValidateAudience"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.ValidateAudience" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate audience of user access token</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>claims (JWTClaims): JWT claims</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.ValidatePermission">
+<code class="descname">ValidatePermission</code><span class="sig-paren">(</span><em>claims: typing.Union[iam_python_sdk.models.JWTClaims, NoneType], requiredPermission: iam_python_sdk.models.Permission, permissionResources: typing.Dict[str, str]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.ValidatePermission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.ValidatePermission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates if an access token has right for a specific permission</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>claims (JWTClaims): JWT claims
+requiredPermission (Permission): permission to access resource, example:
+{Resource: &#8220;NAMESPACE:{namespace}:USER:{userId}&#8221;, Action: 2}
+permissionResources (Dict[str, str]): resource string to replace the <cite>{}</cite> placeholder in
+<cite>requiredPermission</cite>, example: p[&#8220;{namespace}&#8221;] = &#8220;accelbyte&#8221;</dd>
+<dt>Returns:</dt>
+<dd>bool: permission status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.ValidateRole">
+<code class="descname">ValidateRole</code><span class="sig-paren">(</span><em>requiredRoleID: str, claims: typing.Union[iam_python_sdk.models.JWTClaims, NoneType]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.ValidateRole"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.ValidateRole" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates if an access token has a specific role</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>requiredRoleID (str): role ID that required
+claims (JWTClaims): JWT claims</dd>
+<dt>Returns:</dt>
+<dd>bool: role validity status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.AsyncClient.ValidateScope">
+<code class="descname">ValidateScope</code><span class="sig-paren">(</span><em>claims: typing.Union[iam_python_sdk.models.JWTClaims, NoneType], reqScope: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#AsyncClient.ValidateScope"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.AsyncClient.ValidateScope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate scope of user access token</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>claims (JWTClaims): JWT claims
+reqScope (str): required role scope</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="iam_python_sdk.async_client.HttpClient">
+<em class="property">class </em><code class="descclassname">iam_python_sdk.async_client.</code><code class="descname">HttpClient</code><a class="reference internal" href="_modules/iam_python_sdk/async_client.html#HttpClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.HttpClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>HttpClient class to do http request.</p>
+<dl class="method">
+<dt id="iam_python_sdk.async_client.HttpClient.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; httpx.Response<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#HttpClient.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.HttpClient.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.HttpClient.post">
+<code class="descname">post</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; httpx.Response<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#HttpClient.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.HttpClient.post" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.async_client.HttpClient.request">
+<code class="descname">request</code><span class="sig-paren">(</span><em>method: str = 'GET'</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; httpx.Response<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#HttpClient.request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.HttpClient.request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="iam_python_sdk.async_client.NewAsyncClient">
+<em class="property">class </em><code class="descclassname">iam_python_sdk.async_client.</code><code class="descname">NewAsyncClient</code><span class="sig-paren">(</span><em>config: iam_python_sdk.config.Config</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#NewAsyncClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.NewAsyncClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.async_client.AsyncClient" title="iam_python_sdk.async_client.AsyncClient"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.async_client.AsyncClient</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="iam_python_sdk.async_client.backoff_giveup_handler">
+<code class="descclassname">iam_python_sdk.async_client.</code><code class="descname">backoff_giveup_handler</code><span class="sig-paren">(</span><em>backoff</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#backoff_giveup_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.backoff_giveup_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="module-iam_python_sdk.bloom">
 <span id="iam-python-sdk-bloom-module"></span><h2>iam_python_sdk.bloom module<a class="headerlink" href="#module-iam_python_sdk.bloom" title="Permalink to this headline">¶</a></h2>
@@ -766,17 +1006,133 @@ reqScope (str): required role scope</dd>
 </dd></dl>
 
 </div>
+<div class="section" id="module-iam_python_sdk.fastapi">
+<span id="iam-python-sdk-fastapi-module"></span><h2>iam_python_sdk.fastapi module<a class="headerlink" href="#module-iam_python_sdk.fastapi" title="Permalink to this headline">¶</a></h2>
+<p>FastAPI module.</p>
+<dl class="exception">
+<dt id="iam_python_sdk.fastapi.HTTPError">
+<em class="property">exception </em><code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">HTTPError</code><span class="sig-paren">(</span><em>http_code: int</em>, <em>error_code: int</em>, <em>message: str</em>, <em>description: typing.Union[str</em>, <em>NoneType] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#HTTPError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.HTTPError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">fastapi.exceptions.HTTPException</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="iam_python_sdk.fastapi.IAM">
+<em class="property">class </em><code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">IAM</code><span class="sig-paren">(</span><em>app: typing.Union[fastapi.applications.FastAPI, NoneType] = None, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>IAM FastAPI extensions class.</p>
+<dl class="method">
+<dt id="iam_python_sdk.fastapi.IAM.grant_token">
+<code class="descname">grant_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM.grant_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM.grant_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate oauth IAM token</p>
+<dl class="docutils">
+<dt>Raises:</dt>
+<dd>HTTPError: Unable to grant token</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.fastapi.IAM.init_app">
+<code class="descname">init_app</code><span class="sig-paren">(</span><em>app: fastapi.applications.FastAPI, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM.init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM.init_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init IAM FastAPI extensions with FastAPI app.
+Client token grant and local validation will be executed once here,
+then the background thread will spawn to refresh token, jwks and revocation list.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>app (Flask): Flask app instance
+config (Settings): Configuration object</dd>
+<dt>Raises:</dt>
+<dd>IAMError: Error if the requirement configs are not set</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="iam_python_sdk.fastapi.Settings">
+<em class="property">class </em><code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">Settings</code><a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#Settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.Settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">pydantic.env_settings.BaseSettings</span></code></p>
+<p>IAM settings class.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="iam_python_sdk.fastapi.permission_required">
+<code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">permission_required</code><span class="sig-paren">(</span><em>required_permission: typing.Union[dict, iam_python_sdk.models.Permission], permission_resource: dict = {}, csrf_protect: typing.Union[bool, NoneType] = None</em><span class="sig-paren">)</span> &#x2192; typing.Callable<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#permission_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.permission_required" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate permission in the token if it has required permission</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>required_permission (Union[dict, Permission]): The required permission
+permission_resource (dict, optional): The placeholder replacement if any. Defaults to {}.
+csrf_protect (Union[bool, None], optional): CSRF protect options. Defaults to None.</dd>
+<dt>Raises:</dt>
+<dd>IAMError: Error IAM init
+HTTPError: Error if JWT claims data is not sufficient to access required permission and resource</dd>
+<dt>Returns:</dt>
+<dd>Callable: _description_</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="iam_python_sdk.fastapi.token_required">
+<code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">token_required</code><span class="sig-paren">(</span><em>csrf_protect: typing.Union[bool</em>, <em>NoneType] = None</em><span class="sig-paren">)</span> &#x2192; typing.Callable<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#token_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.token_required" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate token in the FastAPI request. This method support headers and cookies with based token.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>csrf_protect (bool, None): Validate referer for CSRF protection</dd>
+<dt>Raises:</dt>
+<dd>IAMError: Error IAM init
+HTTPError: Error if token is not found or invalid</dd>
+<dt>Returns:</dt>
+<dd>JWTClaims: JWT claims data</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="iam_python_sdk.fastapi.validate_referer_header">
+<code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">validate_referer_header</code><span class="sig-paren">(</span><em>request: starlette.requests.Request</em>, <em>jwt_claims: iam_python_sdk.models.JWTClaims</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#validate_referer_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.validate_referer_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate referer header for CSRF protection</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>request (Request): FastAPI request object
+jwt_claims (JWTClaims): JWT Claim data from token</dd>
+<dt>Raises:</dt>
+<dd>IAMError: Error IAM init</dd>
+<dt>Returns:</dt>
+<dd>bool: Is referrer header valid</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-iam_python_sdk.flask">
 <span id="iam-python-sdk-flask-module"></span><h2>iam_python_sdk.flask module<a class="headerlink" href="#module-iam_python_sdk.flask" title="Permalink to this headline">¶</a></h2>
 <p>Flask module.</p>
+<dl class="exception">
+<dt id="iam_python_sdk.flask.HTTPError">
+<em class="property">exception </em><code class="descclassname">iam_python_sdk.flask.</code><code class="descname">HTTPError</code><span class="sig-paren">(</span><em>http_code: int</em>, <em>error_code: int</em>, <em>message: str</em>, <em>description: typing.Union[str</em>, <em>NoneType] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/flask.html#HTTPError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.HTTPError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">werkzeug.exceptions.HTTPException</span></code></p>
+</dd></dl>
+
 <dl class="class">
 <dt id="iam_python_sdk.flask.IAM">
-<em class="property">class </em><code class="descclassname">iam_python_sdk.flask.</code><code class="descname">IAM</code><span class="sig-paren">(</span><em>app: flask.app.Flask = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">iam_python_sdk.flask.</code><code class="descname">IAM</code><span class="sig-paren">(</span><em>app: typing.Union[flask.app.Flask</em>, <em>NoneType] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>IAM Flask extensions class.</p>
 <dl class="method">
+<dt id="iam_python_sdk.flask.IAM.grant_token">
+<code class="descname">grant_token</code><span class="sig-paren">(</span><em>app: flask.app.Flask</em><span class="sig-paren">)</span> &#x2192; iam_python_sdk.client.DefaultClient<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.grant_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.grant_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate oauth IAM token</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>app (Flask): Flask app</dd>
+<dt>Raises:</dt>
+<dd>HTTPError: Unable to grant token</dd>
+<dt>Returns:</dt>
+<dd>DefaultClient: IAM SDK default client object</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="iam_python_sdk.flask.IAM.init_app">
-<code class="descname">init_app</code><span class="sig-paren">(</span><em>app: flask.app.Flask</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.init_app" title="Permalink to this definition">¶</a></dt>
+<code class="descname">init_app</code><span class="sig-paren">(</span><em>app: flask.app.Flask</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.init_app" title="Permalink to this definition">¶</a></dt>
 <dd><p>Init IAM flask extensions with Flask app.
 Client token grant and local validation will be executed once here,
 then the background thread will spawn to refresh token, jwks and revocation list.</p>
@@ -784,7 +1140,7 @@ then the background thread will spawn to refresh token, jwks and revocation list
 <dt>Args:</dt>
 <dd>app (Flask): Flask app instance</dd>
 <dt>Raises:</dt>
-<dd>ValueError: Error if the requirement configs are not set</dd>
+<dd>IAMError: Error if the requirement configs are not set</dd>
 </dl>
 </dd></dl>
 
@@ -801,9 +1157,21 @@ required_permission (Union[dict, Permission]): Required permission that needed,<
 <p class="last">permission_resource (dict): Optional permission resource if needed</p>
 </dd>
 <dt>Raises:</dt>
-<dd>UnauthorizedError: Error if JWT claims data is not sufficient to access required permission and resource</dd>
+<dd>HTTPError: Error if JWT claims data is not sufficient to access required permission and resource</dd>
 <dt>Returns:</dt>
 <dd>bool: Permission status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.flask.IAM.validate_referer_header">
+<code class="descname">validate_referer_header</code><span class="sig-paren">(</span><em>jwt_claims: iam_python_sdk.models.JWTClaims</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.validate_referer_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.validate_referer_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate referer header for CSRF protection</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>jwt_claims (JWTClaims): JWT claims data</dd>
+<dt>Returns:</dt>
+<dd>bool: Is referer header valid or not</dd>
 </dl>
 </dd></dl>
 
@@ -815,8 +1183,7 @@ required_permission (Union[dict, Permission]): Required permission that needed,<
 <dt>Args:</dt>
 <dd>validate_referer (bool): Validate referer for CSRF protection</dd>
 <dt>Raises:</dt>
-<dd>EmptyTokenError: Error if token is not found
-UnauthorizedError: Error if token permission is not sufficient</dd>
+<dd>HTTPError: Error if token is not found or invalid</dd>
 <dt>Returns:</dt>
 <dd>JWTClaims: JWT claims data</dd>
 </dl>
@@ -832,12 +1199,14 @@ default app-wide CORS options if it has enabled.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>headers (dict, optional): CORS headers key and value to be added to the response. Defaults to {}.</dd>
+<dt>Returns:</dt>
+<dd>Callable: Wrapped functions.</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="iam_python_sdk.flask.token_required">
-<code class="descclassname">iam_python_sdk.flask.</code><code class="descname">token_required</code><span class="sig-paren">(</span><em>required_permission: dict</em>, <em>permission_resource: dict = {}</em>, <em>csrf_protect: bool = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/iam_python_sdk/flask.html#token_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.token_required" title="Permalink to this definition">¶</a></dt>
+<dt id="iam_python_sdk.flask.permission_required">
+<code class="descclassname">iam_python_sdk.flask.</code><code class="descname">permission_required</code><span class="sig-paren">(</span><em>required_permission: dict</em>, <em>permission_resource: dict = {}</em>, <em>csrf_protect: typing.Union[bool</em>, <em>NoneType] = None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/iam_python_sdk/flask.html#permission_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.permission_required" title="Permalink to this definition">¶</a></dt>
 <dd><p>The decorator to protect endpoint using IAM service.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -848,11 +1217,19 @@ permission_resource (dict, optional): Optional permission resource if needed wit
 <dl class="last docutils">
 <dt>csrf_protect (bool): CSRF protection (Note: CSRF protect is available only on cookie token).</dt>
 <dd>Defaults to IAM_CSRF_PROTECTION config.</dd>
+<dt>Raises:</dt>
+<dd>IAMError: Error IAM init
+HTTPError: Insufficient permission</dd>
+<dt>Returns:</dt>
+<dd>Callable: Wrapped function</dd>
 </dl>
 </dd>
 </dl>
 </dd></dl>
 
+</div>
+<div class="section" id="module-iam_python_sdk.http_errors">
+<span id="iam-python-sdk-http-errors-module"></span><h2>iam_python_sdk.http_errors module<a class="headerlink" href="#module-iam_python_sdk.http_errors" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-iam_python_sdk.log">
 <span id="iam-python-sdk-log-module"></span><h2>iam_python_sdk.log module<a class="headerlink" href="#module-iam_python_sdk.log" title="Permalink to this headline">¶</a></h2>
@@ -1243,19 +1620,44 @@ permission_resource (dict, optional): Optional permission resource if needed wit
 <span id="iam-python-sdk-task-module"></span><h2>iam_python_sdk.task module<a class="headerlink" href="#module-iam_python_sdk.task" title="Permalink to this headline">¶</a></h2>
 <p>Task module.</p>
 <dl class="class">
+<dt id="iam_python_sdk.task.AsyncTask">
+<em class="property">class </em><code class="descclassname">iam_python_sdk.task.</code><code class="descname">AsyncTask</code><span class="sig-paren">(</span><em>interval: typing.Union[int, float], function: typing.Callable[..., typing.Any], repeat: bool = True, *args, **kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/task.html#AsyncTask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.task.AsyncTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>AsyncTask module for background task.</p>
+<dl class="method">
+<dt id="iam_python_sdk.task.AsyncTask.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/task.html#AsyncTask.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.task.AsyncTask.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the the background task.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.task.AsyncTask.status">
+<code class="descname">status</code><a class="headerlink" href="#iam_python_sdk.task.AsyncTask.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.task.AsyncTask.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/task.html#AsyncTask.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.task.AsyncTask.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the background task.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="iam_python_sdk.task.Task">
-<em class="property">class </em><code class="descclassname">iam_python_sdk.task.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>interval: typing.Union[int, float], function: typing.Callable[..., typing.Any], *args, **kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/task.html#Task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.task.Task" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">iam_python_sdk.task.</code><code class="descname">Task</code><span class="sig-paren">(</span><em>interval: typing.Union[int, float], function: typing.Callable[..., typing.Any], repeat: bool = True, *args, **kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/task.html#Task"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.task.Task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Task module for background task.</p>
 <dl class="method">
 <dt id="iam_python_sdk.task.Task.start">
-<code class="descname">start</code><span class="sig-paren">(</span><em>repeat: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/task.html#Task.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.task.Task.start" title="Permalink to this definition">¶</a></dt>
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/task.html#Task.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.task.Task.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start the thread in background(daemon).</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>repeat (bool, optional): Status if the task is repetitive. Defaults to False.</dd>
-</dl>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.task.Task.status">
+<code class="descname">status</code><a class="headerlink" href="#iam_python_sdk.task.Task.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="iam_python_sdk.task.Task.stop">
@@ -1308,6 +1710,12 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
 </dd></dl>
 
 <dl class="class">
+<dt id="iam_python_sdk.NewAsyncClient">
+<em class="property">class </em><code class="descclassname">iam_python_sdk.</code><code class="descname">NewAsyncClient</code><span class="sig-paren">(</span><em>config: iam_python_sdk.config.Config</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#NewAsyncClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.NewAsyncClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.async_client.AsyncClient" title="iam_python_sdk.async_client.AsyncClient"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.async_client.AsyncClient</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
 <dt id="iam_python_sdk.Config">
 <em class="property">class </em><code class="descclassname">iam_python_sdk.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>BaseURL: str = ''</em>, <em>ClientID: str = ''</em>, <em>ClientSecret: str = ''</em>, <em>RolesCacheExpirationTime: int = 60</em>, <em>JWKSRefreshInterval: int = 60</em>, <em>RevocationListRefreshInterval: int = 60</em>, <em>Debug: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
@@ -1355,7 +1763,7 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.0.0
+        v: 1.2.1
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -1365,6 +1773,9 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
             <dd><a href="0.10.1/iam_python_sdk.html">0.10.1</a></dd>
             <dd><a href="0.12.0/iam_python_sdk.html">0.12.0</a></dd>
             <dd><a href="1.0.0/iam_python_sdk.html">1.0.0</a></dd>
+            <dd><a href="1.1.0/iam_python_sdk.html">1.1.0</a></dd>
+            <dd><a href="1.2.0/iam_python_sdk.html">1.2.0</a></dd>
+            <dd><a href="1.2.1/iam_python_sdk.html">1.2.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

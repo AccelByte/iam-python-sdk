@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>iam_python_sdk.flask &mdash; iam-python-sdk 1.1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/banner.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'1.1.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> iam-python-sdk
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../asyncio.html">Asyncio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../frameworks.html">Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">iam-python-sdk</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>iam_python_sdk.flask</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+
+
+    
+    
+
+
+
+    <p class="scv-banner scv-sphinx_rtd_theme"><b>Warning:</b> This document is for an old version of iam-python-sdk.</p>
+<h1>Source code for iam_python_sdk.flask</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2021 AccelByte Inc</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="sd">&quot;&quot;&quot;Flask module.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">current_app</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">flask.helpers</span> <span class="kn">import</span> <span class="n">make_response</span>
+<span class="kn">from</span> <span class="nn">flask.wrappers</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urlparse</span>
+
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">.client</span> <span class="kn">import</span> <span class="n">DefaultClient</span><span class="p">,</span> <span class="n">NewDefaultClient</span>
+<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="n">ClientTokenGrantError</span><span class="p">,</span> <span class="n">EmptyTokenError</span><span class="p">,</span> <span class="n">GetClientInformationError</span><span class="p">,</span> <span class="n">StartLocalValidationError</span><span class="p">,</span> \
+    <span class="n">TokenRevokedError</span><span class="p">,</span> <span class="n">UnauthorizedError</span><span class="p">,</span> <span class="n">UserRevokedError</span><span class="p">,</span> <span class="n">ValidateAndParseClaimsError</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">JWTClaims</span><span class="p">,</span> <span class="n">Permission</span>
+
+
+<div class="viewcode-block" id="IAM"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.IAM">[docs]</a><span class="k">class</span> <span class="nc">IAM</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;IAM Flask extensions class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">Flask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
+        <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IAM.init_app"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.IAM.init_app">[docs]</a>    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">Flask</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init IAM flask extensions with Flask app.</span>
+<span class="sd">        Client token grant and local validation will be executed once here,</span>
+<span class="sd">        then the background thread will spawn to refresh token, jwks and revocation list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            app (Flask): Flask app instance</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: Error if the requirement configs are not set</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_BASE_URL&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_CLIENT_ID&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_CLIENT_SECRET&quot;</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;IAM_BASE_URL, IAM_CLIENT_ID, IAM_CLIENT_SECRET need to set.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_default_config</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_default_errors</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grant_token</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="s2">&quot;extensions&quot;</span><span class="p">):</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">extensions</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">app</span><span class="o">.</span><span class="n">extensions</span><span class="p">[</span><span class="s2">&quot;flask_iam&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_ENABLE&quot;</span><span class="p">):</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">after_request</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_set_default_cors_headers</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_set_default_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">Flask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_TOKEN_LOCATIONS&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="s2">&quot;cookies&quot;</span><span class="p">])</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_TOKEN_HEADER_NAME&quot;</span><span class="p">,</span> <span class="s2">&quot;Authorization&quot;</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_TOKEN_HEADER_TYPE&quot;</span><span class="p">,</span> <span class="s2">&quot;Bearer&quot;</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_TOKEN_COOKIE_NAME&quot;</span><span class="p">,</span> <span class="s2">&quot;access_token&quot;</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_TOKEN_COOKIE_PATH&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_CSRF_PROTECTION&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_STRICT_REFERER&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_ENABLE&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_ORIGIN&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_HEADERS&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_METHODS&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">)</span>
+        <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_CREDENTIALS&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_default_errors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">Flask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="n">EmptyTokenError</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">handle_token_not_found</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)}),</span> <span class="mi">401</span>
+
+        <span class="nd">@app</span><span class="o">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="n">UnauthorizedError</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">handle_unauthorized</span><span class="p">(</span><span class="n">error</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">)}),</span> <span class="mi">403</span>
+
+    <span class="k">def</span> <span class="nf">_set_default_cors_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">response</span><span class="p">:</span> <span class="n">Response</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Response</span><span class="p">:</span>
+        <span class="n">allowed_origin</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_ORIGIN&quot;</span><span class="p">)</span>
+        <span class="n">allowed_headers</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_HEADERS&quot;</span><span class="p">)</span>
+        <span class="n">allow_credentials</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_CREDENTIALS&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">allowed_methods</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">url_rule</span><span class="o">.</span><span class="n">methods</span><span class="p">)</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">url_rule</span> \
+            <span class="k">else</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_CORS_METHODS&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allowed_methods</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">allowed_methods</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_methods</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">allowed_headers</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">allowed_headers</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">allowed_headers</span><span class="p">)</span>
+
+        <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Access-Control-Allow-Origin&quot;</span><span class="p">,</span> <span class="n">allowed_origin</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Access-Control-Allow-Headers&quot;</span><span class="p">,</span> <span class="n">allowed_headers</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Access-Control-Allow-Methods&quot;</span><span class="p">,</span> <span class="n">allowed_methods</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;Access-Control-Allow-Credentials&quot;</span><span class="p">,</span> <span class="n">allow_credentials</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">response</span>
+
+    <span class="k">def</span> <span class="nf">_grant_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">Flask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DefaultClient</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span>
+            <span class="n">BaseURL</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_BASE_URL&quot;</span><span class="p">],</span>
+            <span class="n">ClientID</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CLIENT_ID&quot;</span><span class="p">],</span>
+            <span class="n">ClientSecret</span><span class="o">=</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CLIENT_SECRET&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">NewDefaultClient</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">ClientTokenGrant</span><span class="p">()</span>
+            <span class="n">client</span><span class="o">.</span><span class="n">StartLocalValidation</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">ClientTokenGrantError</span><span class="p">,</span> <span class="n">StartLocalValidationError</span><span class="p">):</span>
+            <span class="c1"># Cant get access token from IAM</span>
+            <span class="k">raise</span>
+
+        <span class="k">return</span> <span class="n">client</span>
+
+    <span class="k">def</span> <span class="nf">_validate_referer_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jwt_claims</span><span class="p">:</span> <span class="n">JWTClaims</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">client_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">GetClientInformation</span><span class="p">(</span><span class="n">jwt_claims</span><span class="o">.</span><span class="n">Namespace</span><span class="p">,</span> <span class="n">jwt_claims</span><span class="o">.</span><span class="n">ClientId</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">GetClientInformationError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">client_info</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">client_info</span><span class="o">.</span><span class="n">Redirecturi</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">referer_header</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">referrer</span>
+        <span class="n">client_redirect_uris</span> <span class="o">=</span> <span class="n">client_info</span><span class="o">.</span><span class="n">Redirecturi</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">client_info</span> <span class="k">else</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">redirect_uri</span> <span class="ow">in</span> <span class="n">client_redirect_uris</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_STRICT_REFERER&quot;</span><span class="p">):</span>
+                <span class="n">parsed_uri</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">redirect_uri</span><span class="p">)</span>
+                <span class="n">redirect_uri</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">parsed_uri</span><span class="o">.</span><span class="n">scheme</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">parsed_uri</span><span class="o">.</span><span class="n">netloc</span><span class="si">}</span><span class="s2">&quot;</span>
+
+            <span class="k">if</span> <span class="n">referer_header</span> <span class="ow">and</span> <span class="n">referer_header</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">redirect_uri</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="IAM.validate_token_in_request"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.IAM.validate_token_in_request">[docs]</a>    <span class="k">def</span> <span class="nf">validate_token_in_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validate_referer</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JWTClaims</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Validate token in the Flask request. This method support headers and cookies with based token.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            validate_referer (bool): Validate referer for CSRF protection</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            EmptyTokenError: Error if token is not found</span>
+<span class="sd">            UnauthorizedError: Error if token permission is not sufficient</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            JWTClaims: JWT claims data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">access_token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">token_location</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_TOKEN_LOCATIONS&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">location</span> <span class="ow">in</span> <span class="n">token_location</span><span class="p">:</span>
+            <span class="c1"># Get token from headers</span>
+            <span class="k">if</span> <span class="n">location</span> <span class="o">==</span> <span class="s2">&quot;headers&quot;</span><span class="p">:</span>
+                <span class="n">auth_name</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_TOKEN_HEADER_NAME&quot;</span><span class="p">)</span>
+                <span class="n">auth_type</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_TOKEN_HEADER_TYPE&quot;</span><span class="p">)</span>
+
+                <span class="n">auth_header</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">auth_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">auth_header</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">header_parts</span> <span class="o">=</span> <span class="n">auth_header</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">auth_type</span><span class="p">:</span>
+                    <span class="n">access_token</span> <span class="o">=</span> <span class="n">header_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;header&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">access_token</span> <span class="o">=</span> <span class="n">header_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;header&quot;</span>
+
+            <span class="c1"># Get token from cookies</span>
+            <span class="k">if</span> <span class="n">location</span> <span class="o">==</span> <span class="s2">&quot;cookies&quot;</span><span class="p">:</span>
+                <span class="n">cookie_name</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_TOKEN_COOKIE_NAME&quot;</span><span class="p">)</span>
+                <span class="n">auth_cookie</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cookie_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">auth_cookie</span><span class="p">:</span>
+                    <span class="n">access_token</span> <span class="o">=</span> <span class="n">auth_cookie</span><span class="p">,</span> <span class="s2">&quot;cookie&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">access_token</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">EmptyTokenError</span><span class="p">(</span><span class="s2">&quot;Token not found&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">jwt_claims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ValidateAndParseClaims</span><span class="p">(</span><span class="n">access_token</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">ValidateAndParseClaimsError</span><span class="p">,</span> <span class="n">UserRevokedError</span><span class="p">,</span> <span class="n">TokenRevokedError</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnauthorizedError</span><span class="p">(</span><span class="s2">&quot;Token is invalid or revoked&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jwt_claims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnauthorizedError</span><span class="p">(</span><span class="s2">&quot;Invalid referer header&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Validate referer header for cookie token</span>
+        <span class="k">if</span> <span class="n">access_token</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;cookie&quot;</span> <span class="ow">and</span> <span class="n">validate_referer</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_referer_header</span><span class="p">(</span><span class="n">jwt_claims</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">UnauthorizedError</span><span class="p">(</span><span class="s2">&quot;Invalid referer header&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">jwt_claims</span></div>
+
+<div class="viewcode-block" id="IAM.validate_permission"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.IAM.validate_permission">[docs]</a>    <span class="k">def</span> <span class="nf">validate_permission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jwt_claims</span><span class="p">:</span> <span class="n">JWTClaims</span><span class="p">,</span>
+                            <span class="n">required_permission</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Permission</span><span class="p">],</span>
+                            <span class="n">permission_resource</span><span class="p">:</span> <span class="nb">dict</span>
+                            <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Validate permission from JWT claims data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            jwt_claims (JWTClaims): JWT claims data</span>
+<span class="sd">            required_permission (Union[dict, Permission]): Required permission that needed,</span>
+<span class="sd">                can be in dict or Permission format.</span>
+<span class="sd">            permission_resource (dict): Optional permission resource if needed</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            UnauthorizedError: Error if JWT claims data is not sufficient to access required permission and resource</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: Permission status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">required_permission</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">required_permission</span> <span class="o">=</span> <span class="n">Permission</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">required_permission</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">required_permission</span><span class="p">,</span> <span class="n">Permission</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UnauthorizedError</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">ValidatePermission</span><span class="p">(</span><span class="n">jwt_claims</span><span class="p">,</span> <span class="n">required_permission</span><span class="p">,</span> <span class="n">permission_resource</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="token_required"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.token_required">[docs]</a><span class="k">def</span> <span class="nf">token_required</span><span class="p">(</span><span class="n">required_permission</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">permission_resource</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
+                   <span class="n">csrf_protect</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The decorator to protect endpoint using IAM service.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        required_permission (dict): Required permission with format {&quot;resource&quot;: xxx, &quot;action&quot;: n}</span>
+<span class="sd">        permission_resource (dict, optional): Optional permission resource if needed with format</span>
+<span class="sd">            {&quot;{xxx}&quot;: &quot;xxx replacement&quot;}. Defaults to {}.</span>
+<span class="sd">        csrf_protect (bool): CSRF protection (Note: CSRF protect is available only on cookie token).</span>
+<span class="sd">            Defaults to IAM_CSRF_PROTECTION config.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">iam</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;flask_iam&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">iam</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;You must initialize a IAM with this flask &quot;</span>
+                    <span class="s2">&quot;application before using this method&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">validate_referer</span> <span class="o">=</span> <span class="n">csrf_protect</span> <span class="k">if</span> <span class="n">csrf_protect</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
+                <span class="k">else</span> <span class="n">current_app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;IAM_CSRF_PROTECTION&quot;</span><span class="p">)</span>
+
+            <span class="n">jwt_claims</span> <span class="o">=</span> <span class="n">iam</span><span class="o">.</span><span class="n">validate_token_in_request</span><span class="p">(</span><span class="n">validate_referer</span><span class="p">)</span>
+            <span class="n">is_permitted</span> <span class="o">=</span> <span class="n">iam</span><span class="o">.</span><span class="n">validate_permission</span><span class="p">(</span><span class="n">jwt_claims</span><span class="p">,</span> <span class="n">required_permission</span><span class="p">,</span> <span class="n">permission_resource</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_permitted</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">UnauthorizedError</span><span class="p">(</span><span class="s2">&quot;Token do not have required permissions&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">decorator</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+<div class="viewcode-block" id="cors_options"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.cors_options">[docs]</a><span class="k">def</span> <span class="nf">cors_options</span><span class="p">(</span><span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">preflight_options</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decorator for set the CORS response header. This method will override</span>
+<span class="sd">    default app-wide CORS options if it has enabled.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        headers (dict, optional): CORS headers key and value to be added to the response. Defaults to {}.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">preflight_options</span><span class="p">:</span>
+            <span class="n">fn</span><span class="o">.</span><span class="n">required_methods</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s1">&#39;required_methods&#39;</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+            <span class="n">fn</span><span class="o">.</span><span class="n">required_methods</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;OPTIONS&#39;</span><span class="p">)</span>
+            <span class="n">fn</span><span class="o">.</span><span class="n">provide_automatic_options</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">preflight_options</span> <span class="ow">and</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;OPTIONS&#39;</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">current_app</span><span class="o">.</span><span class="n">make_default_options_response</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">make_response</span><span class="p">(</span><span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+                <span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">response</span>
+
+        <span class="k">return</span> <span class="n">decorator</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, AccelByte.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: 1.1.0
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../../../0.10.0/index.html">0.10.0</a></dd>
+            <dd><a href="../../../0.10.1/index.html">0.10.1</a></dd>
+            <dd><a href="../../../0.12.0/index.html">0.12.0</a></dd>
+            <dd><a href="../../../1.0.0/index.html">1.0.0</a></dd>
+            <dd><a href="flask.html">1.1.0</a></dd>
+            <dd><a href="../../../1.2.0/index.html">1.2.0</a></dd>
+            <dd><a href="../../../1.2.1/index.html">1.2.1</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../../../main/index.html">main</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

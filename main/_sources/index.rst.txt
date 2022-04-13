@@ -6,6 +6,7 @@
 
    installation
    usage
+   asyncio
    frameworks
    modules
    contributing

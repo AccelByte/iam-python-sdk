@@ -1,0 +1,465 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Frameworks &mdash; iam-python-sdk 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/banner.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'1.2.0',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API Documentation" href="modules.html" />
+    <link rel="prev" title="Asyncio" href="asyncio.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> iam-python-sdk
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="asyncio.html">Asyncio</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Frameworks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#flask">Flask</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cors-options">CORS Options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fastapi">FastAPI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cors-middleware">CORS Middleware</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">iam-python-sdk</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Frameworks</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/frameworks.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+
+
+    
+    
+
+
+
+    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../1.2.1/frameworks.html"><b>Warning:</b> This document is for an old version of iam-python-sdk. The latest version is 1.2.1.</a></p>
+<div class="section" id="frameworks">
+<h1>Frameworks<a class="headerlink" href="#frameworks" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="flask">
+<h2>Flask<a class="headerlink" href="#flask" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="usage">
+<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<p>To use iam-python-sdk on Flask frameworks, you have to init the iam-python-sdk Flask extensions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">iam_python_sdk.flask</span> <span class="kn">import</span> <span class="n">IAM</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_BASE_URL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Base IAM URL&gt;&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CLIENT_ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Client ID&gt;&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CLIENT_SECRET&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Client Secret&gt;&quot;</span>
+
+<span class="n">iam</span> <span class="o">=</span> <span class="n">IAM</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or you can init with <a class="reference external" href="https://flask.palletsprojects.com/en/latest/patterns/appfactories/">Flask factory pattern</a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">from</span> <span class="nn">iam_python_sdk.flask</span> <span class="kn">import</span> <span class="n">IAM</span>
+
+<span class="n">iam</span> <span class="o">=</span> <span class="n">IAM</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">create_app</span><span class="p">():</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+    <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_BASE_URL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Base IAM URL&gt;&quot;</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CLIENT_ID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Client ID&gt;&quot;</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CLIENT_SECRET&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&lt;Client Secret&gt;&quot;</span>
+
+    <span class="n">iam</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">app</span>
+</pre></div>
+</div>
+<p>Then you can protect your endpoint with <em>permission_required</em> decorator from unauthorized access:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/protected&#39;</span><span class="p">)</span>
+<span class="nd">@permission_required</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;Action&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;Resource&quot;</span><span class="p">:</span> <span class="s2">&quot;NAMESPACE:</span><span class="si">{namespace}</span><span class="s2">:USER:</span><span class="si">{userId}</span><span class="s2">&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;</span><span class="si">{namespace}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;sample-namespace&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{userId}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;sample-userid&quot;</span><span class="p">},</span>
+    <span class="n">csrf_protect</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_protected_endpoint</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;You have authorized access!&#39;</span>
+</pre></div>
+</div>
+<p>By default, <em>permission_required</em> decorator will check the access token on the Authorization header with Bearer type.
+You can customize these default configurations according to your service/apps needs:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_TOKEN_LOCATIONS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="s2">&quot;cookies&quot;</span><span class="p">]</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_TOKEN_HEADER_NAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Authorization&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_TOKEN_HEADER_TYPE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Bearer&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_TOKEN_COOKIE_NAME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;access_token&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_TOKEN_COOKIE_PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CSRF_PROTECTION&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_STRICT_REFERER&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>This module has been tested with Flask default WSGI server for development.
+For production use, this module has been tested with <em>Gunicorn</em> and <em>uWSGI</em>.
+You can use Gunicorn with sync and gthread worker. Since this SDK use multithreading, please
+make sure you enable the thread support with <strong>&#8211;enable-threads</strong> options when you use uWSGI.</p>
+<p class="last">For more information about Flask deployment, please read more information <a class="reference external" href="https://flask.palletsprojects.com/en/latest/deploying/">here</a></p>
+</div>
+</div>
+<div class="section" id="cors-options">
+<h3>CORS Options<a class="headerlink" href="#cors-options" title="Permalink to this headline">¶</a></h3>
+<p>This module support CORS options to set CORS header response. You can set the CORS headers with the <em>cors_options</em> decorator.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/cors&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@cors_options</span><span class="p">({</span><span class="s2">&quot;Access-Control-Allow-Headers&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Device-Id&quot;</span><span class="p">,</span> <span class="s2">&quot;Device-Os&quot;</span><span class="p">,</span> <span class="s2">&quot;Device-Type&quot;</span><span class="p">]})</span>
+<span class="k">def</span> <span class="nf">get_cors_endpoint</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;You access a CORS page!&#39;</span>
+</pre></div>
+</div>
+<p>The sample response of this endpoint would be like:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">HTTP/1.1 200 OK</span>
+<span class="go">Date: Fri, 12 Nov 2021 01:15:39 GMT</span>
+<span class="go">Server: Nginx</span>
+<span class="go">Access-Control-Allow-Origin: *</span>
+<span class="go">Access-Control-Allow-Methods: GET, POST, OPTIONS</span>
+<span class="go">Access-Control-Allow-Headers: Device-Id, Device-Os, Device-Type</span>
+<span class="go">Access-Control-Allow-Credentials: true</span>
+<span class="go">.......</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can read more about CORS specification <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">here</a></p>
+</div>
+<p>You can also set the default CORS headers for all endpoints with Flask application-wide config.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CORS_ENABLE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CORS_ORIGIN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CORS_HEADERS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CORS_METHODS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;IAM_CORS_CREDENTIALS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These default configs will be overridden by the decorator <em>cors_options</em> for specific endpoints.</p>
+</div>
+</div>
+</div>
+<div class="section" id="fastapi">
+<h2>FastAPI<a class="headerlink" href="#fastapi" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>Usage<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>To use iam-python-sdk on FastAPI frameworks, you have to init the iam-python-sdk when FastAPI app started:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span>
+<span class="kn">from</span> <span class="nn">iam_python_sdk.fastapi</span> <span class="kn">import</span> <span class="n">IAM</span><span class="p">,</span> <span class="n">Settings</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">&quot;startup&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">startup_event</span><span class="p">():</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">(</span>
+        <span class="n">iam_base_url</span><span class="o">=</span><span class="s2">&quot;&lt;Base IAM URL&gt;&quot;</span><span class="p">,</span>
+        <span class="n">iam_client_id</span><span class="o">=</span><span class="s2">&quot;&lt;Client ID&gt;&quot;</span><span class="p">,</span>
+        <span class="n">iam_client_secret</span><span class="o">=</span><span class="s2">&quot;&lt;Client Secret&gt;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">iam</span> <span class="o">=</span> <span class="n">IAM</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then you can protect your endpoint with <em>permission_required</em> dependency from unauthorized access:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">iam</span><span class="o">-</span><span class="n">python</span><span class="o">-</span><span class="n">sdk</span><span class="o">.</span><span class="n">fastapi</span> <span class="kn">import</span> <span class="nn">permission_required</span>
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/protected&#39;</span><span class="p">,</span> <span class="n">dependencies</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">Depends</span><span class="p">(</span>
+        <span class="n">permission_required</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;resource&quot;</span><span class="p">:</span> <span class="s2">&quot;ADMIN:NAMESPACE:</span><span class="si">{namespace}</span><span class="s2">:CLIENT&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;</span><span class="si">{namespace}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;sdktest&quot;</span><span class="p">},</span>
+            <span class="n">csrf_protect</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">])</span>
+<span class="k">def</span> <span class="nf">get_protected_endpoint</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;You have authorized access!&#39;</span>
+</pre></div>
+</div>
+<p>By default, <em>permission_required</em> dependency will check the access token on the Authorization header with Bearer type.
+You can customize these default configurations according to your service/apps needs:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">iam_base_url</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_client_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_client_secret</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_token_locations</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="s2">&quot;cookies&quot;</span><span class="p">]</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_token_header_name</span> <span class="o">=</span> <span class="s2">&quot;Authorization&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_token_header_type</span> <span class="o">=</span> <span class="s2">&quot;Bearer&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_token_cookie_name</span> <span class="o">=</span> <span class="s2">&quot;access_token&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_token_cookie_path</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_csrf_protection</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_strict_referer</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>This module has been tested with FastAPI default uvicorn server for development.
+For production use, this module has been tested with <em>Gunicorn</em>.
+You can use Gunicorn with <code class="docutils literal"><span class="pre">uvicorn.workers.UvicornWorker</span></code> class worker.</p>
+<p class="last">For more information about FastAPI deployment, please read more information <a class="reference external" href="https://fastapi.tiangolo.com/deployment/server-workers/">here</a></p>
+</div>
+</div>
+<div class="section" id="cors-middleware">
+<h3>CORS Middleware<a class="headerlink" href="#cors-middleware" title="Permalink to this headline">¶</a></h3>
+<p>This module support CORS middleware to set CORS header response. You can set the CORS headers with these settings.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">iam_cors_enable</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_cors_origin</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_cors_headers</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_cors_methods</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">iam_cors_credentials</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>The sample response of this endpoint would be like:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">HTTP/1.1 200 OK</span>
+<span class="go">Date: Fri, 12 Nov 2021 01:15:39 GMT</span>
+<span class="go">Server: Nginx</span>
+<span class="go">Access-Control-Allow-Origin: *</span>
+<span class="go">Access-Control-Allow-Methods: GET, POST, OPTIONS</span>
+<span class="go">Access-Control-Allow-Headers: Device-Id, Device-Os, Device-Type</span>
+<span class="go">Access-Control-Allow-Credentials: true</span>
+<span class="go">.......</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can read more about CORS specification <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">here</a></p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="modules.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="asyncio.html" class="btn btn-neutral float-left" title="Asyncio" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, AccelByte.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: 1.2.0
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../0.10.0/frameworks.html">0.10.0</a></dd>
+            <dd><a href="../0.10.1/frameworks.html">0.10.1</a></dd>
+            <dd><a href="../0.12.0/frameworks.html">0.12.0</a></dd>
+            <dd><a href="../1.0.0/frameworks.html">1.0.0</a></dd>
+            <dd><a href="../1.1.0/frameworks.html">1.1.0</a></dd>
+            <dd><a href="frameworks.html">1.2.0</a></dd>
+            <dd><a href="../1.2.1/frameworks.html">1.2.1</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../main/frameworks.html">main</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
