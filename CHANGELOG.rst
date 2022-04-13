@@ -2,6 +2,11 @@
 Changelog
 =========
 
+1.2.1 (2022-04-13)
+------------------
+
+* Change default IAM strict referer validation to false.
+
 1.2.0 (2022-04-11)
 ------------------
 
