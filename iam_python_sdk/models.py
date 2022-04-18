@@ -107,7 +107,7 @@ class NamespaceRole(Model):
 class JWTBan(Model):
     """Holds information about ban record in JWT."""
     Ban: str = ""
-    Enddate: float = 0.0
+    Enddate: str = ""
 
 
 class TokenResponse(Model):
@@ -159,7 +159,7 @@ class BloomFilterJSON(Model):
 class UserRevocationListRecord(Model):
     """Used to store revoked user data."""
     Id: str = ""
-    RevokedAt: float = 0.0
+    RevokedAt: str = ""
 
 
 class RevocationList(Model):
