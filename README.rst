@@ -32,6 +32,7 @@ Features
 --------
 
 * Client token grant and validation
+* Sync and async client
 * Validate access token live on IAM service and local using JWKs
 * Get role and validate permission
 * Validate scope, role and audience
