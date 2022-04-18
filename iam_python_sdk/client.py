@@ -230,7 +230,8 @@ class DefaultClient:
             revocation_list = RevocationList.loads(resp.json())
             self._set_revocation_filter(revocation_list.RevokedTokens)
             for revoked_user in revocation_list.RevokedUsers:
-                self._set_revoked_user(revoked_user.Id, revoked_user.RevokedAt)
+                if revoked_user.Id and revoked_user.RevokedAt:
+                    self._set_revoked_user(revoked_user.Id, revoked_user.RevokedAt)
 
         except (json.JSONDecodeError, ValueError) as e:
             raise GetRevocationListError("unable to unmarshal response body") from e
