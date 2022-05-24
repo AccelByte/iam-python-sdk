@@ -88,6 +88,7 @@ class AsyncTask:
         self._status = 'STOPPED'
         self.interval = interval
         self.function = function
+        self.task = None
         self.repeat = repeat
         self.args = args
         self.kwargs = kwargs
@@ -116,27 +117,27 @@ class AsyncTask:
                 self.status = 'RUNNING'
                 await self.function(*self.args, **self.kwargs)
             except asyncio.CancelledError:
-                break
+                raise
             except Exception as e:
                 # We catch all exceptions here because we dont know what error will occur on background task
                 logger.error(e)
                 self.error = e
         else:
-            await self.stop()
+            self.stop()
 
     def start(self) -> None:
         """Start the the background task.
         """
         if self.status == 'STOPPED':
             try:
-                self._task = asyncio.ensure_future(self._run())
+                self.task = asyncio.ensure_future(self._run())
             finally:
-                self._task.cancel()
+                self.stop()
 
-    async def stop(self) -> None:
+    def stop(self) -> None:
         """Stop the background task.
         """
         self.status = 'STOPPED'
 
-        if self._task:
-            self._task.cancel()
+        if self.task:
+            self.task.cancel()

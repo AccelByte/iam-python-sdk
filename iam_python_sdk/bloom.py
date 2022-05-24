@@ -58,7 +58,10 @@ class BloomFilter:
             m (int): Number of bits
         """
         bitset = struct.pack("Q" * len(bits), *bits)
-        self.Bits.frombytes(bitset)
+        bitarr = bitarray(endian="little")
+        bitarr.frombytes(bitset)
+
+        self.Bits = bitarr
         self.K = k
         self.M = m
 
