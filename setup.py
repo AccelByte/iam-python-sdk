@@ -11,16 +11,17 @@ with open('CHANGELOG.rst') as changelog_file:
     changelog = changelog_file.read()
 
 requirements = [
-    'Click>=7.0',
+    'Click>=7.1.2',
     'backoff==1.11.1',
-    'httpx>=1.0.0b0',
+    'httpx==0.22.0',
+    'httpcore==0.14.5',
     'pyjwt[crypto]==2.2.0',
     'crontab==0.23.0',
     'bitarray==2.3.4',
     'mmh3==3.0.0'
 ]
 
-test_requirements = ['pytest==6.2.4', 'pytest-asyncio==0.18.2', 'respx==0.18.0']
+test_requirements = ['pytest==6.2.4', 'pytest-asyncio==0.16.0', 'respx==0.19.2']
 
 optional_requirements = {
     "flask": ["Flask>=1.0"],

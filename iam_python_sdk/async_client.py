@@ -14,7 +14,7 @@
 
 """IAM Python SDK async client module."""
 
-import backoff, httpx, json, jwt
+import asyncio, backoff, httpx, json, jwt
 
 from threading import RLock
 from typing import Any, Dict, List, Union
@@ -55,6 +55,22 @@ def backoff_giveup_handler(backoff) -> None:
 class HttpClient:
     """HttpClient class to do http request."""
 
+    def __init__(self) -> None:
+        self.client = httpx.AsyncClient()
+
+    def __del__(self):
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                asyncio.ensure_future(self.close(), loop=loop)
+            else:
+                loop.run_until_complete(self.close())
+        except Exception:
+            pass
+
+    async def close(self) -> None:
+        await self.client.aclose()
+
     async def get(self, *args, **kwargs) -> httpx.Response:
         return await self.request("GET", *args, **kwargs)
 
@@ -66,10 +82,9 @@ class HttpClient:
         max_time=MAX_BACKOFF_TIME, on_giveup=backoff_giveup_handler
     )
     async def request(self, method: str = "GET", *args, **kwargs) -> httpx.Response:
-        async with httpx.AsyncClient() as client:
-            resp = await client.request(method, *args, **kwargs)
-            if resp.status_code >= 500:
-                resp.raise_for_status()
+        resp = await self.client.request(method, *args, **kwargs)
+        if resp.status_code >= 500:
+            resp.raise_for_status()
 
         return resp
 
@@ -420,7 +435,6 @@ class AsyncClient:
 
             if not self._tokenRefreshActive:
                 self._tokenRefreshActive = True
-
                 self._tasks["refresh_token"] = AsyncTask(
                     token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE,
                     self._refresh_access_token
