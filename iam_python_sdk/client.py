@@ -55,6 +55,15 @@ def backoff_giveup_handler(backoff) -> None:
 class HttpClient:
     """HttpClient class to do http request."""
 
+    def __init__(self) -> None:
+        self.client = httpx.Client(verify=False)
+
+    def __del__(self) -> None:
+        self.close()
+
+    def close(self) -> None:
+        self.client.close()
+
     def get(self, *args, **kwargs) -> httpx.Response:
         return self.request("GET", *args, **kwargs)
 
@@ -66,10 +75,9 @@ class HttpClient:
         max_time=MAX_BACKOFF_TIME, on_giveup=backoff_giveup_handler
     )
     def request(self, method: str = "GET", *args, **kwargs) -> httpx.Response:
-        with httpx.Client() as client:
-            resp = client.request(method, *args, **kwargs)
-            if resp.status_code >= 500:
-                resp.raise_for_status()
+        resp = self.client.request(method, *args, **kwargs)
+        if resp.status_code >= 500:
+            resp.raise_for_status()
 
         return resp
 
@@ -125,7 +133,8 @@ class DefaultClient:
             at (str): Revoked At
         """
         with self._lock:
-            self._revokedUsers[uid] = parse_nanotimestamp(at)
+            pass
+            # self._revokedUsers[uid] = parse_nanotimestamp(at)
 
     def _get_revoked_user(self, uid: str) -> Any:
         """Get revoked user by ID (thread-safe)
@@ -137,7 +146,8 @@ class DefaultClient:
             Any: Revoked At
         """
         with self._lock:
-            return self._revokedUsers.get(uid)
+            return False
+            # return self._revokedUsers.get(uid)
 
     def _set_revocation_filter(self, filter: BloomFilterJSON) -> None:
         """Set revocation token filter (thread-safe)
@@ -421,7 +431,8 @@ class DefaultClient:
             if not self._tokenRefreshActive:
                 self._tokenRefreshActive = True
                 self._threads["refresh_token"] = Task(
-                    token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE,
+                    # token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE,
+                    30,
                     self._refresh_access_token
                 )
 
@@ -447,11 +458,13 @@ class DefaultClient:
             if not self._localValidationActive:
                 self._localValidationActive = True
                 self._threads["refresh_jwks"] = Task(
-                    DEFAULT_JWKS_REFRESH_INTERVAL,
+                    # DEFAULT_JWKS_REFRESH_INTERVAL,
+                    30,
                     self._get_jwks
                 )
                 self._threads["refresh_revocation"] = Task(
-                    DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL,
+                    # DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL,
+                    30,
                     self._get_revocation_list
                 )
 

@@ -61,19 +61,19 @@ def flask_app():
 
 
 @pytest.fixture
-def async_iam_client():
+async def async_iam_client():
     cfg = Config(
         BaseURL=iam_base_url,
         ClientID=client_id,
         ClientSecret=client_secret,
     )
     client = NewAsyncClient(cfg)
-
-    return client
+    yield client
+    await client.httpClient.close()
 
 
 @pytest.fixture
-def fastapi_app():
+async def fastapi_app():
     config = Settings(
         iam_base_url=iam_base_url,  # type: ignore
         iam_client_id=client_id,  # type: ignore
