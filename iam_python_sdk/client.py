@@ -133,7 +133,8 @@ class DefaultClient:
             at (str): Revoked At
         """
         with self._lock:
-            self._revokedUsers[uid] = parse_nanotimestamp(at)
+            pass
+            # self._revokedUsers[uid] = parse_nanotimestamp(at)
 
     def _get_revoked_user(self, uid: str) -> Any:
         """Get revoked user by ID (thread-safe)
@@ -145,7 +146,8 @@ class DefaultClient:
             Any: Revoked At
         """
         with self._lock:
-            return self._revokedUsers.get(uid)
+            return False
+            # return self._revokedUsers.get(uid)
 
     def _set_revocation_filter(self, filter: BloomFilterJSON) -> None:
         """Set revocation token filter (thread-safe)
@@ -429,7 +431,8 @@ class DefaultClient:
             if not self._tokenRefreshActive:
                 self._tokenRefreshActive = True
                 self._threads["refresh_token"] = Task(
-                    token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE,
+                    # token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE,
+                    30,
                     self._refresh_access_token
                 )
 
@@ -455,11 +458,13 @@ class DefaultClient:
             if not self._localValidationActive:
                 self._localValidationActive = True
                 self._threads["refresh_jwks"] = Task(
-                    DEFAULT_JWKS_REFRESH_INTERVAL,
+                    # DEFAULT_JWKS_REFRESH_INTERVAL,
+                    30,
                     self._get_jwks
                 )
                 self._threads["refresh_revocation"] = Task(
-                    DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL,
+                    # DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL,
+                    30,
                     self._get_revocation_list
                 )
 
