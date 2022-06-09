@@ -40,12 +40,30 @@ class HTTPError(HTTPException):
         self.message = message
         self.description = description
 
+
 # ---------- Extensions ---------- #
+
+
+def validate_referer_with_subdomain(referer_header: str, client_redirect_uri: str) -> bool:
+    parsed_referer = urlparse(referer_header)
+    parsed_redirect_uri = urlparse(client_redirect_uri)
+
+    if parsed_referer.scheme == '' or parsed_redirect_uri.scheme == '':
+        return False
+
+    if parsed_referer.netloc == '' or parsed_redirect_uri.netloc == '':
+        return False
+
+    if parsed_referer.scheme != parsed_redirect_uri.scheme:
+        return False
+
+    return parsed_referer.netloc.endswith(parsed_redirect_uri.netloc)
 
 
 class IAM:
     """IAM Flask extensions class.
     """
+
     def __init__(self, app: Union[Flask, None] = None) -> None:
         self.app = app
         if app is not None:
@@ -88,6 +106,7 @@ class IAM:
         app.config.setdefault("IAM_TOKEN_COOKIE_PATH", "/")
         app.config.setdefault("IAM_CSRF_PROTECTION", True)
         app.config.setdefault("IAM_STRICT_REFERER", False)
+        app.config.setdefault("IAM_ALLOW_SUBDOMAIN_REFERER", False)
         app.config.setdefault("IAM_CORS_ENABLE", False)
         app.config.setdefault("IAM_CORS_ORIGIN", "*")
         app.config.setdefault("IAM_CORS_HEADERS", "*")
@@ -102,7 +121,7 @@ class IAM:
         @app.errorhandler(IAMError)
         def handle_iam_error(error):
             return {'errorCode': InternalServerError[1], 'errorMessage': f"{InternalServerError[1]}: {str(error)}"}, \
-                InternalServerError[0]
+                   InternalServerError[0]
 
     def _set_default_cors_headers(self, response: Response) -> Response:
         allowed_origin = current_app.config.get("IAM_CORS_ORIGIN")
@@ -176,8 +195,12 @@ class IAM:
                 parsed_uri = urlparse(redirect_uri)
                 redirect_uri = f"{parsed_uri.scheme}://{parsed_uri.netloc}"
 
-            if referer_header and referer_header.startswith(redirect_uri):
-                return True
+            if not current_app.config.get("IAM_ALLOW_SUBDOMAIN_REFERER"):
+                if referer_header and referer_header.startswith(redirect_uri):
+                    return True
+            else:
+                if validate_referer_with_subdomain(referer_header, redirect_uri):
+                    return True
 
         return False
 
@@ -291,6 +314,7 @@ def permission_required(required_permission: dict, permission_resource: dict = {
         Returns:
             Callable: Wrapped function
     """
+
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
@@ -328,6 +352,7 @@ def cors_options(headers: dict = {}, preflight_options: bool = True):
     Returns:
         Callable: Wrapped functions.
     """
+
     def wrapper(fn):
         if preflight_options:
             fn.required_methods = getattr(fn, 'required_methods', set())

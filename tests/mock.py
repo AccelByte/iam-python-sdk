@@ -94,7 +94,7 @@ client_info = {
     "clientId": client_id,
     "clientName": "IAM Client Test",
     "namespace": "sdktest",
-    "redirectUri": "http://127.0.0.1",
+    "redirectUri": "https://example.com",
     "oauthClientType": "Confidential",
     "audiences": [],
     "baseUri": "",

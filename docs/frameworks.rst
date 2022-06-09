@@ -70,13 +70,14 @@ You can customize these default configurations according to your service/apps ne
     app.config["IAM_TOKEN_COOKIE_PATH"] = "/"
     app.config["IAM_CSRF_PROTECTION"] = True
     app.config["IAM_STRICT_REFERER"] = False
+    app.config["IAM_ALLOW_SUBDOMAIN_REFERER"] = False
 
 .. note::
     This module has been tested with Flask default WSGI server for development.
     For production use, this module has been tested with *Gunicorn* and *uWSGI*.
     You can use Gunicorn with sync and gthread worker. Since this SDK use multithreading, please
     make sure you enable the thread support with **--enable-threads** options when you use uWSGI.
-    
+
     For more information about Flask deployment, please read more information `here <https://flask.palletsprojects.com/en/latest/deploying/>`_
 
 CORS Options
@@ -178,12 +179,13 @@ You can customize these default configurations according to your service/apps ne
     settings.iam_token_cookie_path = "/"
     settings.iam_csrf_protection = True
     settings.iam_strict_referer = False
+    settings.iam_allow_subdomain_referer = False
 
 .. note::
     This module has been tested with FastAPI default uvicorn server for development.
     For production use, this module has been tested with *Gunicorn*.
     You can use Gunicorn with ``uvicorn.workers.UvicornWorker`` class worker.
-    
+
     For more information about FastAPI deployment, please read more information `here <https://fastapi.tiangolo.com/deployment/server-workers/>`_
 
 CORS Middleware
