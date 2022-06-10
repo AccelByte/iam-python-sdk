@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>iam_python_sdk package &mdash; iam-python-sdk 1.2.2 documentation</title>
+  <title>iam_python_sdk package &mdash; iam-python-sdk 1.3.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'./',
-              VERSION:'1.2.2',
+              VERSION:'1.3.0',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                1.2.2
+                1.3.0
               </div>
             
           
@@ -207,7 +207,7 @@
 
 
 
-    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../1.2.2/iam_python_sdk.html"><b>Warning:</b> This document is for the development version of iam-python-sdk. The latest version is 1.2.2.</a></p>
+    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../1.3.0/iam_python_sdk.html"><b>Warning:</b> This document is for the development version of iam-python-sdk. The latest version is 1.3.0.</a></p>
 <div class="section" id="iam-python-sdk-package">
 <h1>iam_python_sdk package<a class="headerlink" href="#iam-python-sdk-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
@@ -417,9 +417,14 @@ reqScope (str): required role scope</dd>
 
 <dl class="class">
 <dt id="iam_python_sdk.async_client.HttpClient">
-<em class="property">class </em><code class="descclassname">iam_python_sdk.async_client.</code><code class="descname">HttpClient</code><a class="reference internal" href="_modules/iam_python_sdk/async_client.html#HttpClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.HttpClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">iam_python_sdk.async_client.</code><code class="descname">HttpClient</code> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#HttpClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.HttpClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>HttpClient class to do http request.</p>
+<dl class="method">
+<dt id="iam_python_sdk.async_client.HttpClient.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#HttpClient.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.HttpClient.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="iam_python_sdk.async_client.HttpClient.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; httpx.Response<a class="reference internal" href="_modules/iam_python_sdk/async_client.html#HttpClient.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.async_client.HttpClient.get" title="Permalink to this definition">¶</a></dt>
@@ -750,9 +755,14 @@ reqScope (str): required role scope</dd>
 
 <dl class="class">
 <dt id="iam_python_sdk.client.HttpClient">
-<em class="property">class </em><code class="descclassname">iam_python_sdk.client.</code><code class="descname">HttpClient</code><a class="reference internal" href="_modules/iam_python_sdk/client.html#HttpClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.client.HttpClient" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">iam_python_sdk.client.</code><code class="descname">HttpClient</code> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/client.html#HttpClient"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.client.HttpClient" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>HttpClient class to do http request.</p>
+<dl class="method">
+<dt id="iam_python_sdk.client.HttpClient.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/client.html#HttpClient.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.client.HttpClient.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="iam_python_sdk.client.HttpClient.get">
 <code class="descname">get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; httpx.Response<a class="reference internal" href="_modules/iam_python_sdk/client.html#HttpClient.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.client.HttpClient.get" title="Permalink to this definition">¶</a></dt>
@@ -1020,7 +1030,7 @@ reqScope (str): required role scope</dd>
 
 <dl class="class">
 <dt id="iam_python_sdk.fastapi.IAM">
-<em class="property">class </em><code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">IAM</code><span class="sig-paren">(</span><em>app: typing.Union[fastapi.applications.FastAPI, NoneType] = None, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">IAM</code><span class="sig-paren">(</span><em>app: typing.Union[fastapi.applications.FastAPI, NoneType] = None, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_allow_subdomain_referer=False, iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>IAM FastAPI extensions class.</p>
 <dl class="method">
@@ -1035,7 +1045,7 @@ reqScope (str): required role scope</dd>
 
 <dl class="method">
 <dt id="iam_python_sdk.fastapi.IAM.init_app">
-<code class="descname">init_app</code><span class="sig-paren">(</span><em>app: fastapi.applications.FastAPI, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM.init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM.init_app" title="Permalink to this definition">¶</a></dt>
+<code class="descname">init_app</code><span class="sig-paren">(</span><em>app: fastapi.applications.FastAPI, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_allow_subdomain_referer=False, iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM.init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM.init_app" title="Permalink to this definition">¶</a></dt>
 <dd><p>Init IAM FastAPI extensions with FastAPI app.
 Client token grant and local validation will be executed once here,
 then the background thread will spawn to refresh token, jwks and revocation list.</p>
@@ -1103,6 +1113,11 @@ jwt_claims (JWTClaims): JWT Claim data from token</dd>
 <dd>bool: Is referrer header valid</dd>
 </dl>
 </dd></dl>
+
+<dl class="function">
+<dt id="iam_python_sdk.fastapi.validate_referer_with_subdomain">
+<code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">validate_referer_with_subdomain</code><span class="sig-paren">(</span><em>referer_header: str</em>, <em>client_redirect_uri: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#validate_referer_with_subdomain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.validate_referer_with_subdomain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="module-iam_python_sdk.flask">
@@ -1229,6 +1244,11 @@ HTTPError: Insufficient permission</dd>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="function">
+<dt id="iam_python_sdk.flask.validate_referer_with_subdomain">
+<code class="descclassname">iam_python_sdk.flask.</code><code class="descname">validate_referer_with_subdomain</code><span class="sig-paren">(</span><em>referer_header: str</em>, <em>client_redirect_uri: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/flask.html#validate_referer_with_subdomain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.validate_referer_with_subdomain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="module-iam_python_sdk.http_errors">
@@ -1780,6 +1800,8 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
             <dd><a href="../1.2.0/iam_python_sdk.html">1.2.0</a></dd>
             <dd><a href="../1.2.1/iam_python_sdk.html">1.2.1</a></dd>
             <dd><a href="../1.2.2/iam_python_sdk.html">1.2.2</a></dd>
+            <dd><a href="../1.2.3/iam_python_sdk.html">1.2.3</a></dd>
+            <dd><a href="../1.3.0/iam_python_sdk.html">1.3.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

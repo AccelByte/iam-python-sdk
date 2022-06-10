@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>iam_python_sdk.bloom &mdash; iam-python-sdk 1.2.2 documentation</title>
+  <title>iam_python_sdk.bloom &mdash; iam-python-sdk 1.3.0 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../../',
-              VERSION:'1.2.2',
+              VERSION:'1.3.0',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -72,7 +72,7 @@
             
             
               <div class="version">
-                1.2.2
+                1.3.0
               </div>
             
           
@@ -239,7 +239,10 @@
 <span class="sd">            m (int): Number of bits</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bitset</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;Q&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">bits</span><span class="p">),</span> <span class="o">*</span><span class="n">bits</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Bits</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">bitset</span><span class="p">)</span>
+        <span class="n">bitarr</span> <span class="o">=</span> <span class="n">bitarray</span><span class="p">(</span><span class="n">endian</span><span class="o">=</span><span class="s2">&quot;little&quot;</span><span class="p">)</span>
+        <span class="n">bitarr</span><span class="o">.</span><span class="n">frombytes</span><span class="p">(</span><span class="n">bitset</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Bits</span> <span class="o">=</span> <span class="n">bitarr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="n">k</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">m</span></div>
 
@@ -300,7 +303,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.2.2
+        v: 1.3.0
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -313,7 +316,9 @@
             <dd><a href="../../1.1.0/index.html">1.1.0</a></dd>
             <dd><a href="../../1.2.0/index.html">1.2.0</a></dd>
             <dd><a href="../../1.2.1/index.html">1.2.1</a></dd>
-            <dd><a href="../../1.2.2/_modules/iam_python_sdk/bloom.html">1.2.2</a></dd>
+            <dd><a href="../../1.2.2/index.html">1.2.2</a></dd>
+            <dd><a href="../../1.2.3/index.html">1.2.3</a></dd>
+            <dd><a href="../../1.3.0/_modules/iam_python_sdk/bloom.html">1.3.0</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
