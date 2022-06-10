@@ -11,7 +11,7 @@ with open('CHANGELOG.rst') as changelog_file:
     changelog = changelog_file.read()
 
 requirements = [
-    'Click>=7.1.2',
+    'Click>=7.1.2,<8.1.0',
     'backoff==1.11.1',
     'httpx==0.22.0',
     'httpcore==0.14.5',
@@ -61,6 +61,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://accelbyte.github.io/iam-python-sdk',
-    version='1.2.3',
+    version='1.3.0',
     zip_safe=False,
 )
