@@ -57,6 +57,7 @@ class Settings(BaseSettings):
     iam_token_cookie_path = "/"
     iam_csrf_protection = True
     iam_strict_referer = False
+    iam_allow_subdomain_referer = False
     iam_cors_enable = False
     iam_cors_origin = "*"
     iam_cors_headers = "*"
@@ -67,6 +68,7 @@ class Settings(BaseSettings):
 class IAM:
     """IAM FastAPI extensions class.
     """
+
     def __init__(self, app: Union[FastAPI, None] = None, config: Settings = Settings()) -> None:
         if app is not None:
             self.init_app(app, config)
@@ -191,10 +193,30 @@ async def validate_referer_header(request: Request, jwt_claims: JWTClaims) -> bo
             parsed_uri = urlparse(redirect_uri)
             redirect_uri = f"{parsed_uri.scheme}://{parsed_uri.netloc}"
 
-        if referer_header and referer_header.startswith(redirect_uri):
-            return True
+        if not iam.config.iam_allow_subdomain_referer:
+            if referer_header and referer_header.startswith(redirect_uri):
+                return True
+        else:
+            if validate_referer_with_subdomain(referer_header, redirect_uri):
+                return True
 
     return False
+
+
+def validate_referer_with_subdomain(referer_header: str, client_redirect_uri: str) -> bool:
+    parsed_referer = urlparse(referer_header)
+    parsed_redirect_uri = urlparse(client_redirect_uri)
+
+    if parsed_referer.scheme == '' or parsed_redirect_uri.scheme == '':
+        return False
+
+    if parsed_referer.netloc == '' or parsed_redirect_uri.netloc == '':
+        return False
+
+    if parsed_referer.scheme != parsed_redirect_uri.scheme:
+        return False
+
+    return parsed_referer.netloc.endswith(parsed_redirect_uri.netloc)
 
 
 def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
@@ -210,6 +232,7 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
     Returns:
         JWTClaims: JWT claims data
     """
+
     async def _dependency(
         request: Request,
         bearer: Optional[HTTPAuthorizationCredentials] = Security(HTTPBearer(auto_error=False)),
@@ -282,6 +305,7 @@ def permission_required(
     Returns:
         Callable: _description_
     """
+
     async def _dependency(request: Request, jwt_claims: JWTClaims = Depends(token_required(csrf_protect))) -> None:
         try:
             iam = request.app.state.iam
