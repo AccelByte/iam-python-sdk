@@ -56,7 +56,7 @@ class HttpClient:
     """HttpClient class to do http request."""
 
     def __init__(self) -> None:
-        self.client = httpx.Client(verify=False)
+        self.client = httpx.Client()
 
     def __del__(self) -> None:
         self.close()
@@ -431,8 +431,7 @@ class DefaultClient:
             if not self._tokenRefreshActive:
                 self._tokenRefreshActive = True
                 self._threads["refresh_token"] = Task(
-                    # token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE,
-                    30,
+                    token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE,
                     self._refresh_access_token
                 )
 
@@ -458,13 +457,11 @@ class DefaultClient:
             if not self._localValidationActive:
                 self._localValidationActive = True
                 self._threads["refresh_jwks"] = Task(
-                    # DEFAULT_JWKS_REFRESH_INTERVAL,
-                    30,
+                    DEFAULT_JWKS_REFRESH_INTERVAL,
                     self._get_jwks
                 )
                 self._threads["refresh_revocation"] = Task(
-                    # DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL,
-                    30,
+                    DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL,
                     self._get_revocation_list
                 )
 
