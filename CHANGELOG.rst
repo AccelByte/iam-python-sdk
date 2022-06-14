@@ -2,12 +2,17 @@
 Changelog
 =========
 
-1.3.0 (2022-06-16)
+1.3.1 (2022-06-14)
+------------------
+
+* Code cleaning
+
+1.3.0 (2022-06-10)
 ------------------
 
 * Add option for allowing referer header validation with subdomain
 
-1.2.3 (2022-06-16)
+1.2.3 (2022-06-06)
 ------------------
 
 * Fixing memory leak issue.
