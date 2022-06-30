@@ -14,7 +14,7 @@
 
 """IAM Python SDK client module."""
 
-import backoff, httpx, json, jwt
+import backoff, httpx, json, jwt, copy
 
 from threading import RLock
 from typing import Any, Dict, List, Union
@@ -393,14 +393,16 @@ class DefaultClient:
         Returns:
             List[Permission]: List of permission with applied user permission
         """
+        granted_permissions = copy.deepcopy(grantedPermissions)
+
         if not allowedNamespace:
             allowedNamespace = claims.Namespace
 
-        for granted_permission in grantedPermissions:
+        for granted_permission in granted_permissions:
             granted_permission.Resource = granted_permission.Resource.replace("{userId}", claims.Sub)
             granted_permission.Resource = granted_permission.Resource.replace("{namespace}", allowedNamespace)
 
-        return grantedPermissions
+        return granted_permissions
 
     def ClientTokenGrant(self) -> None:
         """Starts client token grant to get client bearer token for role caching

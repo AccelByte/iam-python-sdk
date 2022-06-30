@@ -89,7 +89,7 @@ async def test_ValidatePermission(async_iam_client: AsyncClient) -> None:
     await async_iam_client.StartLocalValidation()
     claims = await async_iam_client.ValidateAndParseClaims(await async_iam_client.ClientToken())
     required_permission = Permission.loads(
-        {"Action": 2, "Resource": "ADMIN:NAMESPACE:{namespace}:CLIENT"}
+        {"Action": 2, "Resource": "ADMIN:NAMESPACE:{namespace}:ANALYTICS"}
     )
     permission_resource = {"{namespace}": "sdktest"}
     valid_permission = await async_iam_client.ValidatePermission(
