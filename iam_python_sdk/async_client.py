@@ -281,7 +281,12 @@ class AsyncClient:
             if not public_key:
                 raise ValueError("invalid key")
 
-            claims = jwt.decode(token, public_key, algorithms=["RS256"], options={"verify_exp": True})
+            claims = jwt.decode(
+                token,
+                public_key,
+                algorithms=["RS256"],
+                options={"verify_exp": True, "verify_aud": False}
+            )
             jwt_claims = JWTClaims.loads(claims)
 
         except jwt.DecodeError as e:
