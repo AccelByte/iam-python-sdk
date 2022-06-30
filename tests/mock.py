@@ -55,7 +55,10 @@ claims_data = {
     "is_comply": True,
     "jflgs": 0,
     "namespace": "sdktest",
-    "namespace_roles": None,
+    "namespace_roles": [
+        {"namespace": "other", "roleId": role_id},
+        {"namespace": "sdktest", "roleId": role_id},
+    ],
     "permissions": [
         {"Action": 2, "Resource": "ROLE"},
         {"Action": 2, "Resource": "ADMIN:NAMESPACE:sdktest:CLIENT:{clientId}"},
@@ -112,8 +115,9 @@ role_data = {
     "RoleId": role_id,
     "RoleName": "Role Test",
     "Permissions": [
-        {"Resource": "PERMISSION:PERMISSION", "Action": 1},
-        {"Resource": "PERMISSION", "Action": 3},
+        {"Action": 1, "Resource": "PERMISSION:PERMISSION"},
+        {"Action": 3, "Resource": "PERMISSION"},
+        {"Action": 2, "Resource": "ADMIN:NAMESPACE:{namespace}:ANALYTICS"},
     ],
     "IsWildcard": False,
 }

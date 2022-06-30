@@ -83,7 +83,7 @@ def test_ValidatePermission(iam_client: DefaultClient) -> None:
     iam_client.StartLocalValidation()
     claims = iam_client.ValidateAndParseClaims(iam_client.ClientToken())
     required_permission = Permission.loads(
-        {"Action": 2, "Resource": "ADMIN:NAMESPACE:{namespace}:CLIENT"}
+        {"Action": 2, "Resource": "ADMIN:NAMESPACE:{namespace}:ANALYTICS"}
     )
     permission_resource = {"{namespace}": "sdktest"}
     valid_permission = iam_client.ValidatePermission(

@@ -14,7 +14,7 @@
 
 """IAM Python SDK async client module."""
 
-import asyncio, backoff, httpx, json, jwt
+import asyncio, backoff, httpx, json, jwt, copy
 
 from threading import RLock
 from typing import Any, Dict, List, Union
@@ -281,7 +281,12 @@ class AsyncClient:
             if not public_key:
                 raise ValueError("invalid key")
 
-            claims = jwt.decode(token, public_key, algorithms=["RS256"], options={"verify_exp": True})
+            claims = jwt.decode(
+                token,
+                public_key,
+                algorithms=["RS256"],
+                options={"verify_exp": True, "verify_aud": False}
+            )
             jwt_claims = JWTClaims.loads(claims)
 
         except jwt.DecodeError as e:
@@ -398,14 +403,16 @@ class AsyncClient:
         Returns:
             List[Permission]: List of permission with applied user permission
         """
+        granted_permissions = copy.deepcopy(grantedPermissions)
+
         if not allowedNamespace:
             allowedNamespace = claims.Namespace
 
-        for granted_permission in grantedPermissions:
+        for granted_permission in granted_permissions:
             granted_permission.Resource = granted_permission.Resource.replace("{userId}", claims.Sub)
             granted_permission.Resource = granted_permission.Resource.replace("{namespace}", allowedNamespace)
 
-        return grantedPermissions
+        return granted_permissions
 
     async def ClientTokenGrant(self) -> None:
         """Starts client token grant to get client bearer token for role caching
