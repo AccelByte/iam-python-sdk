@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.3.2 (2022-06-30)
+------------------
+
+* Fixing multiple namespace_role permission validation
+* Disable default verify aud by pyjwt
+* Reformat logging
+
 1.3.1 (2022-06-14)
 ------------------
 
