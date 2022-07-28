@@ -204,6 +204,15 @@ async def validate_referer_header(request: Request, jwt_claims: JWTClaims) -> bo
 
 
 def validate_referer_with_subdomain(referer_header: str, client_redirect_uri: str) -> bool:
+    """Validate referer header that have subdomain.
+
+    Args:
+        referer_header (str): Referer header string
+        client_redirect_uri (str): Client redirect URI string
+
+    Returns:
+        bool: Referer header status
+    """
     parsed_referer = urlparse(referer_header)
     parsed_redirect_uri = urlparse(client_redirect_uri)
 
@@ -219,15 +228,12 @@ def validate_referer_with_subdomain(referer_header: str, client_redirect_uri: st
     return parsed_referer.netloc.endswith(parsed_redirect_uri.netloc)
 
 
-def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
-    """Validate token in the FastAPI request. This method support headers and cookies with based token.
-
-    Args:
-        csrf_protect (bool, None): Validate referer for CSRF protection
+def access_token() -> Callable:
+    """Get access token from request.
 
     Raises:
         IAMError: Error IAM init
-        HTTPError: Error if token is not found or invalid
+        HTTPError: Error if token is not found
 
     Returns:
         JWTClaims: JWT claims data
@@ -237,7 +243,7 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
         request: Request,
         bearer: Optional[HTTPAuthorizationCredentials] = Security(HTTPBearer(auto_error=False)),
         cookie: Optional[str] = Security(APIKeyCookie(name="access_token", auto_error=False)),
-    ) -> JWTClaims:
+    ) -> tuple:
         try:
             iam = request.app.state.iam
         except AttributeError:
@@ -246,7 +252,7 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
                 "startup event before using this method"
             )
 
-        access_token = ""
+        access_token = None
         token_location = iam.config.iam_token_locations
         for location in token_location:
             # Get token from headers
@@ -257,6 +263,10 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
                 header_parts = bearer.credentials.split()
                 access_token = header_parts[-1], "header"
 
+            # Break loop if access token has been found in request header
+            if access_token:
+                break
+
             # Get token from cookies
             if location == "cookies":
                 if cookie:
@@ -264,6 +274,37 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
 
         if not access_token:
             raise HTTPError(*UnauthorizedAccess, description=f"Missing access token in {' or '.join(token_location)}")
+
+        return access_token
+
+    return _dependency
+
+
+def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
+    """Validate token in the FastAPI request. This method support headers and cookies with based token.
+
+    Args:
+        csrf_protect (bool, None): Validate referer for CSRF protection
+
+    Raises:
+        IAMError: Error IAM init
+        HTTPError: Error if token is invalid
+
+    Returns:
+        JWTClaims: JWT claims data
+    """
+
+    async def _dependency(
+        request: Request,
+        access_token: tuple = Depends(access_token()),
+    ) -> JWTClaims:
+        try:
+            iam = request.app.state.iam
+        except AttributeError:
+            raise IAMError(
+                "You must initialize a IAM with on fastapi "
+                "startup event before using this method"
+            )
 
         try:
             jwt_claims = await iam.client.ValidateAndParseClaims(access_token[0])
