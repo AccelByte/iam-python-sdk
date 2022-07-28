@@ -19,7 +19,7 @@ import json
 from flask import Flask, current_app
 
 from iam_python_sdk.client import DefaultClient
-from iam_python_sdk.flask import IAM, validate_referer_with_subdomain
+from iam_python_sdk.flask import IAM
 
 from .mock import iam_mock, client_token
 
@@ -67,6 +67,7 @@ def test_protected_endpoint(flask_app: Flask) -> None:
 
 @iam_mock
 def test_protected_with_csrf_endpoint(flask_app: Flask) -> None:
+    # Redirect URI: https://example.com
     with flask_app.test_client() as c:
         c.set_cookie("localhost", "access_token", client_token['access_token'])
         # Valid referer header
@@ -81,6 +82,7 @@ def test_protected_with_csrf_endpoint(flask_app: Flask) -> None:
 def test_protected_with_csrf_endpoint_with_subdomain(flask_app: Flask) -> None:
     flask_app.config["IAM_ALLOW_SUBDOMAIN_REFERER"] = True
 
+    # Redirect URI: https://example.com
     with flask_app.test_client() as c:
         c.set_cookie("localhost", "access_token", client_token['access_token'])
         # Valid referer header with subdomain
@@ -88,6 +90,12 @@ def test_protected_with_csrf_endpoint_with_subdomain(flask_app: Flask) -> None:
         assert resp.status_code == 200
         # Invalid referer header
         resp = c.get('/protected_with_csrf', headers={"Referer": "http://test.foo.bar"})
+        assert resp.status_code == 401
+        # Invalid scheme
+        resp = c.get('/protected_with_csrf', headers={"Referer": "http://example.com"})
+        assert resp.status_code == 401
+        # Invalid domain
+        resp = c.get('/protected_with_csrf', headers={"Referer": "https://example.net"})
         assert resp.status_code == 401
 
 
@@ -103,19 +111,3 @@ def test_protected_with_cors_endpoint(flask_app: Flask) -> None:
         assert resp.headers.get("Access-Control-Allow-Origin", "") == "*"
         # Assert override CORS header
         assert resp.headers.get("Access-Control-Allow-Headers", "").find("Device-Id") != -1
-
-
-def test_validate_referer_with_subdomain():
-    # Assert wrong URL
-    assert validate_referer_with_subdomain("wrongaddress", "anotherwrong") == False
-    assert validate_referer_with_subdomain("https://example.com", "wrongaddress") == False
-    assert validate_referer_with_subdomain("wrongaddress", "https://example.com") == False
-    # Assert mismatch scheme
-    assert validate_referer_with_subdomain("http://example.com", "https://example.com") == False
-    # Assert mismatch domain
-    assert validate_referer_with_subdomain("https://example.com", "https://example.net") == False
-
-    # Assert exact match
-    assert validate_referer_with_subdomain("https://example.com", "https://example.com") == True
-    # Assert subdomain match
-    assert validate_referer_with_subdomain("https://test.example.com", "https://example.com") == True

@@ -18,7 +18,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from iam_python_sdk.async_client import AsyncClient
-from iam_python_sdk.fastapi import IAM, validate_referer_with_subdomain
+from iam_python_sdk.fastapi import IAM
 
 from .mock import iam_mock, client_token
 
@@ -61,6 +61,7 @@ def test_protected_endpoint(fastapi_app: FastAPI) -> None:
 
 @iam_mock
 def test_protected_with_csrf_endpoint(fastapi_app: FastAPI) -> None:
+    # Redirect URI: https://example.com
     with TestClient(fastapi_app) as c:
         # Valid referer header
         resp = c.get('/protected_with_csrf', headers={"Referer": "https://example.com"},
@@ -74,7 +75,7 @@ def test_protected_with_csrf_endpoint(fastapi_app: FastAPI) -> None:
 
 @iam_mock
 def test_protected_with_csrf_endpoint_with_subdomain(fastapi_app: FastAPI) -> None:
-
+    # Redirect URI: https://example.com
     with TestClient(fastapi_app) as c:
         fastapi_app.state.iam.config.iam_allow_subdomain_referer = True
 
@@ -84,6 +85,14 @@ def test_protected_with_csrf_endpoint_with_subdomain(fastapi_app: FastAPI) -> No
         assert resp.status_code == 200
         # Invalid referer header
         resp = c.get('/protected_with_csrf', headers={"Referer": "http://foo.bar"},
+                     cookies={"access_token": client_token['access_token']})
+        assert resp.status_code == 401
+        # Invalid scheme
+        resp = c.get('/protected_with_csrf', headers={"Referer": "http://example.com"},
+                     cookies={"access_token": client_token['access_token']})
+        assert resp.status_code == 401
+        # Invalid domain
+        resp = c.get('/protected_with_csrf', headers={"Referer": "https://example.net"},
                      cookies={"access_token": client_token['access_token']})
         assert resp.status_code == 401
 
@@ -98,23 +107,7 @@ def test_protected_with_cors_endpoint(fastapi_app: FastAPI) -> None:
         assert resp.status_code == 200
         # Preflight options have empty body response
         assert resp.text == 'OK'
-        # # Assert default CORS header
-        assert resp.headers.get("Access-Control-Allow-Origin", "") == "http://127.0.0.1"
+        # Assert default CORS headers
+        assert resp.headers.get("Access-Control-Allow-Origin", "") == "*"
         # Assert override CORS header
         assert resp.headers.get("Access-Control-Allow-Headers", "").find("Device-Id") != -1
-
-
-def test_validate_referer_with_subdomain():
-    # Assert wrong URL
-    assert validate_referer_with_subdomain("wrongaddress", "anotherwrong") == False
-    assert validate_referer_with_subdomain("https://example.com", "wrongaddress") == False
-    assert validate_referer_with_subdomain("wrongaddress", "https://example.com") == False
-    # Assert mismatch scheme
-    assert validate_referer_with_subdomain("http://example.com", "https://example.com") == False
-    # Assert mismatch domain
-    assert validate_referer_with_subdomain("https://example.com", "https://example.net") == False
-
-    # Assert exact match
-    assert validate_referer_with_subdomain("https://example.com", "https://example.com") == True
-    # Assert subdomain match
-    assert validate_referer_with_subdomain("https://test.example.com", "https://example.com") == True
