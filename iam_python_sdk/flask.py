@@ -118,6 +118,10 @@ class IAM:
         if isinstance(allowed_headers, list):
             allowed_headers = ", ".join(allowed_headers)
 
+        if "*" not in allowed_origin or allow_credentials == "true":
+            allowed_origin = request.origin
+            response.headers.setdefault("Vary", "Origin")
+
         response.headers.setdefault("Access-Control-Allow-Origin", allowed_origin)
         response.headers.setdefault("Access-Control-Allow-Headers", allowed_headers)
         response.headers.setdefault("Access-Control-Allow-Methods", allowed_methods)

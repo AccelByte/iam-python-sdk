@@ -101,13 +101,15 @@ def test_protected_with_csrf_endpoint_with_subdomain(fastapi_app: FastAPI) -> No
 def test_protected_with_cors_endpoint(fastapi_app: FastAPI) -> None:
     with TestClient(fastapi_app) as c:
         resp = c.options('/protected_with_cors',
-                         headers={"Origin": "http://127.0.0.1", "Access-Control-Request-Method": "POST",
-                                  "Access-Control-Request-Headers": "Device-Id"},
+                         headers={"Origin": "http://127.0.0.1",
+                                  "Access-Control-Request-Method": "POST",
+                                  "Access-Control-Request-Headers": "Device-Id"
+                                  },
                          cookies={"access_token": client_token['access_token']})
         assert resp.status_code == 200
         # Preflight options have empty body response
         assert resp.text == 'OK'
         # Assert default CORS headers
-        assert resp.headers.get("Access-Control-Allow-Origin", "") == "*"
+        assert resp.headers.get("Access-Control-Allow-Origin", "") == "http://127.0.0.1"
         # Assert override CORS header
         assert resp.headers.get("Access-Control-Allow-Headers", "").find("Device-Id") != -1

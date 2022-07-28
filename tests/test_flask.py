@@ -103,11 +103,17 @@ def test_protected_with_csrf_endpoint_with_subdomain(flask_app: Flask) -> None:
 def test_protected_with_cors_endpoint(flask_app: Flask) -> None:
     with flask_app.test_client() as c:
         c.set_cookie("localhost", "access_token", client_token['access_token'])
-        resp = c.options('/protected_with_cors', headers={"Referer": "https://example.com"})
+        resp = c.options(
+            '/protected_with_cors',
+            headers={"Origin": "http://127.0.0.1",
+                     "Access-Control-Request-Method": "POST",
+                     "Access-Control-Request-Headers": "Device-Id"
+                     }
+        )
         assert resp.status_code == 200
         # Preflight options have empty body response
         assert resp.get_json() is None
         # Assert default CORS header
-        assert resp.headers.get("Access-Control-Allow-Origin", "") == "*"
+        assert resp.headers.get("Access-Control-Allow-Origin", "") == "http://127.0.0.1"
         # Assert override CORS header
         assert resp.headers.get("Access-Control-Allow-Headers", "").find("Device-Id") != -1
