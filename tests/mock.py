@@ -216,7 +216,6 @@ def flask_protected_with_csrf():
 
 
 @flask_mock.route('/protected_with_cors', methods=["POST"])
-@flask_permission_required({"resource": "ADMIN:NAMESPACE:{namespace}:CLIENT", "action": 2}, {"{namespace}": "sdktest"})
 @flask_cors_options({"Access-Control-Allow-Headers": ["Device-Id", "Device-Os", "Device-Type"]})
 def flask_protected_with_cors():
     return flask.jsonify({'status': 'protected'})

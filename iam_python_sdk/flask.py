@@ -43,23 +43,6 @@ class HTTPError(HTTPException):
 
 # ---------- Extensions ---------- #
 
-
-def validate_referer_with_subdomain(referer_header: str, client_redirect_uri: str) -> bool:
-    parsed_referer = urlparse(referer_header)
-    parsed_redirect_uri = urlparse(client_redirect_uri)
-
-    if parsed_referer.scheme == '' or parsed_redirect_uri.scheme == '':
-        return False
-
-    if parsed_referer.netloc == '' or parsed_redirect_uri.netloc == '':
-        return False
-
-    if parsed_referer.scheme != parsed_redirect_uri.scheme:
-        return False
-
-    return parsed_referer.netloc.endswith(parsed_redirect_uri.netloc)
-
-
 class IAM:
     """IAM Flask extensions class.
     """
@@ -135,6 +118,10 @@ class IAM:
         if isinstance(allowed_headers, list):
             allowed_headers = ", ".join(allowed_headers)
 
+        if "*" not in allowed_origin or allow_credentials == "true":
+            allowed_origin = request.origin
+            response.headers.setdefault("Vary", "Origin")
+
         response.headers.setdefault("Access-Control-Allow-Origin", allowed_origin)
         response.headers.setdefault("Access-Control-Allow-Headers", allowed_headers)
         response.headers.setdefault("Access-Control-Allow-Methods", allowed_methods)
@@ -199,24 +186,45 @@ class IAM:
                 if referer_header and referer_header.startswith(redirect_uri):
                     return True
             else:
-                if validate_referer_with_subdomain(referer_header, redirect_uri):
+                if self.validate_referer_with_subdomain(referer_header, redirect_uri):
                     return True
 
         return False
 
-    def validate_token_in_request(self, validate_referer: bool) -> JWTClaims:
-        """Validate token in the Flask request. This method support headers and cookies with based token.
+    def validate_referer_with_subdomain(self, referer_header: str, client_redirect_uri: str) -> bool:
+        """Validate referer header that have subdomain.
 
         Args:
-            validate_referer (bool): Validate referer for CSRF protection
-
-        Raises:
-            HTTPError: Error if token is not found or invalid
+            referer_header (str): Referer header string
+            client_redirect_uri (str): Client redirect URI string
 
         Returns:
-            JWTClaims: JWT claims data
+            bool: Referer header status
         """
-        access_token = ""
+        parsed_referer = urlparse(referer_header)
+        parsed_redirect_uri = urlparse(client_redirect_uri)
+
+        if parsed_referer.scheme == "" or parsed_redirect_uri.scheme == "":
+            return False
+
+        if parsed_referer.netloc == "" or parsed_redirect_uri.netloc == "":
+            return False
+
+        if parsed_referer.scheme != parsed_redirect_uri.scheme:
+            return False
+
+        return parsed_referer.netloc.endswith(parsed_redirect_uri.netloc)
+
+    def get_token_in_request(self) -> tuple:
+        """Extract access token from request.
+
+        Raises:
+            HTTPError: Error if token is not found
+
+        Returns:
+            tuple: [0] Access token string, [1] Location of access token
+        """
+        access_token = None
         token_location = current_app.config.get("IAM_TOKEN_LOCATIONS", [])
         for location in token_location:
             # Get token from headers
@@ -234,6 +242,10 @@ class IAM:
                 else:
                     access_token = header_parts[1], "header"
 
+            # Break loop if access token has been found in request header
+            if access_token:
+                break
+
             # Get token from cookies
             if location == "cookies":
                 cookie_name = current_app.config.get("IAM_TOKEN_COOKIE_NAME")
@@ -244,6 +256,21 @@ class IAM:
         if not access_token:
             raise HTTPError(*UnauthorizedAccess, description=f"Missing access token in {' or '.join(token_location)}")
 
+        return access_token
+
+    def validate_token_in_request(self, validate_referer: bool) -> JWTClaims:
+        """Validate token in the Flask request. This method support headers and cookies with based token.
+
+        Args:
+            validate_referer (bool): Validate referer for CSRF protection
+
+        Raises:
+            HTTPError: Error if token is invalid
+
+        Returns:
+            JWTClaims: JWT claims data
+        """
+        access_token = self.get_token_in_request()
         try:
             jwt_claims = self.client.ValidateAndParseClaims(access_token[0])
         except (ValidateAndParseClaimsError, UserRevokedError, TokenRevokedError) as e:
