@@ -2,6 +2,13 @@
 Changelog
 =========
 
+1.3.3 (2022-08-04)
+------------------
+
+* Fixing cookie token issue
+* Refactor getting access token function
+* Fixing CORS handler
+
 1.3.2 (2022-06-30)
 ------------------
 
