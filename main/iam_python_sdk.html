@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>iam_python_sdk package &mdash; iam-python-sdk 1.3.2 documentation</title>
+  <title>iam_python_sdk package &mdash; iam-python-sdk 1.3.3 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'./',
-              VERSION:'1.3.2',
+              VERSION:'1.3.3',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                1.3.2
+                1.3.3
               </div>
             
           
@@ -207,7 +207,7 @@
 
 
 
-    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../1.3.2/iam_python_sdk.html"><b>Warning:</b> This document is for the development version of iam-python-sdk. The latest version is 1.3.2.</a></p>
+    <p class="scv-banner scv-sphinx_rtd_theme"><a href="../1.3.3/iam_python_sdk.html"><b>Warning:</b> This document is for the development version of iam-python-sdk. The latest version is 1.3.3.</a></p>
 <div class="section" id="iam-python-sdk-package">
 <h1>iam_python_sdk package<a class="headerlink" href="#iam-python-sdk-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
@@ -1068,6 +1068,19 @@ config (Settings): Configuration object</dd>
 </dd></dl>
 
 <dl class="function">
+<dt id="iam_python_sdk.fastapi.access_token">
+<code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">access_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; typing.Callable<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#access_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.access_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get access token from request.</p>
+<dl class="docutils">
+<dt>Raises:</dt>
+<dd>IAMError: Error IAM init
+HTTPError: Error if token is not found</dd>
+<dt>Returns:</dt>
+<dd>JWTClaims: JWT claims data</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="iam_python_sdk.fastapi.permission_required">
 <code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">permission_required</code><span class="sig-paren">(</span><em>required_permission: typing.Union[dict, iam_python_sdk.models.Permission], permission_resource: dict = {}, csrf_protect: typing.Union[bool, NoneType] = None</em><span class="sig-paren">)</span> &#x2192; typing.Callable<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#permission_required"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.permission_required" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate permission in the token if it has required permission</p>
@@ -1093,7 +1106,7 @@ HTTPError: Error if JWT claims data is not sufficient to access required permiss
 <dd>csrf_protect (bool, None): Validate referer for CSRF protection</dd>
 <dt>Raises:</dt>
 <dd>IAMError: Error IAM init
-HTTPError: Error if token is not found or invalid</dd>
+HTTPError: Error if token is invalid</dd>
 <dt>Returns:</dt>
 <dd>JWTClaims: JWT claims data</dd>
 </dl>
@@ -1117,7 +1130,15 @@ jwt_claims (JWTClaims): JWT Claim data from token</dd>
 <dl class="function">
 <dt id="iam_python_sdk.fastapi.validate_referer_with_subdomain">
 <code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">validate_referer_with_subdomain</code><span class="sig-paren">(</span><em>referer_header: str</em>, <em>client_redirect_uri: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#validate_referer_with_subdomain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.validate_referer_with_subdomain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Validate referer header that have subdomain.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>referer_header (str): Referer header string
+client_redirect_uri (str): Client redirect URI string</dd>
+<dt>Returns:</dt>
+<dd>bool: Referer header status</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-iam_python_sdk.flask">
@@ -1134,6 +1155,18 @@ jwt_claims (JWTClaims): JWT Claim data from token</dd>
 <em class="property">class </em><code class="descclassname">iam_python_sdk.flask.</code><code class="descname">IAM</code><span class="sig-paren">(</span><em>app: typing.Union[flask.app.Flask</em>, <em>NoneType] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>IAM Flask extensions class.</p>
+<dl class="method">
+<dt id="iam_python_sdk.flask.IAM.get_token_in_request">
+<code class="descname">get_token_in_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.get_token_in_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.get_token_in_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract access token from request.</p>
+<dl class="docutils">
+<dt>Raises:</dt>
+<dd>HTTPError: Error if token is not found</dd>
+<dt>Returns:</dt>
+<dd>tuple: [0] Access token string, [1] Location of access token</dd>
+</dl>
+</dd></dl>
+
 <dl class="method">
 <dt id="iam_python_sdk.flask.IAM.grant_token">
 <code class="descname">grant_token</code><span class="sig-paren">(</span><em>app: flask.app.Flask</em><span class="sig-paren">)</span> &#x2192; iam_python_sdk.client.DefaultClient<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.grant_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.grant_token" title="Permalink to this definition">¶</a></dt>
@@ -1194,6 +1227,19 @@ required_permission (Union[dict, Permission]): Required permission that needed,<
 </dd></dl>
 
 <dl class="method">
+<dt id="iam_python_sdk.flask.IAM.validate_referer_with_subdomain">
+<code class="descname">validate_referer_with_subdomain</code><span class="sig-paren">(</span><em>referer_header: str</em>, <em>client_redirect_uri: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.validate_referer_with_subdomain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.validate_referer_with_subdomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate referer header that have subdomain.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>referer_header (str): Referer header string
+client_redirect_uri (str): Client redirect URI string</dd>
+<dt>Returns:</dt>
+<dd>bool: Referer header status</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="iam_python_sdk.flask.IAM.validate_token_in_request">
 <code class="descname">validate_token_in_request</code><span class="sig-paren">(</span><em>validate_referer: bool</em><span class="sig-paren">)</span> &#x2192; iam_python_sdk.models.JWTClaims<a class="reference internal" href="_modules/iam_python_sdk/flask.html#IAM.validate_token_in_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.IAM.validate_token_in_request" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate token in the Flask request. This method support headers and cookies with based token.</p>
@@ -1201,7 +1247,7 @@ required_permission (Union[dict, Permission]): Required permission that needed,<
 <dt>Args:</dt>
 <dd>validate_referer (bool): Validate referer for CSRF protection</dd>
 <dt>Raises:</dt>
-<dd>HTTPError: Error if token is not found or invalid</dd>
+<dd>HTTPError: Error if token is invalid</dd>
 <dt>Returns:</dt>
 <dd>JWTClaims: JWT claims data</dd>
 </dl>
@@ -1244,11 +1290,6 @@ HTTPError: Insufficient permission</dd>
 </dd>
 </dl>
 </dd></dl>
-
-<dl class="function">
-<dt id="iam_python_sdk.flask.validate_referer_with_subdomain">
-<code class="descclassname">iam_python_sdk.flask.</code><code class="descname">validate_referer_with_subdomain</code><span class="sig-paren">(</span><em>referer_header: str</em>, <em>client_redirect_uri: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/flask.html#validate_referer_with_subdomain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.validate_referer_with_subdomain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </div>
 <div class="section" id="module-iam_python_sdk.http_errors">
@@ -1804,6 +1845,7 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
             <dd><a href="../1.3.0/iam_python_sdk.html">1.3.0</a></dd>
             <dd><a href="../1.3.1/iam_python_sdk.html">1.3.1</a></dd>
             <dd><a href="../1.3.2/iam_python_sdk.html">1.3.2</a></dd>
+            <dd><a href="../1.3.3/iam_python_sdk.html">1.3.3</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>
