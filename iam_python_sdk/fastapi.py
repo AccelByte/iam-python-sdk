@@ -14,7 +14,7 @@
 
 """FastAPI module."""
 from pydantic import BaseSettings
-from typing import Callable, Optional, Union
+from typing import Callable, Optional, Union, List
 from urllib.parse import urlparse
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Security
@@ -26,7 +26,8 @@ from .config import Config
 from .async_client import NewAsyncClient
 from .errors import Error as IAMError, ClientTokenGrantError, GetClientInformationError, \
     StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAndParseClaimsError, ValidatePermissionError
-from .http_errors import InsufficientPermissions, InternalServerError, InvalidRefererHeader, UnauthorizedAccess
+from .http_errors import InsufficientPermissions, InternalServerError, InvalidRefererHeader, UnauthorizedAccess, \
+    SubdomainMismatch
 from .models import JWTClaims, Permission
 
 
@@ -58,6 +59,8 @@ class Settings(BaseSettings):
     iam_csrf_protection = True
     iam_strict_referer = False
     iam_allow_subdomain_referer = False
+    iam_subdomain_validation_enable = False
+    iam_subdomain_validation_excluded_namespaces = []
     iam_cors_enable = False
     iam_cors_origin = "*"
     iam_cors_headers = "*"
@@ -181,24 +184,39 @@ async def validate_referer_header(request: Request, jwt_claims: JWTClaims) -> bo
         client_info = await iam.client.GetClientInformation(jwt_claims.Namespace, jwt_claims.ClientId)
     except GetClientInformationError:
         return False
+    
+    referer_header = request.headers.get('Referer')
+    if iam.config.iam_subdomain_validation_enable and referer_header:
+        referer_url = urlparse(referer_header)
+        if not referer_url.netloc.startswith(jwt_claims.Namespace):
+            return False
 
     if client_info and not client_info.Redirecturi:
         return True
 
-    referer_header = request.headers.get('Referer')
-    client_redirect_uris = client_info.Redirecturi.split(",") if client_info else []
+    if iam.config.iam_subdomain_validation_enable and referer_header:
+        referer_url = urlparse(referer_header)
+        if not referer_url.netloc.startswith(jwt_claims.Namespace):
+            return False
+    
+    if client_info and not client_info.Redirecturi:
+        return True
 
-    for redirect_uri in client_redirect_uris:
-        if not iam.config.iam_strict_referer:
-            parsed_uri = urlparse(redirect_uri)
-            redirect_uri = f"{parsed_uri.scheme}://{parsed_uri.netloc}"
-
-        if not iam.config.iam_allow_subdomain_referer:
-            if referer_header and referer_header.startswith(redirect_uri):
-                return True
-        else:
-            if validate_referer_with_subdomain(referer_header, redirect_uri):
-                return True
+    if referer_header:
+        client_redirect_uris = client_info.Redirecturi.split(",") if client_info else []
+        for redirect_uri in client_redirect_uris:
+            if iam.config.iam_subdomain_validation_enable or iam.config.iam_allow_subdomain_referer:
+                if validate_referer_with_subdomain(referer_header, redirect_uri):
+                    return True
+            else:
+                parsed_redirect_uri = urlparse(redirect_uri)
+                parsed_referer_header = urlparse(referer_header)
+                if not iam.config.iam_strict_referer:
+                    if parsed_redirect_uri.netloc == parsed_referer_header.netloc and referer_header.startswith(redirect_uri):
+                        return True
+                else:
+                    if parsed_redirect_uri.netloc == parsed_referer_header.netloc:
+                        return True
 
     return False
 
@@ -226,6 +244,34 @@ def validate_referer_with_subdomain(referer_header: str, client_redirect_uri: st
         return False
 
     return parsed_referer.netloc.endswith(parsed_redirect_uri.netloc)
+
+
+def validate_subdomain_with_namespace(host: str, namespace: str, excluded_namespaces: List[str]) -> bool:
+    """Validate subdomain against namespace
+
+    Args:
+        host (str): hostname
+        namespace (str): namespace
+        excluded_namespaces (List[str]): excluded namespace
+
+    Returns:
+        bool: Is subdomain is valid
+    """
+    host_part = host.split('.')
+
+    # # url with subdomain should have at least 3 part, e.g. foo.example.com, otherwise we should not check it
+    if len(host_part) < 3:
+        return True
+    
+    subdomain = host_part[0]
+    for excluded_namespace in excluded_namespaces:
+        if excluded_namespace.lower() == namespace.lower():
+            return True
+    
+    if namespace.lower() == subdomain.lower():
+        return True
+
+    return False
 
 
 def access_token() -> Callable:
@@ -321,6 +367,11 @@ def token_required(csrf_protect: Union[bool, None] = None) -> Callable:
         if access_token[1] == "cookie" and validate_referer:
             if await validate_referer_header(request, jwt_claims) is not True:
                 raise HTTPError(*InvalidRefererHeader, description="Invalid referrer header")
+        
+        if iam.config.iam_subdomain_validation_enable:
+            excluded_namespaces = iam.config.iam_subdomain_validation_excluded_namespaces;
+            if not validate_subdomain_with_namespace(request.url.netloc, jwt_claims.Namespace, excluded_namespaces):
+                raise HTTPError(*SubdomainMismatch, description="Subdomain mismatch")
 
         return jwt_claims
 

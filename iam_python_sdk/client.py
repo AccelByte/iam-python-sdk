@@ -23,12 +23,15 @@ from .bloom import BloomFilter
 from .cache import Cache
 from .config import DEFAULT_JWKS_REFRESH_INTERVAL, DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL, Config
 from .config import CLIENT_INFO_EXPIRATION, CLIENT_INFORMATION_PATH, DEFAULT_TOKEN_REFRESH_RATE, GET_ROLE_PATH, \
-    GRANT_PATH, JWKS_PATH, MAX_BACKOFF_TIME, REVOCATION_LIST_PATH, SCOPE_SEPARATOR, VERIFY_PATH
+    GRANT_PATH, JWKS_PATH, MAX_BACKOFF_TIME, REVOCATION_LIST_PATH, SCOPE_SEPARATOR, VERIFY_PATH, \
+    DEFAULT_BASIC_SERVICE_BASE_URI, GET_NAMESPACE_CONTEXT_PATH
 from .errors import ClientTokenGrantError, GetClientInformationError, GetJWKSError, GetRevocationListError, \
     GetRolePermissionError, HTTPClientError, InvalidTokenSignatureKeyError, NilClaimError, NoLocalValidationError, \
     RefreshAccessTokenError, StartLocalValidationError, TokenRevokedError, UserRevokedError, ValidateAccessTokenError, \
-    ValidateAndParseClaimsError, ValidateAudienceError, ValidateJWTError, ValidatePermissionError, ValidateScopeError
-from .models import BloomFilterJSON, ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse
+    ValidateAndParseClaimsError, ValidateAudienceError, ValidateJWTError, ValidatePermissionError, ValidateScopeError, \
+    ClientDelegateTokenGrantError, GetNamespaceContextError
+from .models import BloomFilterJSON, ClientInformation, JWTClaims, Permission, RevocationList, Role, TokenResponse, \
+                    NamespaceContext
 from .log import logger
 from .task import Task
 from .utils import parse_nanotimestamp
@@ -102,6 +105,8 @@ class DefaultClient:
         self.httpClient = httpClient
         self.rolePermissionCache = rolePermissionCache
         self.clientInfoCache = clientInfoCache
+        self.delegateTokenCache = Cache(load_func=self._client_delegate_token_grant)
+        self.namespaceContextCache = Cache(load_func=self._get_namespace_context)
 
     def _set_jwk(self, kid: str, value: Any) -> None:
         """Set JWK key-value (thread-safe)
@@ -133,8 +138,7 @@ class DefaultClient:
             at (str): Revoked At
         """
         with self._lock:
-            pass
-            # self._revokedUsers[uid] = parse_nanotimestamp(at)
+            self._revokedUsers[uid] = parse_nanotimestamp(at)
 
     def _get_revoked_user(self, uid: str) -> Any:
         """Get revoked user by ID (thread-safe)
@@ -146,8 +150,7 @@ class DefaultClient:
             Any: Revoked At
         """
         with self._lock:
-            return False
-            # return self._revokedUsers.get(uid)
+            return self._revokedUsers.get(uid)
 
     def _set_revocation_filter(self, filter: BloomFilterJSON) -> None:
         """Set revocation token filter (thread-safe)
@@ -341,6 +344,24 @@ class DefaultClient:
             required_section = required_perm_res_sections[i]
 
             if user_section != required_section and user_section != "*":
+                if user_section.endswith("-") and i > 0:
+                    previous_seg = access_perm_res_sections[i-1]
+                    if previous_seg == RESOURCE_NAMESPACE:
+                        if required_section.find("-") and len(required_section.split("-")) == 2:
+                            if required_section.startswith(user_section):
+                                continue
+                            return False
+                        
+                        if user_section == required_section + "-":
+                            continue
+                        
+                        namespace_context = self.namespaceContextCache.get(required_section)
+                        if not namespace_context:
+                            return False
+
+                        if namespace_context.Type == "Game" and user_section == namespace_context.StudioNamespace + "-":
+                            continue
+
                 return False
 
         if access_perm_res_section_len == required_perm_res_section_len:
@@ -409,6 +430,38 @@ class DefaultClient:
 
         return granted_permissions
 
+    def _client_delegate_token_grant(self, extendNamespace: str):
+        try:
+            data = {
+                'grant_type': 'urn:ietf:params:oauth:grant-type:extend_client_credentials',
+                'extendNamespace': extendNamespace
+            }
+        
+            resp = self.httpClient.post(self.config.BaseURL + GRANT_PATH,
+                                        data=data,
+                                        auth=(self.config.ClientID, self.config.ClientSecret)
+                                        )
+            if not resp.is_success:
+                logger.warning(
+                    f"unable to grant client delegated token: error code : {resp.status_code}, "
+                    f"error message : {resp.reason_phrase}"
+                )
+                raise ClientDelegateTokenGrantError(
+                    f"unable to grant client delegated token: error code : {resp.status_code}, "
+                    f"error message : {resp.reason_phrase}"
+                )
+
+            token_response = TokenResponse.loads(resp.json())
+            refresh_interval = token_response.ExpiresIn * DEFAULT_TOKEN_REFRESH_RATE
+            logger.info("delegated token grant success")
+
+            return token_response.AccessToken, refresh_interval
+
+        except (json.JSONDecodeError, ValueError) as e:
+            raise ClientDelegateTokenGrantError("unable to unmarshal response body") from e
+        except HTTPClientError as e:
+            raise ClientDelegateTokenGrantError(f"{e.message}") from e
+
     def ClientTokenGrant(self) -> None:
         """Starts client token grant to get client bearer token for role caching
 
@@ -454,6 +507,14 @@ class DefaultClient:
             str: token
         """
         return self._clientAccessToken
+
+    def DelegateToken(self, extendNamespace: str):
+        """Returns delegated client access token
+
+        Returns:
+            str: token
+        """
+        return self.delegateTokenCache.get(extendNamespace)
 
     def StartLocalValidation(self) -> None:
         """Starts thread to refresh JWK and revocation list periodically this enables local token validation"""
@@ -863,6 +924,34 @@ class DefaultClient:
             raise GetClientInformationError("unable to unmarshal response body") from e
         except HTTPClientError as e:
             raise GetClientInformationError(f"{e.message}") from e
+
+    def _get_namespace_context(self, namespace: str):
+        # Get namespace informations
+        try:
+            resp = self.httpClient.get(GET_NAMESPACE_CONTEXT_PATH % (DEFAULT_BASIC_SERVICE_BASE_URI, namespace, "true"),
+                                       headers={"Authorization": f"Bearer {self._clientAccessToken}"}
+                                       )
+            if resp.status_code == 401:
+                logger.warning("unauthorized")
+                # Refresh Token
+                self._refresh_access_token()
+                return self._get_namespace_context(namespace)
+            elif not resp.is_success:
+                logger.warning(
+                    f"unable to get namespace context: error code {resp.status_code},"
+                    f"error message: {resp.reason_phrase}"
+                )
+                return None
+
+            namespace_context = NamespaceContext.loads(resp.json())
+            return namespace_context, 180
+
+        except RefreshAccessTokenError as e:
+            raise GetNamespaceContextError("unable to get namespace context") from e
+        except (json.JSONDecodeError, ValueError) as e:
+            raise GetNamespaceContextError("unable to unmarshal response body") from e
+        except HTTPClientError as e:
+            raise GetNamespaceContextError(f"{e.message}") from e
 
 
 class NewDefaultClient(DefaultClient):
