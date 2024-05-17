@@ -229,7 +229,7 @@
 
 
 <div class="viewcode-block" id="Settings"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.fastapi.Settings">[docs]</a><span class="k">class</span> <span class="nc">Settings</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;IAM settings class.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;IAM settings class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">iam_base_url</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">iam_client_id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -249,14 +249,14 @@
 
 
 <div class="viewcode-block" id="IAM"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.fastapi.IAM">[docs]</a><span class="k">class</span> <span class="nc">IAM</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;IAM FastAPI extensions class.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;IAM FastAPI extensions class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">FastAPI</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">app</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
 
 <div class="viewcode-block" id="IAM.init_app"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.fastapi.IAM.init_app">[docs]</a>    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Settings</span> <span class="o">=</span> <span class="n">Settings</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Init IAM FastAPI extensions with FastAPI app.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init IAM FastAPI extensions with FastAPI app.</span>
 <span class="sd">        Client token grant and local validation will be executed once here,</span>
 <span class="sd">        then the background thread will spawn to refresh token, jwks and revocation list.</span>
 
@@ -313,7 +313,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="IAM.grant_token"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.fastapi.IAM.grant_token">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">grant_token</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Generate oauth IAM token</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate oauth IAM token</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            HTTPError: Unable to grant token</span>
@@ -339,7 +339,7 @@
 
 
 <div class="viewcode-block" id="validate_referer_header"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.fastapi.validate_referer_header">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">validate_referer_header</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">jwt_claims</span><span class="p">:</span> <span class="n">JWTClaims</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Validate referer header for CSRF protection</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate referer header for CSRF protection</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        request (Request): FastAPI request object</span>
@@ -382,7 +382,7 @@
 
 
 <div class="viewcode-block" id="token_required"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.fastapi.token_required">[docs]</a><span class="k">def</span> <span class="nf">token_required</span><span class="p">(</span><span class="n">csrf_protect</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Validate token in the FastAPI request. This method support headers and cookies with based token.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate token in the FastAPI request. This method support headers and cookies with based token.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        csrf_protect (bool, None): Validate referer for CSRF protection</span>
@@ -452,7 +452,7 @@
     <span class="n">permission_resource</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
     <span class="n">csrf_protect</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Validate permission in the token if it has required permission</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate permission in the token if it has required permission</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        required_permission (Union[dict, Permission]): The required permission</span>
@@ -550,6 +550,7 @@
             <dd><a href="../../../1.3.1/index.html">1.3.1</a></dd>
             <dd><a href="../../../1.3.2/index.html">1.3.2</a></dd>
             <dd><a href="../../../1.3.3/index.html">1.3.3</a></dd>
+            <dd><a href="../../../1.4.1/index.html">1.4.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

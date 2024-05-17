@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>iam_python_sdk.config &mdash; iam-python-sdk 1.3.3 documentation</title>
+  <title>iam_python_sdk.config &mdash; iam-python-sdk 1.4.1 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'../../',
-              VERSION:'1.3.3',
+              VERSION:'1.4.1',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -72,7 +72,7 @@
             
             
               <div class="version">
-                1.3.3
+                1.4.1
               </div>
             
           
@@ -195,11 +195,11 @@
 
 <span class="sd">&quot;&quot;&quot;Config module.&quot;&quot;&quot;</span>
 
-<span class="n">JWKS_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/oauth/jwks&quot;</span>
-<span class="n">GRANT_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/oauth/token&quot;</span>
-<span class="n">REVOCATION_LIST_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/oauth/revocationlist&quot;</span>
-<span class="n">VERIFY_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/oauth/verify&quot;</span>
-<span class="n">GET_ROLE_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/roles&quot;</span>
+<span class="n">JWKS_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/v3/oauth/jwks&quot;</span>
+<span class="n">GRANT_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/v3/oauth/token&quot;</span>
+<span class="n">REVOCATION_LIST_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/v3/oauth/revocationlist&quot;</span>
+<span class="n">VERIFY_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/v3/oauth/verify&quot;</span>
+<span class="n">GET_ROLE_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/v3/admin/roles&quot;</span>
 <span class="n">CLIENT_INFORMATION_PATH</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/v3/admin/namespaces/</span><span class="si">%s</span><span class="s2">/clients/</span><span class="si">%s</span><span class="s2">&quot;</span>
 <span class="n">DEFAULT_TOKEN_REFRESH_RATE</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span>
 <span class="n">MAX_BACKOFF_TIME</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">65</span>
@@ -208,16 +208,21 @@
 <span class="n">DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span>
 <span class="n">CLIENT_INFO_EXPIRATION</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">60</span>
 <span class="n">SCOPE_SEPARATOR</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
+<span class="n">DEFAULT_BASIC_SERVICE_BASE_URI</span> <span class="o">=</span> <span class="s2">&quot;http://justice-basic-service/basic&quot;</span>
+<span class="n">GET_NAMESPACE_CONTEXT_PATH</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">/v1/admin/namespaces/</span><span class="si">%s</span><span class="s2">/context?activeOnly=</span><span class="si">%s</span><span class="s2">&quot;</span>
 
 
 <div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.config.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Config class.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BaseURL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ClientID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">ClientSecret</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Config class.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BaseURL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> 
+                 <span class="n">BasicBaseURL</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_BASIC_SERVICE_BASE_URI</span><span class="p">,</span>
+                 <span class="n">ClientID</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">ClientSecret</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
                  <span class="n">RolesCacheExpirationTime</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_ROLE_CACHE_TIME</span><span class="p">,</span>
                  <span class="n">JWKSRefreshInterval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_JWKS_REFRESH_INTERVAL</span><span class="p">,</span>
                  <span class="n">RevocationListRefreshInterval</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL</span><span class="p">,</span>
                  <span class="n">Debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Config class init.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Config class init.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            BaseURL (str): Base IAM service URL</span>
@@ -270,7 +275,7 @@
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.3.3
+        v: 1.4.1
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -288,7 +293,8 @@
             <dd><a href="../../1.3.0/index.html">1.3.0</a></dd>
             <dd><a href="../../1.3.1/index.html">1.3.1</a></dd>
             <dd><a href="../../1.3.2/index.html">1.3.2</a></dd>
-            <dd><a href="../../1.3.3/_modules/iam_python_sdk/config.html">1.3.3</a></dd>
+            <dd><a href="../../1.3.3/index.html">1.3.3</a></dd>
+            <dd><a href="../../1.4.1/_modules/iam_python_sdk/config.html">1.4.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

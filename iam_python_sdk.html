@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>iam_python_sdk package &mdash; iam-python-sdk 1.3.3 documentation</title>
+  <title>iam_python_sdk package &mdash; iam-python-sdk 1.4.1 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
       <script type="text/javascript">
           var DOCUMENTATION_OPTIONS = {
               URL_ROOT:'./',
-              VERSION:'1.3.3',
+              VERSION:'1.4.1',
               LANGUAGE:'None',
               COLLAPSE_INDEX:false,
               FILE_SUFFIX:'.html',
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                1.3.3
+                1.4.1
               </div>
             
           
@@ -496,7 +496,7 @@ m (int): Number of bits</dd>
 <p>Cache module.</p>
 <dl class="class">
 <dt id="iam_python_sdk.cache.Cache">
-<em class="property">class </em><code class="descclassname">iam_python_sdk.cache.</code><code class="descname">Cache</code><span class="sig-paren">(</span><em>ttl: int = None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/cache.html#Cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.cache.Cache" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">iam_python_sdk.cache.</code><code class="descname">Cache</code><span class="sig-paren">(</span><em>ttl: int = None</em>, <em>load_func: typing.Callable = None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/cache.html#Cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.cache.Cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></code></p>
 <p>Cache class that implement OrderedDict with thread safe feature.</p>
 <dl class="docutils">
@@ -574,6 +574,16 @@ ttl (int, optional): time to live in seconds. Defaults to None.</dd>
 <dt>Raises:</dt>
 <dd>ClientTokenGrantError: exception response format error
 ClientTokenGrantError: exceptions http request error</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="iam_python_sdk.client.DefaultClient.DelegateToken">
+<code class="descname">DelegateToken</code><span class="sig-paren">(</span><em>extendNamespace: str</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/iam_python_sdk/client.html#DefaultClient.DelegateToken"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.client.DefaultClient.DelegateToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns delegated client access token</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>str: token</dd>
 </dl>
 </dd></dl>
 
@@ -794,7 +804,7 @@ reqScope (str): required role scope</dd>
 <p>Config module.</p>
 <dl class="class">
 <dt id="iam_python_sdk.config.Config">
-<em class="property">class </em><code class="descclassname">iam_python_sdk.config.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>BaseURL: str = ''</em>, <em>ClientID: str = ''</em>, <em>ClientSecret: str = ''</em>, <em>RolesCacheExpirationTime: int = 60</em>, <em>JWKSRefreshInterval: int = 60</em>, <em>RevocationListRefreshInterval: int = 60</em>, <em>Debug: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.config.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">iam_python_sdk.config.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>BaseURL: str = ''</em>, <em>BasicBaseURL: str = 'http://justice-basic-service/basic'</em>, <em>ClientID: str = ''</em>, <em>ClientSecret: str = ''</em>, <em>RolesCacheExpirationTime: int = 60</em>, <em>JWKSRefreshInterval: int = 60</em>, <em>RevocationListRefreshInterval: int = 60</em>, <em>Debug: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.config.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Config class.</p>
 </dd></dl>
@@ -803,6 +813,12 @@ reqScope (str): required role scope</dd>
 <div class="section" id="module-iam_python_sdk.errors">
 <span id="iam-python-sdk-errors-module"></span><h2>iam_python_sdk.errors module<a class="headerlink" href="#module-iam_python_sdk.errors" title="Permalink to this headline">¶</a></h2>
 <p>Error module.</p>
+<dl class="exception">
+<dt id="iam_python_sdk.errors.ClientDelegateTokenGrantError">
+<em class="property">exception </em><code class="descclassname">iam_python_sdk.errors.</code><code class="descname">ClientDelegateTokenGrantError</code><span class="sig-paren">(</span><em>message: str = ''</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/errors.html#ClientDelegateTokenGrantError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.errors.ClientDelegateTokenGrantError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.errors.Error" title="iam_python_sdk.errors.Error"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.errors.Error</span></code></a></p>
+</dd></dl>
+
 <dl class="exception">
 <dt id="iam_python_sdk.errors.ClientTokenGrantError">
 <em class="property">exception </em><code class="descclassname">iam_python_sdk.errors.</code><code class="descname">ClientTokenGrantError</code><span class="sig-paren">(</span><em>message: str = ''</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/errors.html#ClientTokenGrantError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.errors.ClientTokenGrantError" title="Permalink to this definition">¶</a></dt>
@@ -847,6 +863,12 @@ reqScope (str): required role scope</dd>
 <dl class="exception">
 <dt id="iam_python_sdk.errors.GetJWKSError">
 <em class="property">exception </em><code class="descclassname">iam_python_sdk.errors.</code><code class="descname">GetJWKSError</code><span class="sig-paren">(</span><em>message: str = ''</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/errors.html#GetJWKSError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.errors.GetJWKSError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.errors.Error" title="iam_python_sdk.errors.Error"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.errors.Error</span></code></a></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="iam_python_sdk.errors.GetNamespaceContextError">
+<em class="property">exception </em><code class="descclassname">iam_python_sdk.errors.</code><code class="descname">GetNamespaceContextError</code><span class="sig-paren">(</span><em>message: str = ''</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/errors.html#GetNamespaceContextError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.errors.GetNamespaceContextError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.errors.Error" title="iam_python_sdk.errors.Error"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.errors.Error</span></code></a></p>
 </dd></dl>
 
@@ -1027,7 +1049,7 @@ reqScope (str): required role scope</dd>
 
 <dl class="class">
 <dt id="iam_python_sdk.fastapi.IAM">
-<em class="property">class </em><code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">IAM</code><span class="sig-paren">(</span><em>app: typing.Union[fastapi.applications.FastAPI, NoneType] = None, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_allow_subdomain_referer=False, iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">IAM</code><span class="sig-paren">(</span><em>app: typing.Union[fastapi.applications.FastAPI, NoneType] = None, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_allow_subdomain_referer=False, iam_subdomain_validation_enable=False, iam_subdomain_validation_excluded_namespaces=[], iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>IAM FastAPI extensions class.</p>
 <dl class="method">
@@ -1042,7 +1064,7 @@ reqScope (str): required role scope</dd>
 
 <dl class="method">
 <dt id="iam_python_sdk.fastapi.IAM.init_app">
-<code class="descname">init_app</code><span class="sig-paren">(</span><em>app: fastapi.applications.FastAPI, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_allow_subdomain_referer=False, iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM.init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM.init_app" title="Permalink to this definition">¶</a></dt>
+<code class="descname">init_app</code><span class="sig-paren">(</span><em>app: fastapi.applications.FastAPI, config: iam_python_sdk.fastapi.Settings = Settings(iam_base_url='', iam_client_id='', iam_client_secret='', iam_token_locations=['headers', 'cookies'], iam_token_header_name='Authorization', iam_token_header_type='Bearer', iam_token_cookie_name='access_token', iam_token_cookie_path='/', iam_csrf_protection=True, iam_strict_referer=False, iam_allow_subdomain_referer=False, iam_subdomain_validation_enable=False, iam_subdomain_validation_excluded_namespaces=[], iam_cors_enable=False, iam_cors_origin='*', iam_cors_headers='*', iam_cors_methods='*', iam_cors_credentials=True)</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#IAM.init_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.IAM.init_app" title="Permalink to this definition">¶</a></dt>
 <dd><p>Init IAM FastAPI extensions with FastAPI app.
 Client token grant and local validation will be executed once here,
 then the background thread will spawn to refresh token, jwks and revocation list.</p>
@@ -1134,6 +1156,20 @@ jwt_claims (JWTClaims): JWT Claim data from token</dd>
 client_redirect_uri (str): Client redirect URI string</dd>
 <dt>Returns:</dt>
 <dd>bool: Referer header status</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="iam_python_sdk.fastapi.validate_subdomain_with_namespace">
+<code class="descclassname">iam_python_sdk.fastapi.</code><code class="descname">validate_subdomain_with_namespace</code><span class="sig-paren">(</span><em>host: str, namespace: str, excluded_namespaces: typing.List[str]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/fastapi.html#validate_subdomain_with_namespace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.fastapi.validate_subdomain_with_namespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate subdomain against namespace</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>host (str): hostname
+namespace (str): namespace
+excluded_namespaces (List[str]): excluded namespace</dd>
+<dt>Returns:</dt>
+<dd>bool: Is subdomain is valid</dd>
 </dl>
 </dd></dl>
 
@@ -1288,6 +1324,25 @@ HTTPError: Insufficient permission</dd>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="iam_python_sdk.flask.validate_referer_with_subdomain">
+<code class="descclassname">iam_python_sdk.flask.</code><code class="descname">validate_referer_with_subdomain</code><span class="sig-paren">(</span><em>referer_header: str</em>, <em>client_redirect_uri: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/flask.html#validate_referer_with_subdomain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.validate_referer_with_subdomain" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="iam_python_sdk.flask.validate_subdomain_with_namespace">
+<code class="descclassname">iam_python_sdk.flask.</code><code class="descname">validate_subdomain_with_namespace</code><span class="sig-paren">(</span><em>host: str, namespace: str, excluded_namespaces: typing.List[str]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="_modules/iam_python_sdk/flask.html#validate_subdomain_with_namespace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.flask.validate_subdomain_with_namespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate subdomain against namespace</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>host (str): hostname
+namespace (str): namespace
+excluded_namespaces (List[str]): excluded namespace</dd>
+<dt>Returns:</dt>
+<dd>bool: Is subdomain is valid</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-iam_python_sdk.http_errors">
 <span id="iam-python-sdk-http-errors-module"></span><h2>iam_python_sdk.http_errors module<a class="headerlink" href="#module-iam_python_sdk.http_errors" title="Permalink to this headline">¶</a></h2>
@@ -1369,11 +1424,6 @@ HTTPError: Insufficient permission</dd>
 <dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.models.Model" title="iam_python_sdk.models.Model"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.models.Model</span></code></a></p>
 <p>Holds data stored in a JWT access token with additional Justice Flags field.</p>
 <dl class="attribute">
-<dt id="iam_python_sdk.models.JWTClaims.AcceptedPolicyVersion">
-<code class="descname">AcceptedPolicyVersion</code><em class="property"> = ['']</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.AcceptedPolicyVersion" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="iam_python_sdk.models.JWTClaims.Aud">
 <code class="descname">Aud</code><em class="property"> = ['']</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Aud" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1404,8 +1454,23 @@ HTTPError: Insufficient permission</dd>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.ExtendNamespace">
+<code class="descname">ExtendNamespace</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.ExtendNamespace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="iam_python_sdk.models.JWTClaims.Iat">
 <code class="descname">Iat</code><em class="property"> = -1</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Iat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.Ipf">
+<code class="descname">Ipf</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Ipf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.Ipo">
+<code class="descname">Ipo</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Ipo" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1414,8 +1479,18 @@ HTTPError: Insufficient permission</dd>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.Iss">
+<code class="descname">Iss</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Iss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="iam_python_sdk.models.JWTClaims.Jflgs">
 <code class="descname">Jflgs</code><em class="property"> = -1</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Jflgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.Jti">
+<code class="descname">Jti</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Jti" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1426,6 +1501,16 @@ HTTPError: Insufficient permission</dd>
 <dl class="attribute">
 <dt id="iam_python_sdk.models.JWTClaims.NamespaceRoles">
 <code class="descname">NamespaceRoles</code><em class="property"> = [&lt;iam_python_sdk.models.NamespaceRole object&gt;]</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.NamespaceRoles" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.Nbf">
+<code class="descname">Nbf</code><em class="property"> = -1</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Nbf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.ParentNamespace">
+<code class="descname">ParentNamespace</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.ParentNamespace" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1444,8 +1529,23 @@ HTTPError: Insufficient permission</dd>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.Sp">
+<code class="descname">Sp</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Sp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="iam_python_sdk.models.JWTClaims.Sub">
 <code class="descname">Sub</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.Sub" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.UnionID">
+<code class="descname">UnionID</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.UnionID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.JWTClaims.UnionNamespace">
+<code class="descname">UnionNamespace</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.JWTClaims.UnionNamespace" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1466,6 +1566,22 @@ HTTPError: Insufficient permission</dd>
 <dd>Any: model object</dd>
 </dl>
 </dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="iam_python_sdk.models.NamespaceContext">
+<em class="property">class </em><code class="descclassname">iam_python_sdk.models.</code><code class="descname">NamespaceContext</code><a class="reference internal" href="_modules/iam_python_sdk/models.html#NamespaceContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.models.NamespaceContext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.models.Model" title="iam_python_sdk.models.Model"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.models.Model</span></code></a></p>
+<dl class="attribute">
+<dt id="iam_python_sdk.models.NamespaceContext.StudioNamespace">
+<code class="descname">StudioNamespace</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.NamespaceContext.StudioNamespace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.NamespaceContext.Type">
+<code class="descname">Type</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.NamespaceContext.Type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -1555,6 +1671,16 @@ HTTPError: Insufficient permission</dd>
 <em class="property">class </em><code class="descclassname">iam_python_sdk.models.</code><code class="descname">Role</code><a class="reference internal" href="_modules/iam_python_sdk/models.html#Role"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.models.Role" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#iam_python_sdk.models.Model" title="iam_python_sdk.models.Model"><code class="xref py py-class docutils literal"><span class="pre">iam_python_sdk.models.Model</span></code></a></p>
 <p>Hold info about a user role.</p>
+<dl class="attribute">
+<dt id="iam_python_sdk.models.Role.AdminRole">
+<code class="descname">AdminRole</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.Role.AdminRole" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="iam_python_sdk.models.Role.IsWildcard">
+<code class="descname">IsWildcard</code><em class="property"> = ''</em><a class="headerlink" href="#iam_python_sdk.models.Role.IsWildcard" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="iam_python_sdk.models.Role.Permissions">
 <code class="descname">Permissions</code><em class="property"> = [&lt;iam_python_sdk.models.Permission object&gt;]</em><a class="headerlink" href="#iam_python_sdk.models.Role.Permissions" title="Permalink to this definition">¶</a></dt>
@@ -1778,7 +1904,7 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
 
 <dl class="class">
 <dt id="iam_python_sdk.Config">
-<em class="property">class </em><code class="descclassname">iam_python_sdk.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>BaseURL: str = ''</em>, <em>ClientID: str = ''</em>, <em>ClientSecret: str = ''</em>, <em>RolesCacheExpirationTime: int = 60</em>, <em>JWKSRefreshInterval: int = 60</em>, <em>RevocationListRefreshInterval: int = 60</em>, <em>Debug: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.Config" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">iam_python_sdk.</code><code class="descname">Config</code><span class="sig-paren">(</span><em>BaseURL: str = ''</em>, <em>BasicBaseURL: str = 'http://justice-basic-service/basic'</em>, <em>ClientID: str = ''</em>, <em>ClientSecret: str = ''</em>, <em>RolesCacheExpirationTime: int = 60</em>, <em>JWKSRefreshInterval: int = 60</em>, <em>RevocationListRefreshInterval: int = 60</em>, <em>Debug: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/iam_python_sdk/config.html#Config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iam_python_sdk.Config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Config class.</p>
 </dd></dl>
@@ -1824,7 +1950,7 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
 <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
     <span class="rst-current-version" data-toggle="rst-current-version">
         <span class="fa fa-book"> Other Versions</span>
-        v: 1.3.3
+        v: 1.4.1
         <span class="fa fa-caret-down"></span>
     </span>
     <div class="rst-other-versions">
@@ -1843,6 +1969,7 @@ ValueError: Data error if not a list, a dict or a string json.</dd>
             <dd><a href="1.3.1/iam_python_sdk.html">1.3.1</a></dd>
             <dd><a href="1.3.2/iam_python_sdk.html">1.3.2</a></dd>
             <dd><a href="1.3.3/iam_python_sdk.html">1.3.3</a></dd>
+            <dd><a href="1.4.1/iam_python_sdk.html">1.4.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

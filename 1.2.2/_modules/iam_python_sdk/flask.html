@@ -228,7 +228,7 @@
 
 
 <div class="viewcode-block" id="IAM"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.IAM">[docs]</a><span class="k">class</span> <span class="nc">IAM</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;IAM Flask extensions class.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;IAM Flask extensions class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Flask</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
@@ -236,7 +236,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
 
 <div class="viewcode-block" id="IAM.init_app"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.IAM.init_app">[docs]</a>    <span class="k">def</span> <span class="nf">init_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">Flask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Init IAM flask extensions with Flask app.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Init IAM flask extensions with Flask app.</span>
 <span class="sd">        Client token grant and local validation will be executed once here,</span>
 <span class="sd">        then the background thread will spawn to refresh token, jwks and revocation list.</span>
 
@@ -308,7 +308,7 @@
         <span class="k">return</span> <span class="n">response</span>
 
 <div class="viewcode-block" id="IAM.grant_token"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.IAM.grant_token">[docs]</a>    <span class="k">def</span> <span class="nf">grant_token</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">Flask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DefaultClient</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Generate oauth IAM token</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate oauth IAM token</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            app (Flask): Flask app</span>
@@ -336,7 +336,7 @@
         <span class="k">return</span> <span class="n">client</span></div>
 
 <div class="viewcode-block" id="IAM.validate_referer_header"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.IAM.validate_referer_header">[docs]</a>    <span class="k">def</span> <span class="nf">validate_referer_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jwt_claims</span><span class="p">:</span> <span class="n">JWTClaims</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Validate referer header for CSRF protection</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate referer header for CSRF protection</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            jwt_claims (JWTClaims): JWT claims data</span>
@@ -366,7 +366,7 @@
         <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="IAM.validate_token_in_request"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.IAM.validate_token_in_request">[docs]</a>    <span class="k">def</span> <span class="nf">validate_token_in_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validate_referer</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JWTClaims</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Validate token in the Flask request. This method support headers and cookies with based token.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate token in the Flask request. This method support headers and cookies with based token.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            validate_referer (bool): Validate referer for CSRF protection</span>
@@ -424,7 +424,7 @@
                             <span class="n">required_permission</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">Permission</span><span class="p">],</span>
                             <span class="n">permission_resource</span><span class="p">:</span> <span class="nb">dict</span>
                             <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Validate permission from JWT claims data.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate permission from JWT claims data.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            jwt_claims (JWTClaims): JWT claims data</span>
@@ -459,7 +459,7 @@
 
 <div class="viewcode-block" id="permission_required"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.permission_required">[docs]</a><span class="k">def</span> <span class="nf">permission_required</span><span class="p">(</span><span class="n">required_permission</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">permission_resource</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span>
                         <span class="n">csrf_protect</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The decorator to protect endpoint using IAM service.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The decorator to protect endpoint using IAM service.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        required_permission (dict): Required permission with format {&quot;resource&quot;: xxx, &quot;action&quot;: n}</span>
@@ -503,7 +503,7 @@
 
 
 <div class="viewcode-block" id="cors_options"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.flask.cors_options">[docs]</a><span class="k">def</span> <span class="nf">cors_options</span><span class="p">(</span><span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">preflight_options</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Decorator for set the CORS response header. This method will override</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator for set the CORS response header. This method will override</span>
 <span class="sd">    default app-wide CORS options if it has enabled.</span>
 
 <span class="sd">    Args:</span>
@@ -593,6 +593,7 @@
             <dd><a href="../../../1.3.1/index.html">1.3.1</a></dd>
             <dd><a href="../../../1.3.2/index.html">1.3.2</a></dd>
             <dd><a href="../../../1.3.3/index.html">1.3.3</a></dd>
+            <dd><a href="../../../1.4.1/index.html">1.4.1</a></dd>
         </dl>
         <dl>
             <dt>Branches</dt>

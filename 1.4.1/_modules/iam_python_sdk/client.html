@@ -1,0 +1,1224 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>iam_python_sdk.client &mdash; iam-python-sdk 1.4.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/banner.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../../',
+              VERSION:'1.4.1',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> iam-python-sdk
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.4.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../asyncio.html">Asyncio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../frameworks.html">Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">iam-python-sdk</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>iam_python_sdk.client</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+
+
+
+
+
+<h1>Source code for iam_python_sdk.client</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2021 AccelByte Inc</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1"># http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="sd">&quot;&quot;&quot;IAM Python SDK client module.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">backoff</span><span class="o">,</span> <span class="nn">httpx</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">jwt</span><span class="o">,</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">RLock</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">.bloom</span> <span class="kn">import</span> <span class="n">BloomFilter</span>
+<span class="kn">from</span> <span class="nn">.cache</span> <span class="kn">import</span> <span class="n">Cache</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">DEFAULT_JWKS_REFRESH_INTERVAL</span><span class="p">,</span> <span class="n">DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL</span><span class="p">,</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">CLIENT_INFO_EXPIRATION</span><span class="p">,</span> <span class="n">CLIENT_INFORMATION_PATH</span><span class="p">,</span> <span class="n">DEFAULT_TOKEN_REFRESH_RATE</span><span class="p">,</span> <span class="n">GET_ROLE_PATH</span><span class="p">,</span> \
+    <span class="n">GRANT_PATH</span><span class="p">,</span> <span class="n">JWKS_PATH</span><span class="p">,</span> <span class="n">MAX_BACKOFF_TIME</span><span class="p">,</span> <span class="n">REVOCATION_LIST_PATH</span><span class="p">,</span> <span class="n">SCOPE_SEPARATOR</span><span class="p">,</span> <span class="n">VERIFY_PATH</span><span class="p">,</span> \
+    <span class="n">DEFAULT_BASIC_SERVICE_BASE_URI</span><span class="p">,</span> <span class="n">GET_NAMESPACE_CONTEXT_PATH</span>
+<span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="n">ClientTokenGrantError</span><span class="p">,</span> <span class="n">GetClientInformationError</span><span class="p">,</span> <span class="n">GetJWKSError</span><span class="p">,</span> <span class="n">GetRevocationListError</span><span class="p">,</span> \
+    <span class="n">GetRolePermissionError</span><span class="p">,</span> <span class="n">HTTPClientError</span><span class="p">,</span> <span class="n">InvalidTokenSignatureKeyError</span><span class="p">,</span> <span class="n">NilClaimError</span><span class="p">,</span> <span class="n">NoLocalValidationError</span><span class="p">,</span> \
+    <span class="n">RefreshAccessTokenError</span><span class="p">,</span> <span class="n">StartLocalValidationError</span><span class="p">,</span> <span class="n">TokenRevokedError</span><span class="p">,</span> <span class="n">UserRevokedError</span><span class="p">,</span> <span class="n">ValidateAccessTokenError</span><span class="p">,</span> \
+    <span class="n">ValidateAndParseClaimsError</span><span class="p">,</span> <span class="n">ValidateAudienceError</span><span class="p">,</span> <span class="n">ValidateJWTError</span><span class="p">,</span> <span class="n">ValidatePermissionError</span><span class="p">,</span> <span class="n">ValidateScopeError</span><span class="p">,</span> \
+    <span class="n">ClientDelegateTokenGrantError</span><span class="p">,</span> <span class="n">GetNamespaceContextError</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">BloomFilterJSON</span><span class="p">,</span> <span class="n">ClientInformation</span><span class="p">,</span> <span class="n">JWTClaims</span><span class="p">,</span> <span class="n">Permission</span><span class="p">,</span> <span class="n">RevocationList</span><span class="p">,</span> <span class="n">Role</span><span class="p">,</span> <span class="n">TokenResponse</span><span class="p">,</span> \
+                    <span class="n">NamespaceContext</span>
+<span class="kn">from</span> <span class="nn">.log</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">.task</span> <span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">parse_nanotimestamp</span>
+
+
+<span class="n">RESOURCE_NAMESPACE</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NAMESPACE&quot;</span>
+<span class="n">RESOURCE_USER</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;USER&quot;</span>
+<span class="n">USER_STATUS_EMAIL_VERIFIED</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">USER_STATUS_PHONE_VERIFIED</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+<span class="n">USER_STATUS_ANONYMOUS</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">2</span>
+
+
+<div class="viewcode-block" id="backoff_giveup_handler"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.backoff_giveup_handler">[docs]</a><span class="k">def</span> <span class="nf">backoff_giveup_handler</span><span class="p">(</span><span class="n">backoff</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">raise</span>
+    <span class="k">except</span> <span class="n">httpx</span><span class="o">.</span><span class="n">HTTPStatusError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPClientError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;endpoint returned status code: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">except</span> <span class="n">httpx</span><span class="o">.</span><span class="n">RequestError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPClientError</span><span class="p">(</span><span class="s2">&quot;unable to do HTTP request&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPClientError</span><span class="p">(</span><span class="s2">&quot;unable to create new HTTP request&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+
+<div class="viewcode-block" id="HttpClient"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.HttpClient">[docs]</a><span class="k">class</span> <span class="nc">HttpClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;HttpClient class to do http request.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="HttpClient.close"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.HttpClient.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HttpClient.get"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.HttpClient.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HttpClient.post"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.HttpClient.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="nd">@backoff</span><span class="o">.</span><span class="n">on_exception</span><span class="p">(</span>
+        <span class="n">backoff</span><span class="o">.</span><span class="n">expo</span><span class="p">,</span> <span class="p">(</span><span class="n">httpx</span><span class="o">.</span><span class="n">HTTPStatusError</span><span class="p">,</span> <span class="n">httpx</span><span class="o">.</span><span class="n">RequestError</span><span class="p">),</span>
+        <span class="n">max_time</span><span class="o">=</span><span class="n">MAX_BACKOFF_TIME</span><span class="p">,</span> <span class="n">on_giveup</span><span class="o">=</span><span class="n">backoff_giveup_handler</span>
+    <span class="p">)</span>
+<div class="viewcode-block" id="HttpClient.request"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.HttpClient.request">[docs]</a>    <span class="k">def</span> <span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&gt;=</span> <span class="mi">500</span><span class="p">:</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">resp</span></div></div>
+
+
+<div class="viewcode-block" id="DefaultClient"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient">[docs]</a><span class="k">class</span> <span class="nc">DefaultClient</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Default Client class.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span>
+                 <span class="n">rolePermissionCache</span><span class="p">:</span> <span class="n">Cache</span><span class="p">,</span>
+                 <span class="n">clientInfoCache</span><span class="p">:</span> <span class="n">Cache</span><span class="p">,</span>
+                 <span class="n">httpClient</span><span class="p">:</span> <span class="n">HttpClient</span>
+                 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_threads</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_clientAccessToken</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tokenRefreshActive</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_localValidationActive</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_jwks</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_revokedUsers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_revocationFilter</span> <span class="o">=</span> <span class="n">BloomFilter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span> <span class="o">=</span> <span class="n">httpClient</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rolePermissionCache</span> <span class="o">=</span> <span class="n">rolePermissionCache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clientInfoCache</span> <span class="o">=</span> <span class="n">clientInfoCache</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delegateTokenCache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">load_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_client_delegate_token_grant</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">namespaceContextCache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">load_func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_namespace_context</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_jwk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set JWK key-value (thread-safe)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kid (str): JWK key_id</span>
+<span class="sd">            value (Any): JWK object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_jwks</span><span class="p">[</span><span class="n">kid</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_get_jwk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get JWK key by key_id (thread-safe)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kid (str): JWK key_id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any: JWK object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jwks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">kid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_revoked_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">at</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set revoked user (thread-safe)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uid (str): User ID</span>
+<span class="sd">            at (str): Revoked At</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_revokedUsers</span><span class="p">[</span><span class="n">uid</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_nanotimestamp</span><span class="p">(</span><span class="n">at</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_revoked_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get revoked user by ID (thread-safe)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            uid (str): User ID</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Any: Revoked At</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_revokedUsers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_revocation_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">BloomFilterJSON</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set revocation token filter (thread-safe)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filter (BloomFilter): Bloom filter object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_revocationFilter</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">filter</span><span class="o">.</span><span class="n">Bits</span><span class="p">,</span> <span class="nb">filter</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="nb">filter</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_revocation_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">access_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get revocation token filter by access token (thread-safe)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            access_token (str): Access token string</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: Access token revocation status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_revocationFilter</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">access_token</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_refresh_access_token</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Refresh user token&quot;</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RefreshAccessTokenError: exception failed to refresh token</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ClientTokenGrant</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;client token refreshed&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">ClientTokenGrantError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">RefreshAccessTokenError</span><span class="p">(</span><span class="s2">&quot;unable to refresh token&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">def</span> <span class="nf">_get_jwks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get JWKS data</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            GetJWKSError: unable to unmarshal response body</span>
+<span class="sd">            GetJWKSError: unable to generate public key</span>
+<span class="sd">            GetJWKSError: unexpected error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">BaseURL</span> <span class="o">+</span> <span class="n">JWKS_PATH</span><span class="p">,</span>
+                                       <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientID</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientSecret</span><span class="p">)</span>
+                                       <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to get JWKS: error code </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">GetJWKSError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to get JWKS: error code </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">jwks</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">PyJWKSet</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;keys&quot;</span><span class="p">,</span> <span class="p">[]))</span>
+            <span class="k">for</span> <span class="n">jwk</span> <span class="ow">in</span> <span class="n">jwks</span><span class="o">.</span><span class="n">keys</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_set_jwk</span><span class="p">(</span><span class="n">jwk</span><span class="o">.</span><span class="n">key_id</span><span class="p">,</span> <span class="n">jwk</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetJWKSError</span><span class="p">(</span><span class="s2">&quot;unable to unmarshal response body&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">jwt</span><span class="o">.</span><span class="n">InvalidKeyError</span><span class="p">,</span> <span class="n">jwt</span><span class="o">.</span><span class="n">PyJWKSetError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetJWKSError</span><span class="p">(</span><span class="s2">&quot;unable to generate public key&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">HTTPClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetJWKSError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">def</span> <span class="nf">_get_revocation_list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get user and token revocation list</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            GetRevocationListError: unable to unmarshal response body</span>
+<span class="sd">            GetRevocationListError: unexpected error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">BaseURL</span> <span class="o">+</span> <span class="n">REVOCATION_LIST_PATH</span><span class="p">,</span>
+                                       <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientID</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientSecret</span><span class="p">)</span>
+                                       <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to get JWKS: error code </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">GetRevocationListError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to get JWKS: error code </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">revocation_list</span> <span class="o">=</span> <span class="n">RevocationList</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_revocation_filter</span><span class="p">(</span><span class="n">revocation_list</span><span class="o">.</span><span class="n">RevokedTokens</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">revoked_user</span> <span class="ow">in</span> <span class="n">revocation_list</span><span class="o">.</span><span class="n">RevokedUsers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">revoked_user</span><span class="o">.</span><span class="n">Id</span> <span class="ow">and</span> <span class="n">revoked_user</span><span class="o">.</span><span class="n">RevokedAt</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_set_revoked_user</span><span class="p">(</span><span class="n">revoked_user</span><span class="o">.</span><span class="n">Id</span><span class="p">,</span> <span class="n">revoked_user</span><span class="o">.</span><span class="n">RevokedAt</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetRevocationListError</span><span class="p">(</span><span class="s2">&quot;unable to unmarshal response body&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">HTTPClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetRevocationListError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">def</span> <span class="nf">_validate_jwt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate access token with JWK</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            token (str): access token</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: invalid token</span>
+<span class="sd">            InvalidTokenSignatureKeyError: [description]</span>
+<span class="sd">            ValueError: invalid header</span>
+<span class="sd">            ValidateJWTError: unable to deserialize JWT claims</span>
+<span class="sd">            ValidateJWTError: unable to validate JWT</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Union[JWTClaims, None]: [description]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">token</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid token&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">web_token</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">get_unverified_header</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">web_token</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kid&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">InvalidTokenSignatureKeyError</span><span class="p">(</span><span class="s2">&quot;invalid header&quot;</span><span class="p">)</span>
+
+            <span class="n">public_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_jwk</span><span class="p">(</span><span class="n">web_token</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kid&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">public_key</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid key&quot;</span><span class="p">)</span>
+
+            <span class="n">claims</span> <span class="o">=</span> <span class="n">jwt</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+                <span class="n">token</span><span class="p">,</span>
+                <span class="n">public_key</span><span class="p">,</span>
+                <span class="n">algorithms</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;RS256&quot;</span><span class="p">],</span>
+                <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;verify_exp&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;verify_aud&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">jwt_claims</span> <span class="o">=</span> <span class="n">JWTClaims</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">claims</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">DecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValidateJWTError</span><span class="p">(</span><span class="s2">&quot;unable to deserialize JWT claims&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">jwt</span><span class="o">.</span><span class="n">ExpiredSignatureError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValidateJWTError</span><span class="p">(</span><span class="s2">&quot;unable to validate JWT&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">jwt_claims</span>
+
+    <span class="k">def</span> <span class="nf">_user_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">issued_at</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Chech if user is revoked or not</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            user_id (str): User ID</span>
+<span class="sd">            issued_at (int): Access token issued time</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: User revoked status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_revoked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_revoked_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">time_revoked</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">time_revoked</span> <span class="o">&gt;=</span> <span class="n">issued_at</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_token_revoked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">access_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if token was revoked or not</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            access_token (str): Access token</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: Access token revoked status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_revocation_filter</span><span class="p">(</span><span class="n">access_token</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_resource_allowed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accessPermissionResource</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">requiredPermissionResource</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if user have permission to the required resource or not</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            accessPermissionResource (str): Granted resource permission</span>
+<span class="sd">            requiredPermissionResource (str): Granted resource permission</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: Resource allowed status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">required_perm_res_sections</span> <span class="o">=</span> <span class="n">requiredPermissionResource</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">required_perm_res_section_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">required_perm_res_sections</span><span class="p">)</span>
+        <span class="n">access_perm_res_sections</span> <span class="o">=</span> <span class="n">accessPermissionResource</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">access_perm_res_section_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">access_perm_res_sections</span><span class="p">)</span>
+        <span class="n">min_section_len</span> <span class="o">=</span> <span class="n">access_perm_res_section_len</span>
+
+        <span class="k">if</span> <span class="n">min_section_len</span> <span class="o">&gt;</span> <span class="n">required_perm_res_section_len</span><span class="p">:</span>
+            <span class="n">min_section_len</span> <span class="o">=</span> <span class="n">required_perm_res_section_len</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">min_section_len</span><span class="p">):</span>
+            <span class="n">user_section</span> <span class="o">=</span> <span class="n">access_perm_res_sections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">required_section</span> <span class="o">=</span> <span class="n">required_perm_res_sections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">user_section</span> <span class="o">!=</span> <span class="n">required_section</span> <span class="ow">and</span> <span class="n">user_section</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">user_section</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">previous_seg</span> <span class="o">=</span> <span class="n">access_perm_res_sections</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">previous_seg</span> <span class="o">==</span> <span class="n">RESOURCE_NAMESPACE</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">required_section</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">required_section</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">required_section</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">user_section</span><span class="p">):</span>
+                                <span class="k">continue</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+                        
+                        <span class="k">if</span> <span class="n">user_section</span> <span class="o">==</span> <span class="n">required_section</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        
+                        <span class="n">namespace_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">namespaceContextCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">required_section</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">namespace_context</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="kc">False</span>
+
+                        <span class="k">if</span> <span class="n">namespace_context</span><span class="o">.</span><span class="n">Type</span> <span class="o">==</span> <span class="s2">&quot;Game&quot;</span> <span class="ow">and</span> <span class="n">user_section</span> <span class="o">==</span> <span class="n">namespace_context</span><span class="o">.</span><span class="n">StudioNamespace</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+                            <span class="k">continue</span>
+
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">access_perm_res_section_len</span> <span class="o">==</span> <span class="n">required_perm_res_section_len</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">access_perm_res_section_len</span> <span class="o">&lt;</span> <span class="n">required_perm_res_section_len</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">access_perm_res_sections</span><span class="p">[</span><span class="n">access_perm_res_section_len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">access_perm_res_section_len</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+
+                <span class="n">segment</span> <span class="o">=</span> <span class="n">access_perm_res_sections</span><span class="p">[</span><span class="n">access_perm_res_section_len</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">segment</span> <span class="o">==</span> <span class="n">RESOURCE_NAMESPACE</span> <span class="ow">or</span> <span class="n">segment</span> <span class="o">==</span> <span class="n">RESOURCE_USER</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">required_perm_res_section_len</span><span class="p">,</span> <span class="n">access_perm_res_section_len</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">access_perm_res_sections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_permission_allowed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grantedPermissions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Permission</span><span class="p">],</span> <span class="n">requiredPermission</span><span class="p">:</span> <span class="n">Permission</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if user have the required permission or not</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            grantedPermissions (List[Permission]): List of permission that user have</span>
+<span class="sd">            requiredPermission (Permission): Required permission</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: Permission allowed status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">granted_permission</span> <span class="ow">in</span> <span class="n">grantedPermissions</span><span class="p">:</span>
+            <span class="n">granted_action</span> <span class="o">=</span> <span class="n">granted_permission</span><span class="o">.</span><span class="n">Action</span>
+            <span class="k">if</span> <span class="n">granted_permission</span><span class="o">.</span><span class="n">is_scheduled</span><span class="p">():</span>
+                <span class="n">granted_action</span> <span class="o">=</span> <span class="n">granted_permission</span><span class="o">.</span><span class="n">Schedaction</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resource_allowed</span><span class="p">(</span><span class="n">granted_permission</span><span class="o">.</span><span class="n">Resource</span><span class="p">,</span> <span class="n">requiredPermission</span><span class="o">.</span><span class="n">Resource</span><span class="p">)</span> <span class="ow">and</span> \
+               <span class="p">(</span><span class="n">granted_action</span> <span class="o">&amp;</span> <span class="n">requiredPermission</span><span class="o">.</span><span class="n">Action</span> <span class="o">==</span> <span class="n">requiredPermission</span><span class="o">.</span><span class="n">Action</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_apply_user_permission_resource_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grantedPermissions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Permission</span><span class="p">],</span>
+                                               <span class="n">claims</span><span class="p">:</span> <span class="n">JWTClaims</span><span class="p">,</span> <span class="n">allowedNamespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Permission</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply user permission to the resource</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            grantedPermissions (List[Permission]): List of granted permissions</span>
+<span class="sd">            claims (JWTClaims): JWT claims object</span>
+<span class="sd">            allowedNamespace (str): Granted namespace</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[Permission]: List of permission with applied user permission</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">granted_permissions</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">grantedPermissions</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">allowedNamespace</span><span class="p">:</span>
+            <span class="n">allowedNamespace</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">Namespace</span>
+
+        <span class="k">for</span> <span class="n">granted_permission</span> <span class="ow">in</span> <span class="n">granted_permissions</span><span class="p">:</span>
+            <span class="n">granted_permission</span><span class="o">.</span><span class="n">Resource</span> <span class="o">=</span> <span class="n">granted_permission</span><span class="o">.</span><span class="n">Resource</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{userId}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">claims</span><span class="o">.</span><span class="n">Sub</span><span class="p">)</span>
+            <span class="n">granted_permission</span><span class="o">.</span><span class="n">Resource</span> <span class="o">=</span> <span class="n">granted_permission</span><span class="o">.</span><span class="n">Resource</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{namespace}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">allowedNamespace</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">granted_permissions</span>
+
+    <span class="k">def</span> <span class="nf">_client_delegate_token_grant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extendNamespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;grant_type&#39;</span><span class="p">:</span> <span class="s1">&#39;urn:ietf:params:oauth:grant-type:extend_client_credentials&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;extendNamespace&#39;</span><span class="p">:</span> <span class="n">extendNamespace</span>
+            <span class="p">}</span>
+        
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">BaseURL</span> <span class="o">+</span> <span class="n">GRANT_PATH</span><span class="p">,</span>
+                                        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                                        <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientID</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientSecret</span><span class="p">)</span>
+                                        <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to grant client delegated token: error code : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ClientDelegateTokenGrantError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to grant client delegated token: error code : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">token_response</span> <span class="o">=</span> <span class="n">TokenResponse</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+            <span class="n">refresh_interval</span> <span class="o">=</span> <span class="n">token_response</span><span class="o">.</span><span class="n">ExpiresIn</span> <span class="o">*</span> <span class="n">DEFAULT_TOKEN_REFRESH_RATE</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;delegated token grant success&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">token_response</span><span class="o">.</span><span class="n">AccessToken</span><span class="p">,</span> <span class="n">refresh_interval</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ClientDelegateTokenGrantError</span><span class="p">(</span><span class="s2">&quot;unable to unmarshal response body&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">HTTPClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ClientDelegateTokenGrantError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+<div class="viewcode-block" id="DefaultClient.ClientTokenGrant"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.ClientTokenGrant">[docs]</a>    <span class="k">def</span> <span class="nf">ClientTokenGrant</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Starts client token grant to get client bearer token for role caching</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ClientTokenGrantError: exception response format error</span>
+<span class="sd">            ClientTokenGrantError: exceptions http request error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">BaseURL</span> <span class="o">+</span> <span class="n">GRANT_PATH</span><span class="p">,</span>
+                                        <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;grant_type&#39;</span><span class="p">:</span> <span class="s1">&#39;client_credentials&#39;</span><span class="p">},</span>
+                                        <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientID</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientSecret</span><span class="p">)</span>
+                                        <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to grant client token: error code : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">ClientTokenGrantError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to grant client token: error code : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">token_response</span> <span class="o">=</span> <span class="n">TokenResponse</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clientAccessToken</span> <span class="o">=</span> <span class="n">token_response</span><span class="o">.</span><span class="n">AccessToken</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;token grant success&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenRefreshActive</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_tokenRefreshActive</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_threads</span><span class="p">[</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span>
+                    <span class="n">token_response</span><span class="o">.</span><span class="n">ExpiresIn</span> <span class="o">*</span> <span class="n">DEFAULT_TOKEN_REFRESH_RATE</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_refresh_access_token</span>
+                <span class="p">)</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ClientTokenGrantError</span><span class="p">(</span><span class="s2">&quot;unable to unmarshal response body&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">HTTPClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ClientTokenGrantError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+<div class="viewcode-block" id="DefaultClient.ClientToken"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.ClientToken">[docs]</a>    <span class="k">def</span> <span class="nf">ClientToken</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns client access token</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: token</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clientAccessToken</span></div>
+
+<div class="viewcode-block" id="DefaultClient.DelegateToken"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.DelegateToken">[docs]</a>    <span class="k">def</span> <span class="nf">DelegateToken</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extendNamespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns delegated client access token</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: token</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">delegateTokenCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">extendNamespace</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultClient.StartLocalValidation"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.StartLocalValidation">[docs]</a>    <span class="k">def</span> <span class="nf">StartLocalValidation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Starts thread to refresh JWK and revocation list periodically this enables local token validation&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_jwks</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_revocation_list</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_localValidationActive</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_localValidationActive</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_threads</span><span class="p">[</span><span class="s2">&quot;refresh_jwks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span>
+                    <span class="n">DEFAULT_JWKS_REFRESH_INTERVAL</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_get_jwks</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_threads</span><span class="p">[</span><span class="s2">&quot;refresh_revocation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span>
+                    <span class="n">DEFAULT_REVOCATION_LIST_REFRESH_INTERVAL</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_get_revocation_list</span>
+                <span class="p">)</span>
+
+        <span class="k">except</span> <span class="n">GetJWKSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StartLocalValidationError</span><span class="p">(</span><span class="s2">&quot;unable to get JWKS&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">GetRevocationListError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StartLocalValidationError</span><span class="p">(</span><span class="s2">&quot;unable to get revocation list&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+<div class="viewcode-block" id="DefaultClient.ValidateAccessToken"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.ValidateAccessToken">[docs]</a>    <span class="k">def</span> <span class="nf">ValidateAccessToken</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accessToken</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates access token by calling IAM service</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            accessToken (str): access token</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValidateAccessTokenError: exception failed to refresh token</span>
+<span class="sd">            ValidateAccessTokenError: exceptions http request error</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: access token validity status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">BaseURL</span> <span class="o">+</span> <span class="n">VERIFY_PATH</span><span class="p">,</span>
+                                        <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;token&#39;</span><span class="p">:</span> <span class="n">accessToken</span><span class="p">},</span>
+                                        <span class="n">auth</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientID</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientSecret</span><span class="p">)</span>
+                                        <span class="p">)</span>
+            <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;unauthorized&quot;</span><span class="p">)</span>
+                <span class="c1"># Refresh Token</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_refresh_access_token</span><span class="p">()</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ValidateAccessToken</span><span class="p">(</span><span class="n">accessToken</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to validate access token: error code : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message : </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;token is valid&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="n">RefreshAccessTokenError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValidateAccessTokenError</span><span class="p">(</span><span class="s2">&quot;unable to validate token&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">HTTPClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValidateAccessTokenError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+<div class="viewcode-block" id="DefaultClient.ValidateAndParseClaims"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.ValidateAndParseClaims">[docs]</a>    <span class="k">def</span> <span class="nf">ValidateAndParseClaims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accessToken</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates access token locally and returns the JWT claims contained in the token</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            accessToken (str): access token</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Union[JWTClaims, None]: JWT claims or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_localValidationActive</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NoLocalValidationError</span>
+
+        <span class="n">jwt_claims</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">jwt_claims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_jwt</span><span class="p">(</span><span class="n">accessToken</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">InvalidTokenSignatureKeyError</span><span class="p">,</span> <span class="n">ValidateJWTError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValidateAndParseClaimsError</span><span class="p">(</span><span class="s2">&quot;unable to validate JWT&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">if</span> <span class="n">jwt_claims</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_revoked</span><span class="p">(</span><span class="n">jwt_claims</span><span class="o">.</span><span class="n">Sub</span><span class="p">,</span> <span class="n">jwt_claims</span><span class="o">.</span><span class="n">Iat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">UserRevokedError</span><span class="p">(</span><span class="s2">&quot;user (owner) of JWT is revoked&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">jwt_claims</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_token_revoked</span><span class="p">(</span><span class="n">accessToken</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">TokenRevokedError</span><span class="p">(</span><span class="s2">&quot;token is revoked&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">jwt_claims</span></div>
+
+<div class="viewcode-block" id="DefaultClient.ValidatePermission"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.ValidatePermission">[docs]</a>    <span class="k">def</span> <span class="nf">ValidatePermission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">claims</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">requiredPermission</span><span class="p">:</span> <span class="n">Permission</span><span class="p">,</span>
+                           <span class="n">permissionResources</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates if an access token has right for a specific permission</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            claims (JWTClaims): JWT claims</span>
+<span class="sd">            requiredPermission (Permission): permission to access resource, example:</span>
+<span class="sd">            {Resource: &quot;NAMESPACE:{namespace}:USER:{userId}&quot;, Action: 2}</span>
+<span class="sd">            permissionResources (Dict[str, str]): resource string to replace the `{}` placeholder in</span>
+<span class="sd">            `requiredPermission`, example: p[&quot;{namespace}&quot;] = &quot;accelbyte&quot;</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: permission status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">claims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NilClaimError</span><span class="p">(</span><span class="s2">&quot;claim is nil&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">permissionResources</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">requiredPermission</span><span class="o">.</span><span class="n">Resource</span> <span class="o">=</span> <span class="n">requiredPermission</span><span class="o">.</span><span class="n">Resource</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_permission_allowed</span><span class="p">(</span><span class="n">claims</span><span class="o">.</span><span class="n">Permissions</span><span class="p">,</span> <span class="n">requiredPermission</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;permission allowed to access resource&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">namespace_roles</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">NamespaceRoles</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">namespace_role</span> <span class="ow">in</span> <span class="n">namespace_roles</span><span class="p">:</span>
+            <span class="n">granted_role_permissions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">granted_role_permissions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetRolePermissions</span><span class="p">(</span><span class="n">namespace_role</span><span class="o">.</span><span class="n">Roleid</span><span class="p">)</span>
+                <span class="n">granted_role_permissions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_user_permission_resource_values</span><span class="p">(</span>
+                    <span class="n">granted_role_permissions</span><span class="p">,</span> <span class="n">claims</span><span class="p">,</span> <span class="n">namespace_role</span><span class="o">.</span><span class="n">Namespace</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_permission_allowed</span><span class="p">(</span><span class="n">granted_role_permissions</span><span class="p">,</span> <span class="n">requiredPermission</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;permission allowed to access resource&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+
+            <span class="k">except</span> <span class="n">GetRolePermissionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ValidatePermissionError</span><span class="p">(</span><span class="s2">&quot;unable to get role perms&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="n">roles</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">Roles</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">role_id</span> <span class="ow">in</span> <span class="n">roles</span><span class="p">:</span>
+            <span class="n">granted_role_permissions</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">granted_role_permissions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetRolePermissions</span><span class="p">(</span><span class="n">role_id</span><span class="p">)</span>
+                <span class="n">granted_role_permissions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_user_permission_resource_values</span><span class="p">(</span>
+                    <span class="n">granted_role_permissions</span><span class="p">,</span> <span class="n">claims</span><span class="p">,</span> <span class="s2">&quot;&quot;</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_permission_allowed</span><span class="p">(</span><span class="n">granted_role_permissions</span><span class="p">,</span> <span class="n">requiredPermission</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;permission allowed to access resource&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="n">GetRolePermissionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ValidatePermissionError</span><span class="p">(</span><span class="s2">&quot;unable to get role perms&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;permission not allowed to access resource&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DefaultClient.ValidateRole"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.ValidateRole">[docs]</a>    <span class="k">def</span> <span class="nf">ValidateRole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requiredRoleID</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">claims</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates if an access token has a specific role</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            requiredRoleID (str): role ID that required</span>
+<span class="sd">            claims (JWTClaims): JWT claims</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: role validity status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">claims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NilClaimError</span><span class="p">(</span><span class="s2">&quot;claim is nil&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">claims</span><span class="o">.</span><span class="n">Roles</span> <span class="ow">and</span> <span class="n">requiredRoleID</span> <span class="ow">in</span> <span class="n">claims</span><span class="o">.</span><span class="n">Roles</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;role allowed to access resource&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;role not allowed to access resource&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DefaultClient.UserPhoneVerificationStatus"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.UserPhoneVerificationStatus">[docs]</a>    <span class="k">def</span> <span class="nf">UserPhoneVerificationStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">claims</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets user phone verification status on access token</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            claims (JWTClaims): JWT claims</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: user phone verification status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">claims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NilClaimError</span><span class="p">(</span><span class="s2">&quot;claim is nil&quot;</span><span class="p">)</span>
+
+        <span class="n">phone_verified_status</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">Jflgs</span> <span class="o">&amp;</span> <span class="n">USER_STATUS_PHONE_VERIFIED</span> <span class="o">==</span> <span class="n">USER_STATUS_PHONE_VERIFIED</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">phone_verified_status</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">phone_verified_status</span></div>
+
+<div class="viewcode-block" id="DefaultClient.UserEmailVerificationStatus"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.UserEmailVerificationStatus">[docs]</a>    <span class="k">def</span> <span class="nf">UserEmailVerificationStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">claims</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets user email verification status on access token</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            claims (JWTClaims): JWT claims</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: user email verification status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">claims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NilClaimError</span><span class="p">(</span><span class="s2">&quot;claim is nil&quot;</span><span class="p">)</span>
+
+        <span class="n">email_verification_status</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">Jflgs</span> <span class="o">&amp;</span> <span class="n">USER_STATUS_EMAIL_VERIFIED</span> <span class="o">==</span> <span class="n">USER_STATUS_EMAIL_VERIFIED</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">email_verification_status</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">email_verification_status</span></div>
+
+<div class="viewcode-block" id="DefaultClient.UserAnonymousStatus"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.UserAnonymousStatus">[docs]</a>    <span class="k">def</span> <span class="nf">UserAnonymousStatus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">claims</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets user anonymous status on access token</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            claims (JWTClaims): JWT claims</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: user anonymous status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">claims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NilClaimError</span><span class="p">(</span><span class="s2">&quot;claim is nil&quot;</span><span class="p">)</span>
+
+        <span class="n">user_anonymous_status</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">Jflgs</span> <span class="o">&amp;</span> <span class="n">USER_STATUS_ANONYMOUS</span> <span class="o">==</span> <span class="n">USER_STATUS_ANONYMOUS</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">user_anonymous_status</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">user_anonymous_status</span></div>
+
+<div class="viewcode-block" id="DefaultClient.HasBan"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.HasBan">[docs]</a>    <span class="k">def</span> <span class="nf">HasBan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">claims</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">banType</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validates if certain ban exist</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            claims (JWTClaims): JWT claims</span>
+<span class="sd">            banType (str): ban type</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: ban status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">claims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NilClaimError</span><span class="p">(</span><span class="s2">&quot;claim is nil&quot;</span><span class="p">)</span>
+
+        <span class="n">claim_bans</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">Bans</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ban</span> <span class="ow">in</span> <span class="n">claim_bans</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ban</span><span class="o">.</span><span class="n">Ban</span> <span class="o">==</span> <span class="n">banType</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;user banned&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;user not banned&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="DefaultClient.HealthCheck"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.HealthCheck">[docs]</a>    <span class="k">def</span> <span class="nf">HealthCheck</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Lets caller know the health of the IAM client</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: health status</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">refresh_token</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threads</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;refresh_token&quot;</span><span class="p">)</span>
+            <span class="n">refresh_jwks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threads</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;refresh_jwks&quot;</span><span class="p">)</span>
+            <span class="n">refresh_revocation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threads</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;refresh_revocation&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">refresh_token</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">refresh_jwks</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">refresh_revocation</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;refresh token, jwks or revocation list background thread not started&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">refresh_token</span><span class="o">.</span><span class="n">error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;error refresh token&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">refresh_token</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">refresh_jwks</span><span class="o">.</span><span class="n">error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;error refresh jwks&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">refresh_jwks</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">refresh_revocation</span><span class="o">.</span><span class="n">error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;error refresh revocation list&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">refresh_revocation</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;all OK&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DefaultClient.ValidateAudience"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.ValidateAudience">[docs]</a>    <span class="k">def</span> <span class="nf">ValidateAudience</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">claims</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate audience of user access token</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            claims (JWTClaims): JWT claims</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">claims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NilClaimError</span><span class="p">(</span><span class="s2">&quot;claim is nil&quot;</span><span class="p">)</span>
+
+        <span class="c1"># no need to check if no audience found in the claims. https://tools.ietf.org/html/rfc7519#section-4.1.3</span>
+        <span class="n">audience</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">claims</span><span class="p">,</span> <span class="s2">&quot;Aud&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">audience</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;no audience found in the token. Skipping the audience validation&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">client_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetClientInformation</span><span class="p">(</span><span class="n">claims</span><span class="o">.</span><span class="n">Namespace</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">ClientID</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">claims</span><span class="o">.</span><span class="n">Aud</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">client_info</span><span class="p">,</span> <span class="s2">&quot;Baseuri&quot;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">claims</span><span class="o">.</span><span class="n">Aud</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">ValidateAudienceError</span><span class="p">(</span><span class="s2">&quot;audience is not valid&quot;</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;audience is valid&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">except</span> <span class="n">GetClientInformationError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValidateAudienceError</span><span class="p">(</span><span class="s2">&quot;get client detail returns error&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+<div class="viewcode-block" id="DefaultClient.ValidateScope"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.ValidateScope">[docs]</a>    <span class="k">def</span> <span class="nf">ValidateScope</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">claims</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JWTClaims</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">reqScope</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate scope of user access token</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            claims (JWTClaims): JWT claims</span>
+<span class="sd">            reqScope (str): required role scope</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">claims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">NilClaimError</span><span class="p">(</span><span class="s2">&quot;claim is nil&quot;</span><span class="p">)</span>
+
+        <span class="n">scopes</span> <span class="o">=</span> <span class="n">claims</span><span class="o">.</span><span class="n">Scope</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">SCOPE_SEPARATOR</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">reqScope</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scopes</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ValidateScopeError</span><span class="p">(</span><span class="s2">&quot;invalid scope&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;scope valid&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DefaultClient.GetRolePermissions"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.GetRolePermissions">[docs]</a>    <span class="k">def</span> <span class="nf">GetRolePermissions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">roleID</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Permission</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get permssions of a role</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            roleID (str): role id</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            GetRolePermissionError: exception failed to refresh token</span>
+<span class="sd">            GetRolePermissionError: exception response format error</span>
+<span class="sd">            GetRolePermissionError: exceptions http request error</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Union[List[Permission], None]: list of permissions or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Try to get from cache first</span>
+            <span class="n">role_permissions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rolePermissionCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">roleID</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">role_permissions</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">role_permissions</span>
+
+            <span class="c1"># Get permissions</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">BaseURL</span> <span class="o">+</span> <span class="n">GET_ROLE_PATH</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">roleID</span><span class="p">,</span>
+                                       <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_clientAccessToken</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+                                       <span class="p">)</span>
+            <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;unauthorized&quot;</span><span class="p">)</span>
+                <span class="c1"># Refresh Token</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_refresh_access_token</span><span class="p">()</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetRolePermissions</span><span class="p">(</span><span class="n">roleID</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">403</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;forbidden&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">elif</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">404</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;not found&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unexpected error: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="p">[]</span>
+
+            <span class="n">role</span> <span class="o">=</span> <span class="n">Role</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rolePermissionCache</span><span class="p">[</span><span class="n">roleID</span><span class="p">]</span> <span class="o">=</span> <span class="n">role</span><span class="o">.</span><span class="n">Permissions</span>
+            <span class="k">return</span> <span class="n">role</span><span class="o">.</span><span class="n">Permissions</span>
+
+        <span class="k">except</span> <span class="n">RefreshAccessTokenError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetRolePermissionError</span><span class="p">(</span><span class="s2">&quot;unable to get role perms&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetRolePermissionError</span><span class="p">(</span><span class="s2">&quot;unable to unmarshal response body&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">HTTPClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetRolePermissionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+<div class="viewcode-block" id="DefaultClient.GetClientInformation"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.DefaultClient.GetClientInformation">[docs]</a>    <span class="k">def</span> <span class="nf">GetClientInformation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">clientID</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ClientInformation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets IAM client information, it will look into cache first, if not found then fetch it to IAM.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            namespace (str): namespace</span>
+<span class="sd">            clientID (str): client ID</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Union[ClientInformation, None]: client information or None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Try to get from cache first</span>
+        <span class="n">cached_client_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clientInfoCache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">clientID</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cached_client_info</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cached_client_info</span>
+
+        <span class="c1"># Get client informations</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">BaseURL</span> <span class="o">+</span> <span class="n">CLIENT_INFORMATION_PATH</span> <span class="o">%</span> <span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">clientID</span><span class="p">),</span>
+                                       <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_clientAccessToken</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+                                       <span class="p">)</span>
+            <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;unauthorized&quot;</span><span class="p">)</span>
+                <span class="c1"># Refresh Token</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_refresh_access_token</span><span class="p">()</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetClientInformation</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">clientID</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to get client information: error code </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">client_info</span> <span class="o">=</span> <span class="n">ClientInformation</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clientInfoCache</span><span class="p">[</span><span class="n">clientID</span><span class="p">]</span> <span class="o">=</span> <span class="n">client_info</span>
+            <span class="k">return</span> <span class="n">client_info</span>
+
+        <span class="k">except</span> <span class="n">RefreshAccessTokenError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetClientInformationError</span><span class="p">(</span><span class="s2">&quot;unable to get client information&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetClientInformationError</span><span class="p">(</span><span class="s2">&quot;unable to unmarshal response body&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">HTTPClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetClientInformationError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_namespace_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Get namespace informations</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">GET_NAMESPACE_CONTEXT_PATH</span> <span class="o">%</span> <span class="p">(</span><span class="n">DEFAULT_BASIC_SERVICE_BASE_URI</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="s2">&quot;true&quot;</span><span class="p">),</span>
+                                       <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Bearer </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_clientAccessToken</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+                                       <span class="p">)</span>
+            <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">401</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;unauthorized&quot;</span><span class="p">)</span>
+                <span class="c1"># Refresh Token</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_refresh_access_token</span><span class="p">()</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_namespace_context</span><span class="p">(</span><span class="n">namespace</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">resp</span><span class="o">.</span><span class="n">is_success</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;unable to get namespace context: error code </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">,&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;error message: </span><span class="si">{</span><span class="n">resp</span><span class="o">.</span><span class="n">reason_phrase</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">namespace_context</span> <span class="o">=</span> <span class="n">NamespaceContext</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">namespace_context</span><span class="p">,</span> <span class="mi">180</span>
+
+        <span class="k">except</span> <span class="n">RefreshAccessTokenError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetNamespaceContextError</span><span class="p">(</span><span class="s2">&quot;unable to get namespace context&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetNamespaceContextError</span><span class="p">(</span><span class="s2">&quot;unable to unmarshal response body&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="k">except</span> <span class="n">HTTPClientError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">GetNamespaceContextError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+
+
+<div class="viewcode-block" id="NewDefaultClient"><a class="viewcode-back" href="../../iam_python_sdk.html#iam_python_sdk.client.NewDefaultClient">[docs]</a><span class="k">class</span> <span class="nc">NewDefaultClient</span><span class="p">(</span><span class="n">DefaultClient</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span> <span class="o">=</span> <span class="n">HttpClient</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rolePermissionCache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">RolesCacheExpirationTime</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clientInfoCache</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">CLIENT_INFO_EXPIRATION</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">Debug</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rolePermissionCache</span><span class="p">,</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">clientInfoCache</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">httpClient</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, AccelByte.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        <span class="fa fa-book"> Other Versions</span>
+        v: 1.4.1
+        <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        <dl>
+            <dt>Tags</dt>
+            <dd><a href="../../../0.10.0/index.html">0.10.0</a></dd>
+            <dd><a href="../../../0.10.1/index.html">0.10.1</a></dd>
+            <dd><a href="../../../0.12.0/index.html">0.12.0</a></dd>
+            <dd><a href="../../../1.0.0/index.html">1.0.0</a></dd>
+            <dd><a href="../../../1.1.0/index.html">1.1.0</a></dd>
+            <dd><a href="../../../1.2.0/index.html">1.2.0</a></dd>
+            <dd><a href="../../../1.2.1/index.html">1.2.1</a></dd>
+            <dd><a href="../../../1.2.2/index.html">1.2.2</a></dd>
+            <dd><a href="../../../1.2.3/index.html">1.2.3</a></dd>
+            <dd><a href="../../../1.3.0/index.html">1.3.0</a></dd>
+            <dd><a href="../../../1.3.1/index.html">1.3.1</a></dd>
+            <dd><a href="../../../1.3.2/index.html">1.3.2</a></dd>
+            <dd><a href="../../../1.3.3/index.html">1.3.3</a></dd>
+            <dd><a href="client.html">1.4.1</a></dd>
+        </dl>
+        <dl>
+            <dt>Branches</dt>
+            <dd><a href="../../../main/index.html">main</a></dd>
+        </dl>
+    </div>
+</div>
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
