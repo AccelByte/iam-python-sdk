@@ -2,7 +2,7 @@
 Changelog
 =========
 
-1.4.0 (2024-05-17)
+1.4.1 (2024-05-17)
 ------------------
 
 * Fixing user permission expand issue 
