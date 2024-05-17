@@ -15,7 +15,7 @@
 """Flask module."""
 
 from functools import wraps
-from typing import Optional, Union
+from typing import Optional, Union, List
 from flask import current_app, Flask, request
 from flask.helpers import make_response
 from flask.wrappers import Response
@@ -26,7 +26,8 @@ from .config import Config
 from .client import DefaultClient, NewDefaultClient
 from .errors import Error as IAMError, ClientTokenGrantError, GetClientInformationError, StartLocalValidationError, \
     TokenRevokedError, UserRevokedError, ValidateAndParseClaimsError, ValidatePermissionError
-from .http_errors import InsufficientPermissions, InternalServerError, InvalidRefererHeader, UnauthorizedAccess
+from .http_errors import InsufficientPermissions, InternalServerError, InvalidRefererHeader, UnauthorizedAccess, \
+    SubdomainMismatch
 from .models import JWTClaims, Permission
 
 
@@ -42,6 +43,50 @@ class HTTPError(HTTPException):
 
 
 # ---------- Extensions ---------- #
+
+def validate_referer_with_subdomain(referer_header: str, client_redirect_uri: str) -> bool:
+    parsed_referer = urlparse(referer_header)
+    parsed_redirect_uri = urlparse(client_redirect_uri)
+
+    if parsed_referer.scheme == '' or parsed_redirect_uri.scheme == '':
+        return False
+
+    if parsed_referer.netloc == '' or parsed_redirect_uri.netloc == '':
+        return False
+
+    if parsed_referer.scheme != parsed_redirect_uri.scheme:
+        return False
+
+    return parsed_referer.netloc.endswith(parsed_redirect_uri.netloc)
+
+
+def validate_subdomain_with_namespace(host: str, namespace: str, excluded_namespaces: List[str]) -> bool:
+    """Validate subdomain against namespace
+
+    Args:
+        host (str): hostname
+        namespace (str): namespace
+        excluded_namespaces (List[str]): excluded namespace
+
+    Returns:
+        bool: Is subdomain is valid
+    """
+    host_part = host.split('.')
+
+    # # url with subdomain should have at least 3 part, e.g. foo.example.com, otherwise we should not check it
+    if len(host_part) < 3:
+        return True
+    
+    subdomain = host_part[0]
+    for excluded_namespace in excluded_namespaces:
+        if excluded_namespace.lower() == namespace.lower():
+            return True
+    
+    if namespace.lower() == subdomain.lower():
+        return True
+
+    return False
+
 
 class IAM:
     """IAM Flask extensions class.
@@ -90,6 +135,8 @@ class IAM:
         app.config.setdefault("IAM_CSRF_PROTECTION", True)
         app.config.setdefault("IAM_STRICT_REFERER", False)
         app.config.setdefault("IAM_ALLOW_SUBDOMAIN_REFERER", False)
+        app.config.setdefault("IAM_SUBDOMAIN_VALIDATION_ENABLE", False)
+        app.config.setdefault("IAM_SUBDOMAIN_VALIDATION_EXCLUDED_NAMESPACES", [])
         app.config.setdefault("IAM_CORS_ENABLE", False)
         app.config.setdefault("IAM_CORS_ORIGIN", "*")
         app.config.setdefault("IAM_CORS_HEADERS", "*")
@@ -171,23 +218,30 @@ class IAM:
         except GetClientInformationError:
             return False
 
+        referer_header = request.referrer
+        if current_app.config.get("IAM_SUBDOMAIN_VALIDATION_ENABLE") and referer_header:
+            referer_url = urlparse(referer_header)
+            if not referer_url.netloc.startswith(jwt_claims.Namespace):
+                return False
+
         if client_info and not client_info.Redirecturi:
             return True
 
-        referer_header = request.referrer
-        client_redirect_uris = client_info.Redirecturi.split(",") if client_info else []
-
-        for redirect_uri in client_redirect_uris:
-            if not current_app.config.get("IAM_STRICT_REFERER"):
-                parsed_uri = urlparse(redirect_uri)
-                redirect_uri = f"{parsed_uri.scheme}://{parsed_uri.netloc}"
-
-            if not current_app.config.get("IAM_ALLOW_SUBDOMAIN_REFERER"):
-                if referer_header and referer_header.startswith(redirect_uri):
-                    return True
-            else:
-                if self.validate_referer_with_subdomain(referer_header, redirect_uri):
-                    return True
+        if referer_header:
+            client_redirect_uris = client_info.Redirecturi.split(",") if client_info else []
+            for redirect_uri in client_redirect_uris:
+                if current_app.config.get("IAM_SUBDOMAIN_VALIDATION_ENABLE") or current_app.config.get("IAM_ALLOW_SUBDOMAIN_REFERER"):
+                    if validate_referer_with_subdomain(referer_header, redirect_uri):
+                        return True
+                else:
+                    parsed_redirect_uri = urlparse(redirect_uri)
+                    parsed_referer_header = urlparse(referer_header)
+                    if current_app.config.get("IAM_STRICT_REFERER"):
+                        if parsed_redirect_uri.netloc == parsed_referer_header.netloc and referer_header.startswith(redirect_uri):
+                            return True
+                    else:
+                        if parsed_redirect_uri.netloc == parsed_referer_header.netloc:
+                            return True
 
         return False
 
@@ -283,6 +337,11 @@ class IAM:
         if access_token[1] == "cookie" and validate_referer:
             if self.validate_referer_header(jwt_claims) is not True:
                 raise HTTPError(*InvalidRefererHeader, description="Invalid referrer header")
+
+        if current_app.config.get("IAM_SUBDOMAIN_VALIDATION_ENABLE"):
+            excluded_namespaces = current_app.config.get("IAM_SUBDOMAIN_VALIDATION_EXCLUDED_NAMESPACES");
+            if not validate_subdomain_with_namespace(request.host, jwt_claims.Namespace, excluded_namespaces):
+                raise HTTPError(*SubdomainMismatch, description="Subdomain mismatch")
 
         return jwt_claims
 

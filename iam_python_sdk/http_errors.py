@@ -17,4 +17,5 @@
 UnauthorizedAccess = 401, 20001, "unauthorized access"
 InvalidRefererHeader = 401, 20023, "invalid referer header"
 InsufficientPermissions = 403, 20013, "insufficient permissions"
+SubdomainMismatch = 404, 20030, "subdomain mismatch error"
 InternalServerError = 500, 20000, "internal server error"

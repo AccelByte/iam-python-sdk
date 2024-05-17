@@ -17,7 +17,7 @@
 from collections import OrderedDict
 from threading import RLock
 from time import time
-from typing import Any, AnyStr
+from typing import Any, AnyStr, Callable
 
 
 class Cache(OrderedDict):
@@ -26,9 +26,10 @@ class Cache(OrderedDict):
     Args:
         OrderedDict ([type]): dict subclass that remembers the order entries were added.
     """
-    def __init__(self, ttl: int = None, *args, **kwargs) -> None:
+    def __init__(self, ttl: int = None, load_func: Callable = None, *args, **kwargs) -> None:
         self._ttl = ttl
         self._lock = RLock()
+        self._load_func = load_func
         super().__init__(*args, **kwargs)
         self.update(*args, **kwargs)
 
@@ -56,9 +57,23 @@ class Cache(OrderedDict):
 
     def __getitem__(self, key: AnyStr) -> Any:
         with self._lock:
+            try:
+                value = super().__getitem__(key)[1]
+                return value
+            except KeyError as e:
+                if not self._load_func:
+                    raise e
+                value, ttl = self._load_func(key)
+                self.set(key, value, ttl)
+
             if self.is_expired(key):
-                self.__delitem__(key)
-                raise KeyError
+                if not self._load_func:
+                    self.__delitem__(key)
+                    raise KeyError
+                else:
+                    value, ttl = self._load_func(key)
+                    self.set(key, value, ttl)
+
             return super().__getitem__(key)[1]
 
     def __delitem__(self, key: AnyStr) -> None:

@@ -33,3 +33,8 @@ def test_is_expired():
     assert cache.is_expired('x') is False
     assert cache.is_expired('y', 30) is False
     assert cache.is_expired('z', 35) is True
+
+
+def test_load_func():
+    cache = Cache(load_func=lambda x: (x, 60))
+    assert cache['x'] == 'x'

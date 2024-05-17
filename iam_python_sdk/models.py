@@ -93,6 +93,8 @@ class Permission(Model):
 
 class Role(Model):
     """Hold info about a user role."""
+    IsWildcard: str = ""
+    AdminRole: str = ""
     Roleid: str = ""
     Rolename: str = ""
     Permissions: List[Permission] = [Permission()]
@@ -135,7 +137,6 @@ class JWTClaims(Model):
     Namespace: str = ""
     DisplayName: str = ""
     Roles: List[str] = [""]
-    AcceptedPolicyVersion: List[str] = [""]
     NamespaceRoles: List[NamespaceRole] = [NamespaceRole()]
     Permissions: List[Permission] = [Permission()]
     Bans: List[JWTBan] = [JWTBan()]
@@ -144,10 +145,20 @@ class JWTClaims(Model):
     Country: str = ""
     ClientId: str = ""
     IsComply: bool = False
+    ParentNamespace: str = ""
+    Ipf: str = ""  # IssuedPlatformFrom
+    Ipo: str = ""  # IssuedPlatformOn
+    Sp: str = ""  # SimultaneousPlatform
+    UnionID: str = ""
+    UnionNamespace: str = ""
+    ExtendNamespace: str = ""
+    Iss: str = ""
     Sub: str = ""
-    Iat: int = -1
-    Exp: int = -1
     Aud: List[str] = [""]
+    Exp: int = -1
+    Nbf: int = -1
+    Iat: int = -1
+    Jti: str = ""
 
 
 class BloomFilterJSON(Model):
@@ -174,3 +185,8 @@ class ClientInformation(Model):
     Namespace: str = ""
     Redirecturi: str = ""
     Baseuri: str = ""
+
+
+class NamespaceContext(Model):
+    Type: str = ""
+    StudioNamespace: str = ""

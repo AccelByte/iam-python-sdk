@@ -75,6 +75,10 @@ class ClientTokenGrantError(Error):
     pass
 
 
+class ClientDelegateTokenGrantError(Error):
+    pass
+
+
 class RefreshAccessTokenError(Error):
     pass
 
@@ -120,4 +124,8 @@ class GetRolePermissionError(Error):
 
 
 class GetClientInformationError(Error):
+    pass
+
+
+class GetNamespaceContextError(Error):
     pass
