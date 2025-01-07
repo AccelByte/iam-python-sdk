@@ -15,23 +15,29 @@
 """Flask module."""
 
 from functools import wraps
-from typing import Optional, Union, List
-from flask import current_app, Flask, request
+from typing import List, Optional, Union
+from urllib.parse import urlparse
+
+from flask import Flask, current_app, request
 from flask.helpers import make_response
 from flask.wrappers import Response
-from urllib.parse import urlparse
 from werkzeug.exceptions import HTTPException
 
-from .config import Config
+from .cache import Cache
 from .client import DefaultClient, NewDefaultClient
-from .errors import Error as IAMError, ClientTokenGrantError, GetClientInformationError, StartLocalValidationError, \
-    TokenRevokedError, UserRevokedError, ValidateAndParseClaimsError, ValidatePermissionError
-from .http_errors import InsufficientPermissions, InternalServerError, InvalidRefererHeader, UnauthorizedAccess, \
-    SubdomainMismatch
+from .config import Config
+from .errors import ClientTokenGrantError
+from .errors import Error as IAMError
+from .errors import (GetClientInformationError, StartLocalValidationError,
+                     TokenRevokedError, UserRevokedError,
+                     ValidateAndParseClaimsError, ValidatePermissionError)
+from .http_errors import (InsufficientPermissions, InternalServerError,
+                          InvalidRefererHeader, SubdomainMismatch,
+                          UnauthorizedAccess)
 from .models import JWTClaims, Permission
 
-
 # ---------- Exceptions ---------- #
+
 
 class HTTPError(HTTPException):
     def __init__(self, http_code: int, error_code: int, message: str, description: Optional[str] = None) -> None:
@@ -93,6 +99,7 @@ class IAM:
     """
 
     def __init__(self, app: Union[Flask, None] = None) -> None:
+        self.client_info_cache = Cache(ttl=60)
         self.app = app
         if app is not None:
             self.init_app(app)
@@ -214,7 +221,19 @@ class IAM:
             bool: Is referer header valid or not
         """
         try:
-            client_info = self.client.GetClientInformation(jwt_claims.Namespace, jwt_claims.ClientId)
+            # Create cache key
+            cache_key = f"{jwt_claims.Namespace}:{jwt_claims.ClientId}"
+            
+            # Try to get from cache first
+            client_info = self.client_info_cache.get(cache_key)
+
+            if client_info is None:
+                # If not in cache, fetch from source
+                client_info = self.client.GetClientInformation(jwt_claims.Namespace, jwt_claims.ClientId)
+                if client_info:
+                    # Store in cache
+                    self.client_info_cache[cache_key] = client_info
+
         except GetClientInformationError:
             return False
 
