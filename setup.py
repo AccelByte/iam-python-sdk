@@ -15,7 +15,7 @@ requirements = [
     'backoff==1.11.1',
     'httpx==0.22.0',
     'httpcore==0.14.5',
-    'pyjwt[crypto]==2.2.0',
+    'pyjwt[crypto]==2.4.0',
     'crontab==0.23.0',
     'bitarray==2.3.4',
     'mmh3==3.0.0'
@@ -24,7 +24,7 @@ requirements = [
 test_requirements = ['pytest==6.2.4', 'pytest-asyncio==0.16.0', 'respx==0.19.2']
 
 optional_requirements = {
-    "flask": ["Flask>=1.0,<2.0"],
+    "flask": ["Flask>=1.0,<3.0"],
     "fastapi": ["fastapi<=0.90.1"]
 }
 

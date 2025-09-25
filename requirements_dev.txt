@@ -15,7 +15,7 @@ black==21.7b0
 backoff==1.11.1
 httpx==0.22.0
 httpcore==0.14.5
-pyjwt[crypto]==2.2.0
+pyjwt[crypto]==2.4.0
 crontab==0.23.0
 respx==0.19.2
 Flask>=1.0,<2.0
