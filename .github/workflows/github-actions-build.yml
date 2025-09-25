@@ -25,7 +25,7 @@ jobs:
       - name: Build Package
         run: make dist
       - name: Save artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: iam-python-sdk-dist-${{ github.sha }}
           path: dist/*
