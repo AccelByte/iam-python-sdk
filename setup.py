@@ -11,20 +11,20 @@ with open('CHANGELOG.rst') as changelog_file:
     changelog = changelog_file.read()
 
 requirements = [
-    'Click>=7.1.2,<8.1.0',
+    'Click>=8.1.3',
     'backoff==1.11.1',
     'httpx==0.22.0',
     'httpcore==0.14.5',
     'pyjwt[crypto]==2.4.0',
     'crontab==0.23.0',
-    'bitarray==2.3.4',
-    'mmh3==3.0.0'
+    'bitarray>=2.9.0',
+    'mmh3>=4.0.0'
 ]
 
 test_requirements = ['pytest==6.2.4', 'pytest-asyncio==0.16.0', 'respx==0.19.2']
 
 optional_requirements = {
-    "flask": ["Flask>=1.0,<3.0"],
+    "flask": ["Flask>=1.0,<4.0"],
     "fastapi": ["fastapi<=0.90.1"]
 }
 
@@ -42,6 +42,11 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
     ],
     description="AccelByte IAM Python SDK",
     entry_points={
@@ -61,6 +66,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://accelbyte.github.io/iam-python-sdk',
-    version='1.4.3',
+    version='1.5.0',
     zip_safe=False,
 )

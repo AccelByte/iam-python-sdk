@@ -18,9 +18,7 @@ from functools import wraps
 from typing import List, Optional, Union
 from urllib.parse import urlparse
 
-from flask import Flask, current_app, request
-from flask.helpers import make_response
-from flask.wrappers import Response
+from flask import Flask, current_app, request, make_response, Response
 from werkzeug.exceptions import HTTPException
 
 from .cache import Cache
@@ -82,12 +80,12 @@ def validate_subdomain_with_namespace(host: str, namespace: str, excluded_namesp
     # # url with subdomain should have at least 3 part, e.g. foo.example.com, otherwise we should not check it
     if len(host_part) < 3:
         return True
-    
+
     subdomain = host_part[0]
     for excluded_namespace in excluded_namespaces:
         if excluded_namespace.lower() == namespace.lower():
             return True
-    
+
     if namespace.lower() == subdomain.lower():
         return True
 
@@ -226,11 +224,11 @@ class IAM:
             # issued with the old URL. This cache ensures those tokens can still be
             # validated during the transition period without making redundant requests
             # to IAM for the same client information.
-                    
+
             # Create cache key using namespace and client ID from JWT claims
             # This combination uniquely identifies the client across IAM URL changes
             cache_key = f"{jwt_claims.Namespace}:{jwt_claims.ClientId}"
-                    
+
             # Try to get client info from cache first to avoid unnecessary IAM requests
             # during the URL transition period. This is particularly important when
             # handling multiple requests with JWTs issued under the old URL.

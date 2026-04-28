@@ -1,6 +1,16 @@
 =========
 Changelog
 =========
+1.5.0 (2026-04-28)
+------------------
+
+* Add support for Python 3.10, 3.11, 3.12, 3.13, and 3.14
+* Update Click dependency to >=8.1.3 for Flask 3.x compatibility
+* Update Flask support to <4.0 (now supports Flask 3.1.3)
+* Update bitarray to >=2.9.0 for Python 3.14 compatibility
+* Update mmh3 to >=4.0.0 for Python 3.14 compatibility
+* Update Flask imports to use direct imports from flask module instead of flask.helpers and flask.wrappers for better Flask 3.x compatibility
+
 1.4.3 (2025-09-25)
 ------------------
 
@@ -14,7 +24,7 @@ Changelog
 1.4.1 (2024-05-17)
 ------------------
 
-* Fixing user permission expand issue 
+* Fixing user permission expand issue
 
 1.3.3 (2022-08-04)
 ------------------
